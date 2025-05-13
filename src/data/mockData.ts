@@ -379,7 +379,7 @@ export const accessReviews: AccessReview[] = [
     reviewerId: 'user2',
     subjectId: 'user3',
     permissionId: 'perm8',
-    decision: 'pending',
+    decision: 'maintain',
     createdAt: '2023-05-10T09:00:00Z',
     dueDate: '2023-05-15T09:00:00Z',
     status: 'pending',
@@ -390,7 +390,7 @@ export const accessReviews: AccessReview[] = [
     reviewerId: 'user6',
     subjectId: 'user4',
     roleId: 'role4',
-    decision: 'pending',
+    decision: 'maintain',
     createdAt: '2023-05-11T15:00:00Z',
     dueDate: '2023-05-18T15:00:00Z',
     status: 'pending',
@@ -401,7 +401,7 @@ export const accessReviews: AccessReview[] = [
     reviewerId: 'user1',
     subjectId: 'user5',
     permissionId: 'perm6',
-    decision: 'pending',
+    decision: 'revoke',
     createdAt: '2023-05-09T11:30:00Z',
     dueDate: '2023-05-12T11:30:00Z',
     status: 'overdue',
@@ -463,4 +463,168 @@ export const accessViolations: AccessViolation[] = [
     detectedAt: '2023-05-09T10:10:00Z',
     status: 'Open'
   },
+];
+
+// Additional data for enhanced Access Request form
+export const complianceEnvironments = [
+  { id: 'federal', name: 'Federal', description: 'US Federal Government compliance standards' },
+  { id: 'cccs', name: 'CCCS', description: 'Canadian Centre for Cyber Security compliance standards' },
+  { id: 'usgov', name: 'USGov', description: 'US Government compliance standards' },
+  { id: 'us-commercial', name: 'US (Commercial)', description: 'US Commercial compliance standards' },
+  { id: 'uk-commercial', name: 'UK (Commercial)', description: 'UK Commercial compliance standards' },
+  { id: 'au-commercial', name: 'AU (Commercial)', description: 'Australian Commercial compliance standards' }
+];
+
+export const environmentTypes = [
+  { id: 'dev', name: 'Development', riskLevel: 'Low' },
+  { id: 'test', name: 'Test', riskLevel: 'Low' },
+  { id: 'stage', name: 'Staging', riskLevel: 'Medium' },
+  { id: 'prod', name: 'Production', riskLevel: 'High' }
+];
+
+export const targetResources = [
+  { 
+    id: 'aws-cccs-platform-admin',
+    name: 'AWS CCCS Platform Administrator', 
+    environment: 'prod',
+    compliance: 'cccs',
+    riskLevel: 'High',
+    recommendedFor: ['System Administrator', 'DevOps Engineer']
+  },
+  { 
+    id: 'aws-cccs-platform-reader',
+    name: 'AWS CCCS Platform Reader', 
+    environment: 'prod',
+    compliance: 'cccs',
+    riskLevel: 'Medium',
+    recommendedFor: ['Data Analyst', 'Business Analyst', 'Compliance Auditor']
+  },
+  { 
+    id: 'aws-cccs-customer-data',
+    name: 'AWS CCCS Customer Data', 
+    environment: 'prod',
+    compliance: 'cccs',
+    riskLevel: 'High',
+    recommendedFor: ['Data Scientist', 'Business Intelligence Developer']
+  },
+  { 
+    id: 'gcp-cjis-platform-reader',
+    name: 'GCP CJIS Platform Reader', 
+    environment: 'prod',
+    compliance: 'federal',
+    riskLevel: 'High',
+    isSensitive: true,
+    recommendedFor: ['Security Analyst', 'Compliance Auditor']
+  },
+  { 
+    id: 'azure-federal-security-admin',
+    name: 'Azure Federal Security Admin', 
+    environment: 'stage',
+    compliance: 'federal',
+    riskLevel: 'High',
+    isPrivileged: true,
+    recommendedFor: ['Security Analyst', 'System Administrator']
+  },
+  { 
+    id: 'aws-us-commercial-dev',
+    name: 'AWS US Commercial Dev Environment', 
+    environment: 'dev',
+    compliance: 'us-commercial',
+    riskLevel: 'Low',
+    recommendedFor: ['Software Engineer (Junior)', 'Software Engineer (Senior)', 'QA Engineer']
+  },
+  { 
+    id: 'aws-us-commercial-test',
+    name: 'AWS US Commercial Test Environment', 
+    environment: 'test',
+    compliance: 'us-commercial',
+    riskLevel: 'Low',
+    recommendedFor: ['Software Engineer (Junior)', 'Software Engineer (Senior)', 'QA Engineer']
+  }
+];
+
+export const jobFunctionDefinitions = [
+  {
+    id: 'system-administrator',
+    title: 'System Administrator',
+    description: 'Responsible for infrastructure management and system configuration',
+    defaultPermissions: ['perm1', 'perm3', 'perm5', 'perm6', 'perm10'],
+    recommendedResources: ['aws-cccs-platform-admin', 'azure-federal-security-admin']
+  },
+  {
+    id: 'devops-engineer',
+    title: 'DevOps Engineer',
+    description: 'Handles CI/CD pipelines and deployment environments',
+    defaultPermissions: ['perm1', 'perm3', 'perm5', 'perm10'],
+    recommendedResources: ['aws-cccs-platform-admin', 'aws-us-commercial-dev', 'aws-us-commercial-test']
+  },
+  {
+    id: 'software-engineer-senior',
+    title: 'Software Engineer (Senior)',
+    description: 'Advanced development with broader system access',
+    defaultPermissions: ['perm1', 'perm3', 'perm5', 'perm10'],
+    recommendedResources: ['aws-us-commercial-dev', 'aws-us-commercial-test']
+  },
+  {
+    id: 'software-engineer-junior',
+    title: 'Software Engineer (Junior)',
+    description: 'Entry-level development with limited access',
+    defaultPermissions: ['perm1', 'perm5', 'perm10'],
+    recommendedResources: ['aws-us-commercial-dev', 'aws-us-commercial-test']
+  },
+  {
+    id: 'data-analyst',
+    title: 'Data Analyst',
+    description: 'Basic data access for reporting',
+    defaultPermissions: ['perm1', 'perm5', 'perm8', 'perm10'],
+    recommendedResources: ['aws-cccs-platform-reader']
+  },
+  {
+    id: 'data-scientist',
+    title: 'Data Scientist',
+    description: 'Advanced data manipulation and model training access',
+    defaultPermissions: ['perm1', 'perm5', 'perm8', 'perm10'],
+    recommendedResources: ['aws-cccs-customer-data']
+  },
+  {
+    id: 'security-analyst',
+    title: 'Security Analyst',
+    description: 'Security monitoring and investigation',
+    defaultPermissions: ['perm1', 'perm5', 'perm8', 'perm9', 'perm10'],
+    recommendedResources: ['gcp-cjis-platform-reader', 'azure-federal-security-admin']
+  },
+  {
+    id: 'compliance-auditor',
+    title: 'Compliance Auditor',
+    description: 'Read-only access for compliance reviews',
+    defaultPermissions: ['perm1', 'perm5', 'perm8', 'perm9', 'perm10'],
+    recommendedResources: ['aws-cccs-platform-reader', 'gcp-cjis-platform-reader']
+  }
+];
+
+export const approvers = [
+  {
+    id: 'approver1',
+    name: 'Sarah L.',
+    title: 'Engineering Manager',
+    type: 'manager'
+  },
+  {
+    id: 'approver2',
+    name: 'DevOps Team',
+    title: 'Resource Owner',
+    type: 'resource-owner'
+  },
+  {
+    id: 'approver3',
+    name: 'Security Office',
+    title: 'Security Review',
+    type: 'security'
+  },
+  {
+    id: 'approver4',
+    name: 'Compliance Office',
+    title: 'Compliance Review',
+    type: 'compliance'
+  }
 ];

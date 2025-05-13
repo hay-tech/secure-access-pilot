@@ -56,6 +56,23 @@ export interface AccessRequest {
   createdAt: string;
   updatedAt: string;
   expiresAt?: string;
+  // Enhanced fields
+  riskScore?: number;
+  riskLevel?: 'Low' | 'Medium' | 'High';
+  environmentType?: string;
+  complianceFramework?: string;
+  approvalChain?: ApprovalStep[];
+}
+
+export interface ApprovalStep {
+  approverId: string;
+  approverName: string;
+  approverTitle: string;
+  approverType: 'manager' | 'resource-owner' | 'security' | 'compliance';
+  status: 'pending' | 'approved' | 'rejected';
+  comments?: string;
+  timestamp?: string;
+  reason?: string;
 }
 
 export interface AuditLog {
@@ -111,6 +128,7 @@ export interface AccessReviewSummary {
   averageResponseTime: number;
 }
 
+// Enhanced job function and access types
 export type JobFunction = 
   // IT/Engineering Roles
   | 'System Administrator' 
@@ -163,3 +181,42 @@ export type AccessType =
   | 'Internal'
   | 'Confidential'
   | 'Restricted';
+
+// Additional interface definitions for the enhanced access request form
+export interface JobFunctionDefinition {
+  id: string;
+  title: string;
+  description: string;
+  defaultPermissions: string[];
+  recommendedResources: string[];
+}
+
+export interface TargetResource {
+  id: string;
+  name: string;
+  environment: string;
+  compliance: string;
+  riskLevel: 'Low' | 'Medium' | 'High';
+  isSensitive?: boolean;
+  isPrivileged?: boolean;
+  recommendedFor: string[];
+}
+
+export interface ComplianceEnvironment {
+  id: string;
+  name: string;
+  description: string;
+}
+
+export interface EnvironmentType {
+  id: string;
+  name: string;
+  riskLevel: 'Low' | 'Medium' | 'High';
+}
+
+export interface Approver {
+  id: string;
+  name: string;
+  title: string;
+  type: string;
+}
