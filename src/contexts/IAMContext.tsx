@@ -1,5 +1,6 @@
+
 import React, { createContext, useContext, useState } from 'react';
-import { User, Role, Permission, AccessRequest, AuditLog, AccessReview } from '../types/iam';
+import { User, Role, Permission, AccessRequest, AuditLog, AccessReview, ApprovalStep } from '../types/iam';
 import { users, roles, permissions, accessRequests, auditLogs, accessReviews } from '../data/mockData';
 import { toast } from 'sonner';
 
@@ -190,7 +191,14 @@ export const IAMProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     const now = new Date().toISOString();
     
     // Generate approval chain based on compliance framework and resource hierarchy
-    let approvalChain = request.approvalChain || [];
+    let approvalChain: ApprovalStep[] = request.approvalChain ? request.approvalChain.map(approver => ({
+      approverId: approver.id || approver.approverId,
+      approverName: approver.name || approver.approverName,
+      approverTitle: approver.title || approver.approverTitle,
+      approverType: (approver.type || approver.approverType) as 'manager' | 'resource-owner' | 'security' | 'compliance',
+      status: 'pending',
+      reason: approver.reason
+    })) : [];
     
     // Handle expiration for temporary access
     let expiresAt = request.expiresAt;
