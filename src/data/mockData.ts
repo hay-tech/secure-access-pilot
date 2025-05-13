@@ -477,7 +477,6 @@ export const complianceEnvironments = [
 
 export const environmentTypes = [
   { id: 'dev', name: 'Development', riskLevel: 'Low' },
-  { id: 'test', name: 'Test', riskLevel: 'Low' },
   { id: 'stage', name: 'Staging', riskLevel: 'Medium' },
   { id: 'prod', name: 'Production', riskLevel: 'High' }
 ];
@@ -545,9 +544,9 @@ export const targetResources = [
 
 export const jobFunctionDefinitions = [
   {
-    id: 'system-administrator',
-    title: 'System Administrator',
-    description: 'Responsible for infrastructure management and system configuration',
+    id: 'cloud-platform-administrator',
+    title: 'Cloud Platform Administrator',
+    description: 'Responsible for cloud infrastructure management and system configuration',
     defaultPermissions: ['perm1', 'perm3', 'perm5', 'perm6', 'perm10'],
     recommendedResources: ['aws-cccs-platform-admin', 'azure-federal-security-admin']
   },
