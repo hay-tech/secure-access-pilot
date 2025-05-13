@@ -4,8 +4,11 @@ import { useAuth } from '../contexts/AuthContext';
 import { useIAM } from '../contexts/IAMContext';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
-import { Shield, Users, ListCheck, AlertTriangle } from 'lucide-react';
-import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, PieChart, Pie, Cell } from 'recharts';
+import { Shield, Users, ListCheck, AlertTriangle, FileText, X, AlertCircle, Clock } from 'lucide-react';
+import { 
+  BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, PieChart, Pie, Cell, Legend 
+} from 'recharts';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 
 const Dashboard: React.FC = () => {
   const { currentUser } = useAuth();
@@ -16,7 +19,7 @@ const Dashboard: React.FC = () => {
     roles,
     getUserRoles, 
     getUserPermissions,
-    hasPermission 
+    hasPermission
   } = useIAM();
 
   if (!currentUser) return null;
@@ -32,19 +35,49 @@ const Dashboard: React.FC = () => {
   
   const canViewSystemStats = hasPermission(currentUser.id, 'reports', 'read');
   
-  // Chart data
+  // Chart data for access request status
   const statusData = [
     { name: 'Approved', value: accessRequests.filter(r => r.status === 'approved').length },
     { name: 'Pending', value: accessRequests.filter(r => r.status === 'pending').length },
     { name: 'Rejected', value: accessRequests.filter(r => r.status === 'rejected').length },
   ];
   
-  const COLORS = ['#10b981', '#f59e0b', '#ef4444'];
-  
+  // Chart data for role distribution
   const roleDistribution = roles.map(role => ({
     name: role.name,
     users: users.filter(user => user.roleIds.includes(role.id)).length,
   }));
+
+  // New data for access review insights
+  const pendingReviews = accessReviews.filter(r => r.status === 'pending' || r.status === 'overdue');
+  const overdueReviews = pendingReviews.filter(r => r.daysOverdue && r.daysOverdue > 0);
+  
+  // Mock data for access matching insights
+  const accessMatchData = [
+    { name: 'Matched Access', value: 85 },
+    { name: 'Unmatched Access', value: 15 }
+  ];
+
+  // Mock data for violations by type
+  const violationsData = [
+    { type: 'SoD', count: 12, description: 'Segregation of Duties' },
+    { type: 'Excessive', count: 18, description: 'Excessive Permissions' },
+    { type: 'Dormant', count: 7, description: 'Unused Access (90+ days)' },
+    { type: 'Critical', count: 5, description: 'Critical System Exceptions' },
+    { type: 'Mismatch', count: 10, description: 'Role-Permission Mismatch' }
+  ];
+
+  // Mock data for pending reviews table
+  const pendingReviewsData = [
+    { id: 'rev1', resource: 'Production Database', role: 'Database Administrator', daysOverdue: 5 },
+    { id: 'rev2', resource: 'Financial Reports', role: 'Business Analyst', daysOverdue: 3 },
+    { id: 'rev3', resource: 'Source Code Repository', role: 'Software Engineer', daysOverdue: 7 },
+    { id: 'rev4', resource: 'Customer Data', role: 'Data Analyst', daysOverdue: 2 },
+    { id: 'rev5', resource: 'Network Configuration', role: 'Network Administrator', daysOverdue: 9 }
+  ];
+
+  const COLORS = ['#10b981', '#f59e0b', '#ef4444']; // green, amber, red
+  const ACCESS_COLORS = ['#3b82f6', '#4ade80']; // blue, green
 
   return (
     <div className="space-y-6">
@@ -109,52 +142,138 @@ const Dashboard: React.FC = () => {
 
       {canViewSystemStats && (
         <>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          {/* Access Review Insights Section */}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
             <Card>
               <CardHeader>
-                <CardTitle>Access Request Status</CardTitle>
-                <CardDescription>Distribution of access request statuses</CardDescription>
+                <CardTitle>Access Compliance Overview</CardTitle>
+                <CardDescription>Actual vs. approved access across the organization</CardDescription>
               </CardHeader>
               <CardContent className="h-80">
-                <ResponsiveContainer width="100%" height="100%">
-                  <PieChart>
-                    <Pie
-                      data={statusData}
-                      cx="50%"
-                      cy="50%"
-                      labelLine={false}
-                      outerRadius={100}
-                      fill="#8884d8"
-                      dataKey="value"
-                      label={({ name, percent }) => `${name}: ${(percent * 100).toFixed(0)}%`}
-                    >
-                      {statusData.map((entry, index) => (
-                        <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-                      ))}
-                    </Pie>
-                    <Tooltip />
-                  </PieChart>
-                </ResponsiveContainer>
+                <div className="flex flex-col h-full">
+                  <div className="flex-1">
+                    <ResponsiveContainer width="100%" height="100%">
+                      <PieChart>
+                        <Pie
+                          data={accessMatchData}
+                          cx="50%"
+                          cy="50%"
+                          innerRadius={70}
+                          outerRadius={100}
+                          fill="#8884d8"
+                          dataKey="value"
+                          label={({name, percent}) => `${name}: ${(percent * 100).toFixed(0)}%`}
+                        >
+                          {accessMatchData.map((entry, index) => (
+                            <Cell key={`cell-${index}`} fill={ACCESS_COLORS[index % ACCESS_COLORS.length]} />
+                          ))}
+                        </Pie>
+                        <Legend />
+                        <Tooltip formatter={(value) => `${value}%`} />
+                      </PieChart>
+                    </ResponsiveContainer>
+                  </div>
+                  <div className="mt-4">
+                    <p className="text-sm text-center">
+                      <span className="font-medium text-blue-600">85%</span> of user access matches approved roles
+                    </p>
+                    <p className="text-sm text-center text-muted-foreground">
+                      {violationsData.reduce((acc, curr) => acc + curr.count, 0)} total violations found
+                    </p>
+                  </div>
+                </div>
               </CardContent>
             </Card>
 
             <Card>
               <CardHeader>
-                <CardTitle>Role Distribution</CardTitle>
-                <CardDescription>Number of users per role</CardDescription>
+                <CardTitle>Access Violations by Type</CardTitle>
+                <CardDescription>Distribution of potential policy violations</CardDescription>
               </CardHeader>
-              <CardContent className="h-80">
-                <ResponsiveContainer width="100%" height="100%">
-                  <BarChart
-                    data={roleDistribution}
-                    margin={{ top: 20, right: 30, left: 20, bottom: 60 }}
-                  >
-                    <XAxis dataKey="name" angle={-45} textAnchor="end" height={60} />
-                    <YAxis />
-                    <Tooltip />
-                    <Bar dataKey="users" fill="#3b82f6" />
-                  </BarChart>
-                </ResponsiveContainer>
+              <CardContent>
+                <div className="h-80">
+                  <ResponsiveContainer width="100%" height="100%">
+                    <BarChart
+                      data={violationsData}
+                      layout="vertical"
+                      margin={{ top: 20, right: 30, left: 100, bottom: 20 }}
+                    >
+                      <XAxis type="number" />
+                      <YAxis type="category" dataKey="type" width={80} />
+                      <Tooltip 
+                        formatter={(value, name, props) => [
+                          value, 
+                          props.payload.description
+                        ]} 
+                      />
+                      <Bar dataKey="count" fill="#3b82f6" radius={[0, 4, 4, 0]} />
+                    </BarChart>
+                  </ResponsiveContainer>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <Card>
+              <CardHeader className="pb-3">
+                <div className="flex items-center justify-between">
+                  <CardTitle>Role to User Mapping</CardTitle>
+                  <Users className="h-4 w-4 text-muted-foreground" />
+                </div>
+                <CardDescription>Number of users assigned to each role</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead>Role Name</TableHead>
+                      <TableHead className="text-right">Users</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {roleDistribution.sort((a, b) => b.users - a.users).map((role) => (
+                      <TableRow key={role.name}>
+                        <TableCell>{role.name}</TableCell>
+                        <TableCell className="text-right">{role.users}</TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardHeader className="pb-3">
+                <div className="flex items-center justify-between">
+                  <CardTitle>Pending Access Reviews</CardTitle>
+                  <Clock className="h-4 w-4 text-muted-foreground" />
+                </div>
+                <CardDescription>Reviews requiring attention</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead>Resource</TableHead>
+                      <TableHead>Role</TableHead>
+                      <TableHead className="text-right">Days Overdue</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {pendingReviewsData.map((review) => (
+                      <TableRow key={review.id}>
+                        <TableCell>{review.resource}</TableCell>
+                        <TableCell>{review.role}</TableCell>
+                        <TableCell className="text-right">
+                          <span className={`font-medium ${review.daysOverdue > 5 ? 'text-red-500' : 'text-amber-500'}`}>
+                            {review.daysOverdue}
+                          </span>
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
               </CardContent>
             </Card>
           </div>

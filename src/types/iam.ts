@@ -9,6 +9,8 @@ export interface User {
   manager?: string;
   createdAt: string;
   lastLogin?: string;
+  jobFunction?: string;
+  accessLevel?: string;
 }
 
 export interface Role {
@@ -18,6 +20,7 @@ export interface Role {
   permissions: Permission[];
   createdAt: string;
   updatedAt: string;
+  category?: 'IT' | 'Business' | 'Security' | 'Management';
 }
 
 export interface Permission {
@@ -26,6 +29,8 @@ export interface Permission {
   resource: string;
   action: 'create' | 'read' | 'update' | 'delete' | 'approve';
   description: string;
+  category?: 'Data' | 'System' | 'Function' | 'Security';
+  level?: 'Basic' | 'Elevated' | 'Admin';
 }
 
 export interface AccessRequest {
@@ -50,6 +55,7 @@ export interface AccessRequest {
   };
   createdAt: string;
   updatedAt: string;
+  expiresAt?: string;
 }
 
 export interface AuditLog {
@@ -70,4 +76,90 @@ export interface AccessReview {
   decision: 'maintain' | 'revoke' | 'modify';
   comments?: string;
   createdAt: string;
+  dueDate?: string;
+  status?: 'pending' | 'completed' | 'overdue';
+  violationType?: 'SoD' | 'Excessive' | 'Dormant' | 'Critical' | 'Mismatch';
+  daysOverdue?: number;
 }
+
+export interface AccessViolation {
+  id: string;
+  userId: string;
+  roleId?: string;
+  permissionId?: string;
+  violationType: 'SoD' | 'Excessive' | 'Dormant' | 'Critical' | 'Mismatch';
+  severity: 'Low' | 'Medium' | 'High' | 'Critical';
+  details: string;
+  detectedAt: string;
+  status: 'Open' | 'Resolved' | 'Accepted';
+  reviewId?: string;
+}
+
+export interface AccessReviewSummary {
+  totalReviews: number;
+  pendingReviews: number;
+  completedReviews: number;
+  overdueReviews: number;
+  violationsByType: {
+    SoD: number;
+    Excessive: number; 
+    Dormant: number;
+    Critical: number;
+    Mismatch: number;
+  };
+  approvalRate: number;
+  averageResponseTime: number;
+}
+
+export type JobFunction = 
+  // IT/Engineering Roles
+  | 'System Administrator' 
+  | 'Network Administrator'
+  | 'Database Administrator'
+  | 'DevOps Engineer'
+  | 'Software Engineer (Junior)'
+  | 'Software Engineer (Senior)'
+  | 'Software Architect'
+  | 'QA Engineer'
+  | 'Site Reliability Engineer'
+  // Business/Data Roles
+  | 'Data Analyst'
+  | 'Business Analyst'
+  | 'Data Scientist'
+  | 'Product Manager'
+  | 'Project Manager'
+  | 'Business Intelligence Developer'
+  // Security/Compliance Roles
+  | 'Security Analyst'
+  | 'Compliance Auditor'
+  | 'Risk Manager'
+  | 'Data Privacy Officer'
+  // Management Roles
+  | 'Team Lead'
+  | 'Department Manager'
+  | 'Executive'
+  | 'System Owner';
+
+export type AccessType =
+  // Data Access Types
+  | 'Sensitive Data Access'
+  | 'Business Data Access'
+  | 'Customer Data Access'
+  | 'Internal Data Access'
+  // System Access Types
+  | 'Production System Access'
+  | 'Development Environment Access'
+  | 'Test Environment Access'
+  | 'Admin Console Access'
+  // Function Access Types
+  | 'Read Only'
+  | 'Standard User'
+  | 'Power User'
+  | 'Administrator'
+  | 'Approver'
+  | 'Auditor'
+  // Security Level Access Types
+  | 'Public'
+  | 'Internal'
+  | 'Confidential'
+  | 'Restricted';
