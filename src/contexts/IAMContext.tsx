@@ -1,4 +1,3 @@
-
 import React, { createContext, useContext, useState } from 'react';
 import { User, Role, Permission, AccessRequest, AuditLog, AccessReview } from '../types/iam';
 import { users, roles, permissions, accessRequests, auditLogs, accessReviews } from '../data/mockData';
@@ -186,16 +185,32 @@ export const IAMProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     return rolesState.find(r => r.id === id);
   };
 
-  // Access requests
+  // Access requests with enhanced approval flow
   const createAccessRequest = async (request: Omit<AccessRequest, 'id' | 'createdAt' | 'updatedAt' | 'status'>): Promise<AccessRequest> => {
     const now = new Date().toISOString();
+    
+    // Generate approval chain based on compliance framework and resource hierarchy
+    let approvalChain = request.approvalChain || [];
+    
+    // Handle expiration for temporary access
+    let expiresAt = request.expiresAt;
+    if (request.accessType === 'temporary' && !expiresAt) {
+      // Default expiration of 30 days if not specified
+      const expirationDate = new Date();
+      expirationDate.setDate(expirationDate.getDate() + 30);
+      expiresAt = expirationDate.toISOString();
+    }
+    
     const newRequest: AccessRequest = {
       ...request,
       id: `req${accessRequestsState.length + 1}`,
       status: 'pending',
       createdAt: now,
       updatedAt: now,
+      expiresAt,
+      approvalChain
     };
+    
     setAccessRequests(prev => [...prev, newRequest]);
     
     // Log activity

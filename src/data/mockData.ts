@@ -467,12 +467,13 @@ export const accessViolations: AccessViolation[] = [
 
 // Additional data for enhanced Access Request form
 export const complianceEnvironments = [
-  { id: 'federal', name: 'Federal', description: 'US Federal Government compliance standards' },
-  { id: 'cccs', name: 'CCCS', description: 'Canadian Centre for Cyber Security compliance standards' },
-  { id: 'usgov', name: 'USGov', description: 'US Government compliance standards' },
-  { id: 'us-commercial', name: 'US (Commercial)', description: 'US Commercial compliance standards' },
-  { id: 'uk-commercial', name: 'UK (Commercial)', description: 'UK Commercial compliance standards' },
-  { id: 'au-commercial', name: 'AU (Commercial)', description: 'Australian Commercial compliance standards' }
+  { id: 'federal', name: 'Federal', description: 'US Federal Government compliance standards', sovereignOps: true },
+  { id: 'cccs', name: 'CCCS', description: 'Canadian Centre for Cyber Security compliance standards', sovereignOps: true },
+  { id: 'cccs-aws', name: 'CCCS-AWS', description: 'CCCS AWS specific standards', sovereignOps: true },
+  { id: 'cjis', name: 'CJIS', description: 'Criminal Justice Information Services', sovereignOps: false },
+  { id: 'us-commercial', name: 'US (Commercial)', description: 'US Commercial compliance standards', sovereignOps: false },
+  { id: 'uk-commercial', name: 'UK (Commercial)', description: 'UK Commercial compliance standards', sovereignOps: false },
+  { id: 'au-commercial', name: 'AU (Commercial)', description: 'Australian Commercial compliance standards', sovereignOps: false }
 ];
 
 export const environmentTypes = [
@@ -481,74 +482,223 @@ export const environmentTypes = [
   { id: 'prod', name: 'Production', riskLevel: 'High' }
 ];
 
+export const resourceHierarchyLevels = [
+  { id: 'organization', name: 'Organization', approverRole: 'Cloud Account Owner' },
+  { id: 'tenant', name: 'Tenant', approverRole: 'Cloud Platform Tenant Administrator' },
+  { id: 'environment', name: 'Environment/Region', approverRole: 'Cloud Platform Administrator' },
+  { id: 'project', name: 'Project/RG', approverRole: 'Cloud Project Administrator' },
+  { id: 'resource', name: 'Resources/Services', approverRole: 'Cloud Platform Contributor' }
+];
+
 export const targetResources = [
   { 
     id: 'aws-cccs-platform-admin',
     name: 'AWS CCCS Platform Administrator', 
     environment: 'prod',
     compliance: 'cccs',
+    resourceHierarchy: 'organization',
     riskLevel: 'High',
-    recommendedFor: ['System Administrator', 'DevOps Engineer']
+    recommendedFor: ['Cloud Account Owner', 'Cloud IAM Administrator']
   },
   { 
     id: 'aws-cccs-platform-reader',
     name: 'AWS CCCS Platform Reader', 
     environment: 'prod',
     compliance: 'cccs',
+    resourceHierarchy: 'tenant',
     riskLevel: 'Medium',
-    recommendedFor: ['Data Analyst', 'Business Analyst', 'Compliance Auditor']
+    recommendedFor: ['Cloud IAM Reader', 'Cloud Platform Reader']
   },
   { 
     id: 'aws-cccs-customer-data',
     name: 'AWS CCCS Customer Data', 
     environment: 'prod',
     compliance: 'cccs',
+    resourceHierarchy: 'project',
     riskLevel: 'High',
-    recommendedFor: ['Data Scientist', 'Business Intelligence Developer']
+    recommendedFor: ['Cloud Platform Administrator', 'Cloud Project Administrator']
   },
   { 
     id: 'gcp-cjis-platform-reader',
     name: 'GCP CJIS Platform Reader', 
     environment: 'prod',
-    compliance: 'federal',
+    compliance: 'cjis',
+    resourceHierarchy: 'tenant',
     riskLevel: 'High',
     isSensitive: true,
-    recommendedFor: ['Security Analyst', 'Compliance Auditor']
+    recommendedFor: ['Cloud Platform Security Reader', 'Cloud IAM Reader']
   },
   { 
     id: 'azure-federal-security-admin',
     name: 'Azure Federal Security Admin', 
     environment: 'stage',
     compliance: 'federal',
+    resourceHierarchy: 'organization',
     riskLevel: 'High',
     isPrivileged: true,
-    recommendedFor: ['Security Analyst', 'System Administrator']
+    recommendedFor: ['Cloud Platform Security Administrator', 'Cloud IAM Administrator']
   },
   { 
     id: 'aws-us-commercial-dev',
     name: 'AWS US Commercial Dev Environment', 
     environment: 'dev',
     compliance: 'us-commercial',
+    resourceHierarchy: 'environment',
     riskLevel: 'Low',
-    recommendedFor: ['Software Engineer (Junior)', 'Software Engineer (Senior)', 'QA Engineer']
+    recommendedFor: ['Cloud Platform Contributor', 'Cloud Project Contributor']
   },
   { 
     id: 'aws-us-commercial-test',
     name: 'AWS US Commercial Test Environment', 
     environment: 'test',
     compliance: 'us-commercial',
+    resourceHierarchy: 'project',
     riskLevel: 'Low',
-    recommendedFor: ['Software Engineer (Junior)', 'Software Engineer (Senior)', 'QA Engineer']
+    recommendedFor: ['Cloud Platform Contributor', 'Cloud Project Reader']
+  },
+  {
+    id: 'gcp-cjis-organization',
+    name: 'GCP CJIS Organization',
+    environment: 'prod',
+    compliance: 'cjis',
+    resourceHierarchy: 'organization',
+    riskLevel: 'High',
+    isPrivileged: true,
+    recommendedFor: ['Cloud Account Owner']
+  },
+  {
+    id: 'gcp-cjis-tenant',
+    name: 'GCP CJIS Tenant',
+    environment: 'prod',
+    compliance: 'cjis',
+    resourceHierarchy: 'tenant',
+    riskLevel: 'High',
+    isSensitive: true,
+    recommendedFor: ['Cloud Platform Tenant Administrator']
+  },
+  {
+    id: 'azure-commercial-project',
+    name: 'Azure Commercial Project',
+    environment: 'prod',
+    compliance: 'us-commercial',
+    resourceHierarchy: 'project',
+    riskLevel: 'Medium',
+    recommendedFor: ['Cloud Project Administrator', 'Cloud Project Contributor']
   }
 ];
 
 export const jobFunctionDefinitions = [
   {
-    id: 'cloud-platform-administrator',
-    title: 'Cloud Platform Administrator',
-    description: 'Responsible for cloud infrastructure management and system configuration',
+    id: 'cloud-account-owner',
+    title: 'Cloud Account Owner',
+    description: 'Full account ownership and management capabilities',
     defaultPermissions: ['perm1', 'perm3', 'perm5', 'perm6', 'perm10'],
+    recommendedResources: ['aws-cccs-platform-admin', 'gcp-cjis-organization']
+  },
+  {
+    id: 'cloud-iam-admin',
+    title: 'Cloud IAM Administrator',
+    description: 'Identity and Access Management administration',
+    defaultPermissions: ['perm1', 'perm2', 'perm3', 'perm5', 'perm6'],
     recommendedResources: ['aws-cccs-platform-admin', 'azure-federal-security-admin']
+  },
+  {
+    id: 'cloud-iam-reader',
+    title: 'Cloud IAM Reader',
+    description: 'Read-only access to IAM configurations',
+    defaultPermissions: ['perm1', 'perm5'],
+    recommendedResources: ['aws-cccs-platform-reader', 'gcp-cjis-platform-reader']
+  },
+  {
+    id: 'cloud-platform-tenant-admin',
+    title: 'Cloud Platform Tenant Administrator',
+    description: 'Administration of tenant-level resources',
+    defaultPermissions: ['perm1', 'perm3', 'perm5', 'perm6', 'perm10'],
+    recommendedResources: ['aws-cccs-platform-admin', 'gcp-cjis-tenant']
+  },
+  {
+    id: 'cloud-platform-admin',
+    title: 'Cloud Platform Administrator',
+    description: 'Administration of platform-level resources',
+    defaultPermissions: ['perm1', 'perm3', 'perm5', 'perm6', 'perm10'],
+    recommendedResources: ['aws-cccs-platform-admin', 'aws-cccs-customer-data']
+  },
+  {
+    id: 'cloud-platform-contributor',
+    title: 'Cloud Platform Contributor',
+    description: 'Contributor access to platform resources',
+    defaultPermissions: ['perm1', 'perm3', 'perm5', 'perm10'],
+    recommendedResources: ['aws-us-commercial-dev', 'aws-us-commercial-test']
+  },
+  {
+    id: 'cloud-platform-reader',
+    title: 'Cloud Platform Reader',
+    description: 'Read-only access to platform resources',
+    defaultPermissions: ['perm1', 'perm5', 'perm10'],
+    recommendedResources: ['aws-cccs-platform-reader']
+  },
+  {
+    id: 'cloud-project-admin',
+    title: 'Cloud Project Administrator',
+    description: 'Administration of project-level resources',
+    defaultPermissions: ['perm1', 'perm3', 'perm5', 'perm6', 'perm10'],
+    recommendedResources: ['aws-cccs-customer-data', 'azure-commercial-project']
+  },
+  {
+    id: 'cloud-project-contributor',
+    title: 'Cloud Project Contributor',
+    description: 'Contributor access to project resources',
+    defaultPermissions: ['perm1', 'perm3', 'perm5', 'perm10'],
+    recommendedResources: ['aws-us-commercial-dev', 'azure-commercial-project']
+  },
+  {
+    id: 'cloud-project-reader',
+    title: 'Cloud Project Reader',
+    description: 'Read-only access to project resources',
+    defaultPermissions: ['perm1', 'perm5', 'perm10'],
+    recommendedResources: ['aws-us-commercial-test']
+  },
+  {
+    id: 'cloud-platform-security-admin',
+    title: 'Cloud Platform Security Administrator',
+    description: 'Security administration for cloud platforms',
+    defaultPermissions: ['perm1', 'perm3', 'perm5', 'perm6', 'perm7', 'perm10'],
+    recommendedResources: ['azure-federal-security-admin']
+  },
+  {
+    id: 'cloud-platform-security-contributor',
+    title: 'Cloud Platform Security Contributor',
+    description: 'Security contributor for cloud platforms',
+    defaultPermissions: ['perm1', 'perm3', 'perm5', 'perm7', 'perm10'],
+    recommendedResources: ['azure-federal-security-admin']
+  },
+  {
+    id: 'cloud-platform-security-reader',
+    title: 'Cloud Platform Security Reader',
+    description: 'Security monitoring for cloud platforms',
+    defaultPermissions: ['perm1', 'perm5', 'perm10'],
+    recommendedResources: ['gcp-cjis-platform-reader']
+  },
+  {
+    id: 'cloud-platform-finops-admin',
+    title: 'Cloud Platform FinOps Administrator',
+    description: 'Financial operations for cloud platforms',
+    defaultPermissions: ['perm1', 'perm5', 'perm8', 'perm10'],
+    recommendedResources: ['aws-us-commercial-dev']
+  },
+  {
+    id: 'cloud-platform-sre',
+    title: 'Cloud Platform Site Reliability Engineer',
+    description: 'Site reliability engineering for cloud platforms',
+    defaultPermissions: ['perm1', 'perm3', 'perm5', 'perm10'],
+    recommendedResources: ['aws-us-commercial-dev', 'aws-us-commercial-test']
+  },
+  {
+    id: 'system-administrator',
+    title: 'System Administrator',
+    description: 'System administration and configuration',
+    defaultPermissions: ['perm1', 'perm3', 'perm5', 'perm6', 'perm10'],
+    recommendedResources: []
   },
   {
     id: 'devops-engineer',
@@ -625,5 +775,60 @@ export const approvers = [
     name: 'Compliance Office',
     title: 'Compliance Review',
     type: 'compliance'
+  },
+  {
+    id: 'approver5',
+    name: 'Sovereign Ops Team',
+    title: 'Sovereign Operations',
+    type: 'sovereign-ops'
+  },
+  {
+    id: 'approver6',
+    name: 'Organization Owner',
+    title: 'Organization Owner',
+    type: 'org-owner' 
+  },
+  {
+    id: 'approver7',
+    name: 'Tenant Admin',
+    title: 'Tenant Administrator',
+    type: 'tenant-admin'
+  },
+  {
+    id: 'approver8',
+    name: 'Environment Owner',
+    title: 'Environment/Region Owner',
+    type: 'env-owner'
+  },
+  {
+    id: 'approver9',
+    name: 'Project Owner',
+    title: 'Project/Resource Group Owner',
+    type: 'project-owner'
   }
 ];
+
+// Approval matrix for different resource hierarchies based on compliance framework
+export const approvalMatrix = {
+  'cjis': {
+    'organization': ['manager', 'org-owner', 'security', 'compliance'],
+    'tenant': ['manager', 'tenant-admin', 'security'],
+    'environment': ['manager', 'env-owner', 'security'],
+    'project': ['manager', 'project-owner'],
+    'resource': ['manager', 'resource-owner']
+  },
+  'commercial': {
+    'organization': ['manager', 'org-owner', 'security'],
+    'tenant': ['manager', 'tenant-admin'],
+    'environment': ['manager', 'env-owner'],
+    'project': ['manager'],
+    'resource': ['manager']
+  },
+  'default': {
+    'organization': ['manager', 'security'],
+    'tenant': ['manager', 'security'],
+    'environment': ['manager'],
+    'project': ['manager'],
+    'resource': ['manager']
+  }
+};

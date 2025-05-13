@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../contexts/AuthContext';
 import { useIAM } from '../contexts/IAMContext';
@@ -33,8 +32,8 @@ import {
   DialogTrigger,
 } from '@/components/ui/dialog';
 import { Badge } from '@/components/ui/badge';
-import { formatDistanceToNow } from 'date-fns';
-import { Plus, HelpCircle, AlertCircle, CheckCircle, Info } from 'lucide-react';
+import { format, formatDistanceToNow } from 'date-fns';
+import { Plus, HelpCircle, AlertCircle, CheckCircle, Info, Calendar } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { 
   Form, 
@@ -49,9 +48,12 @@ import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { toast } from 'sonner';
-import { jobFunctionDefinitions, targetResources, approvers, complianceEnvironments, environmentTypes } from '../data/mockData';
+import { jobFunctionDefinitions, targetResources, approvers, complianceEnvironments, environmentTypes, resourceHierarchyLevels, approvalMatrix } from '../data/mockData';
+import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
+import { Calendar as CalendarComponent } from '@/components/ui/calendar';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 
-// Define form schema
+// Define form schema with access type and expiration date
 const accessRequestSchema = z.object({
   jobFunction: z.string().min(1, { message: "Please select a job function" }),
   resources: z.array(z.string()).min(1, { message: "Please select at least one resource" }),
@@ -60,35 +62,101 @@ const accessRequestSchema = z.object({
     .max(500, { message: "Justification is too long (maximum 500 characters)" }),
   complianceFilter: z.string().optional(),
   environmentFilter: z.string().optional(),
+  accessType: z.enum(['permanent', 'temporary'], {
+    required_error: "Please select an access type",
+  }),
+  expirationDate: z.date().optional()
+    .refine(date => {
+      if (!date) return true;
+      return date > new Date();
+    }, {
+      message: "Expiration date must be in the future",
+    }),
 });
 
-type AccessRequestFormValues = z.infer<typeof accessRequestSchema>;
+// Add conditional validation for expirationDate when accessType is 'temporary'
+const conditionalAccessRequestSchema = z.intersection(
+  accessRequestSchema,
+  z.object({
+    expirationDate: z.date().optional(),
+  })
+).refine(
+  (data) => !(data.accessType === 'temporary' && !data.expirationDate),
+  {
+    message: "Expiration date is required for temporary access",
+    path: ['expirationDate'],
+  }
+);
 
-// Extract approval chain based on selected resources and job function
+type AccessRequestFormValues = z.infer<typeof conditionalAccessRequestSchema>;
+
+// Extract approval chain based on selected resources, job function, and compliance framework
 const getApprovalChain = (resources: string[], jobFunction: string) => {
-  const selectedResources = targetResources.filter(r => resources.includes(r.id));
-  const approvalChain = [
-    { ...approvers[0], reason: "Default manager approval" } // Always include manager
-  ];
+  if (!resources.length) return [];
+
+  // Get the first selected resource for determining the approval flow
+  const selectedResource = targetResources.find(r => resources.includes(r.id));
+  if (!selectedResource) return [{ ...approvers[0], reason: "Default manager approval" }];
+
+  // For sovereign environments (Federal, CCCS, CCCS-AWS), route to Sovereign Operations team
+  const complianceEnv = complianceEnvironments.find(c => c.id === selectedResource.compliance);
   
-  // Check if any resource requires special approval
-  const needsResourceOwnerApproval = selectedResources.some(r => r.environment === 'prod');
-  const needsSecurityApproval = selectedResources.some(r => r.isPrivileged || r.riskLevel === 'High');
-  const needsComplianceApproval = selectedResources.some(r => r.compliance === 'federal' || r.compliance === 'cccs');
-  
-  if (needsResourceOwnerApproval) {
-    approvalChain.push({ ...approvers[1], reason: "Production resource access" });
+  if (complianceEnv && complianceEnv.sovereignOps) {
+    return [
+      { ...approvers[0], reason: "Default manager approval" }, // Manager
+      { ...approvers[4], reason: `Sovereign environment (${complianceEnv.name}) approval required` } // Sovereign Ops
+    ];
   }
   
-  if (needsSecurityApproval) {
-    approvalChain.push({ ...approvers[2], reason: "High-risk or privileged access" });
+  // For CJIS and Commercial, use the approval matrix based on resource hierarchy
+  let approvalTypes: string[] = [];
+  const resourceHierarchy = selectedResource.resourceHierarchy;
+  const complianceType = selectedResource.compliance === 'cjis' ? 'cjis' : 'commercial';
+  
+  // Get the appropriate approval chain from the matrix
+  if (approvalMatrix[complianceType] && approvalMatrix[complianceType][resourceHierarchy]) {
+    approvalTypes = approvalMatrix[complianceType][resourceHierarchy];
+  } else {
+    // Fallback to default approval chain
+    approvalTypes = approvalMatrix.default[resourceHierarchy] || ['manager'];
   }
   
-  if (needsComplianceApproval) {
-    approvalChain.push({ ...approvers[3], reason: "Regulated environment access" });
-  }
-  
-  return approvalChain;
+  // Map approval types to actual approver objects
+  return approvalTypes.map(type => {
+    const approverObj = approvers.find(a => a.type === type);
+    if (!approverObj) return null;
+    
+    let reason = "Required approver";
+    
+    switch (type) {
+      case 'manager':
+        reason = "Default manager approval";
+        break;
+      case 'security':
+        reason = "Security review required";
+        break;
+      case 'compliance':
+        reason = "Compliance review required";
+        break;
+      case 'org-owner':
+        reason = "Organization-level access requires owner approval";
+        break;
+      case 'tenant-admin':
+        reason = "Tenant-level access requires administrator approval";
+        break;
+      case 'env-owner':
+        reason = "Environment-level access requires owner approval";
+        break;
+      case 'project-owner':
+        reason = "Project-level access requires owner approval";
+        break;
+      case 'resource-owner':
+        reason = "Resource-specific access requires owner approval";
+        break;
+    }
+    
+    return { ...approverObj, reason };
+  }).filter(Boolean);
 };
 
 // Calculate risk score based on selected resources
@@ -126,13 +194,15 @@ const AccessRequests: React.FC = () => {
   const [riskScore, setRiskScore] = useState({ score: 0, level: 'Low' });
   
   const form = useForm<AccessRequestFormValues>({
-    resolver: zodResolver(accessRequestSchema),
+    resolver: zodResolver(conditionalAccessRequestSchema),
     defaultValues: {
       jobFunction: '',
       resources: [],
       justification: '',
       complianceFilter: '',
       environmentFilter: '',
+      accessType: 'permanent',
+      expirationDate: undefined
     },
   });
   
@@ -177,6 +247,7 @@ const AccessRequests: React.FC = () => {
   // Watch for form value changes
   const watchedResources = form.watch('resources');
   const watchedJobFunction = form.watch('jobFunction');
+  const watchedAccessType = form.watch('accessType');
   
   // Update approval chain when resources or job function changes
   useEffect(() => {
@@ -204,13 +275,14 @@ const AccessRequests: React.FC = () => {
   
   const onSubmit = async (data: AccessRequestFormValues) => {
     // Collect resource names for the selected resources
-    const resourceNames = targetResources
-      .filter(resource => data.resources.includes(resource.id))
-      .map(resource => resource.name)
-      .join(', ');
+    const selectedResources = targetResources.filter(resource => data.resources.includes(resource.id));
+    const resourceNames = selectedResources.map(resource => resource.name).join(', ');
     
-    // Get job function title
-    const jobFunction = jobFunctionDefinitions.find(jf => jf.id === data.jobFunction);
+    // Get the first resource for determining compliance and resource hierarchy
+    const primaryResource = selectedResources[0];
+    
+    // Generate approval chain
+    const generatedApprovalChain = getApprovalChain(data.resources, data.jobFunction);
     
     try {
       // Create access request with enhanced data
@@ -220,6 +292,12 @@ const AccessRequests: React.FC = () => {
         resourceName: resourceNames,
         requestType: 'role',
         justification: data.justification,
+        accessType: data.accessType,
+        expiresAt: data.accessType === 'temporary' && data.expirationDate ? 
+                   data.expirationDate.toISOString() : undefined,
+        complianceFramework: primaryResource?.compliance,
+        resourceHierarchy: primaryResource?.resourceHierarchy,
+        approvalChain: generatedApprovalChain
       });
       
       // Reset form and close dialog
@@ -371,7 +449,7 @@ const AccessRequests: React.FC = () => {
                             value={complianceFilter}
                             onValueChange={setComplianceFilter}
                           >
-                            <SelectTrigger>
+                            <SelectTrigger id="compliance-filter">
                               <SelectValue placeholder="All frameworks" />
                             </SelectTrigger>
                             <SelectContent>
@@ -388,7 +466,7 @@ const AccessRequests: React.FC = () => {
                             value={environmentFilter}
                             onValueChange={setEnvironmentFilter}
                           >
-                            <SelectTrigger>
+                            <SelectTrigger id="environment-filter">
                               <SelectValue placeholder="All environments" />
                             </SelectTrigger>
                             <SelectContent>
@@ -442,7 +520,8 @@ const AccessRequests: React.FC = () => {
                                   <div className="font-medium">{resource.name}</div>
                                   <div className="text-sm text-gray-500">
                                     {environmentTypes.find(e => e.id === resource.environment)?.name} | 
-                                    {complianceEnvironments.find(c => c.id === resource.compliance)?.name}
+                                    {complianceEnvironments.find(c => c.id === resource.compliance)?.name} | 
+                                    {resourceHierarchyLevels.find(h => h.id === resource.resourceHierarchy)?.name}
                                   </div>
                                   <div className="mt-1 flex items-center gap-2">
                                     {renderRiskBadge(resource.riskLevel)}
@@ -484,7 +563,7 @@ const AccessRequests: React.FC = () => {
                   </div>
                 )}
                 
-                {/* Step 2: Justification and approval preview */}
+                {/* Step 2: Justification, access type, and approval preview */}
                 {formStep === 2 && (
                   <div className="space-y-6">
                     {/* Risk Score Indicator */}
@@ -521,6 +600,92 @@ const AccessRequests: React.FC = () => {
                         </div>
                       </div>
                     </div>
+                    
+                    {/* Access Type Selection */}
+                    <FormField
+                      control={form.control}
+                      name="accessType"
+                      render={({ field }) => (
+                        <FormItem className="space-y-3">
+                          <FormLabel>Access Type</FormLabel>
+                          <FormDescription>
+                            Choose whether you need permanent or temporary access.
+                          </FormDescription>
+                          <FormControl>
+                            <RadioGroup
+                              onValueChange={field.onChange}
+                              defaultValue={field.value}
+                              className="flex flex-col space-y-1"
+                            >
+                              <FormItem className="flex items-center space-x-3 space-y-0">
+                                <FormControl>
+                                  <RadioGroupItem value="permanent" />
+                                </FormControl>
+                                <FormLabel className="font-normal">
+                                  Permanent Access
+                                </FormLabel>
+                              </FormItem>
+                              <FormItem className="flex items-center space-x-3 space-y-0">
+                                <FormControl>
+                                  <RadioGroupItem value="temporary" />
+                                </FormControl>
+                                <FormLabel className="font-normal">
+                                  Temporary Access
+                                </FormLabel>
+                              </FormItem>
+                            </RadioGroup>
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                    
+                    {/* Expiration Date (only if temporary access is selected) */}
+                    {watchedAccessType === 'temporary' && (
+                      <FormField
+                        control={form.control}
+                        name="expirationDate"
+                        render={({ field }) => (
+                          <FormItem className="flex flex-col">
+                            <FormLabel>Expiration Date</FormLabel>
+                            <FormDescription>
+                              Select when this temporary access should expire.
+                            </FormDescription>
+                            <Popover>
+                              <PopoverTrigger asChild>
+                                <FormControl>
+                                  <Button
+                                    variant={"outline"}
+                                    className={cn(
+                                      "w-full pl-3 text-left font-normal",
+                                      !field.value && "text-muted-foreground"
+                                    )}
+                                  >
+                                    {field.value ? (
+                                      format(field.value, "PPP")
+                                    ) : (
+                                      <span>Pick a date</span>
+                                    )}
+                                    <Calendar className="ml-auto h-4 w-4 opacity-50" />
+                                  </Button>
+                                </FormControl>
+                              </PopoverTrigger>
+                              <PopoverContent className="w-auto p-0" align="start">
+                                <CalendarComponent
+                                  mode="single"
+                                  selected={field.value}
+                                  onSelect={field.onChange}
+                                  disabled={(date) => date < new Date()}
+                                  initialFocus
+                                  className={cn("p-3 pointer-events-auto")}
+                                />
+                              </PopoverContent>
+                            </Popover>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                    )}
                     
                     {/* Business Justification */}
                     <FormField
@@ -563,7 +728,7 @@ const AccessRequests: React.FC = () => {
                         <HelpCircle className="h-4 w-4 ml-1 text-gray-400" />
                       </h3>
                       <p className="text-sm text-gray-500 mb-3">
-                        Based on your selected actions and resource sensitivity, this is the approval chain your request will follow.
+                        Based on your selected resources, compliance framework, and resource hierarchy level, this is the approval chain your request will follow.
                       </p>
                       <div className="bg-gray-50 p-4 rounded-md">
                         {approvalChain.length > 0 ? (
@@ -585,6 +750,14 @@ const AccessRequests: React.FC = () => {
                           <p className="text-center text-gray-500 py-2">No approvals needed</p>
                         )}
                       </div>
+                      
+                      {/* Special note for sovereign environments */}
+                      {approvalChain.some(approver => approver.type === 'sovereign-ops') && (
+                        <div className="mt-3 p-3 bg-blue-50 border border-blue-200 rounded-md text-blue-800 flex items-center">
+                          <Info className="h-5 w-5 mr-2" />
+                          <span>This request will be routed to the Sovereign Operations team for special handling according to compliance requirements.</span>
+                        </div>
+                      )}
                     </div>
                     
                     <div className="flex justify-between">
@@ -624,9 +797,9 @@ const AccessRequests: React.FC = () => {
                     <TableHead>Resource</TableHead>
                     <TableHead>Type</TableHead>
                     <TableHead>Status</TableHead>
-                    <TableHead>Requested</TableHead>
-                    <TableHead>Manager Approval</TableHead>
-                    <TableHead>Security Approval</TableHead>
+                    <TableHead>Access Type</TableHead>
+                    <TableHead>Expiration</TableHead>
+                    <TableHead>Approval Status</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -645,24 +818,34 @@ const AccessRequests: React.FC = () => {
                         </TableCell>
                         <TableCell>{renderStatusBadge(request.status)}</TableCell>
                         <TableCell>
-                          {formatDistanceToNow(new Date(request.createdAt), { addSuffix: true })}
-                        </TableCell>
-                        <TableCell>
-                          {request.managerApproval ? (
-                            <Badge variant="outline" className={statusColors[request.managerApproval.status as keyof typeof statusColors]}>
-                              {request.managerApproval.status.charAt(0).toUpperCase() + request.managerApproval.status.slice(1)}
+                          {request.accessType ? (
+                            <Badge variant="outline" className={request.accessType === 'permanent' ? 
+                              "bg-blue-100 text-blue-800" : "bg-amber-100 text-amber-800"
+                            }>
+                              {request.accessType.charAt(0).toUpperCase() + request.accessType.slice(1)}
                             </Badge>
                           ) : (
-                            <Badge variant="outline">N/A</Badge>
+                            <Badge variant="outline">Permanent</Badge>
                           )}
                         </TableCell>
                         <TableCell>
-                          {request.securityApproval ? (
-                            <Badge variant="outline" className={statusColors[request.securityApproval.status as keyof typeof statusColors]}>
-                              {request.securityApproval.status.charAt(0).toUpperCase() + request.securityApproval.status.slice(1)}
-                            </Badge>
+                          {request.expiresAt ? (
+                            format(new Date(request.expiresAt), "PPP")
                           ) : (
-                            <Badge variant="outline">N/A</Badge>
+                            "N/A"
+                          )}
+                        </TableCell>
+                        <TableCell>
+                          {request.approvalChain ? (
+                            `${request.approvalChain.filter(a => a.status === 'approved').length}/${request.approvalChain.length} Approvals`
+                          ) : (
+                            request.managerApproval ? (
+                              <Badge variant="outline" className={statusColors[request.managerApproval.status as keyof typeof statusColors]}>
+                                Manager: {request.managerApproval.status.charAt(0).toUpperCase() + request.managerApproval.status.slice(1)}
+                              </Badge>
+                            ) : (
+                              "Pending"
+                            )
                           )}
                         </TableCell>
                       </TableRow>
@@ -672,175 +855,4 @@ const AccessRequests: React.FC = () => {
               </Table>
             </CardContent>
           </Card>
-        </TabsContent>
-        
-        <TabsContent value="approved">
-          <Card>
-            <CardHeader>
-              <CardTitle>Approved Requests</CardTitle>
-              <CardDescription>Access requests that have been approved</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>Resource</TableHead>
-                    <TableHead>Type</TableHead>
-                    <TableHead>Requested</TableHead>
-                    <TableHead>Approved Date</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {myRequests.filter(r => r.status === 'approved').length === 0 ? (
-                    <TableRow>
-                      <TableCell colSpan={4} className="text-center py-4 text-muted-foreground">
-                        No approved requests found
-                      </TableCell>
-                    </TableRow>
-                  ) : (
-                    myRequests
-                      .filter(r => r.status === 'approved')
-                      .map((request) => (
-                        <TableRow key={request.id}>
-                          <TableCell className="font-medium">{request.resourceName}</TableCell>
-                          <TableCell>
-                            {request.requestType.charAt(0).toUpperCase() + request.requestType.slice(1)}
-                          </TableCell>
-                          <TableCell>
-                            {formatDistanceToNow(new Date(request.createdAt), { addSuffix: true })}
-                          </TableCell>
-                          <TableCell>
-                            {request.updatedAt ? 
-                              formatDistanceToNow(new Date(request.updatedAt), { addSuffix: true }) : 
-                              'N/A'}
-                          </TableCell>
-                        </TableRow>
-                      ))
-                  )}
-                </TableBody>
-              </Table>
-            </CardContent>
-          </Card>
-        </TabsContent>
-        
-        <TabsContent value="pending">
-          <Card>
-            <CardHeader>
-              <CardTitle>Pending Requests</CardTitle>
-              <CardDescription>Access requests awaiting approval</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>Resource</TableHead>
-                    <TableHead>Type</TableHead>
-                    <TableHead>Requested</TableHead>
-                    <TableHead>Manager Approval</TableHead>
-                    <TableHead>Security Approval</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {myRequests.filter(r => r.status === 'pending').length === 0 ? (
-                    <TableRow>
-                      <TableCell colSpan={5} className="text-center py-4 text-muted-foreground">
-                        No pending requests found
-                      </TableCell>
-                    </TableRow>
-                  ) : (
-                    myRequests
-                      .filter(r => r.status === 'pending')
-                      .map((request) => (
-                        <TableRow key={request.id}>
-                          <TableCell className="font-medium">{request.resourceName}</TableCell>
-                          <TableCell>
-                            {request.requestType.charAt(0).toUpperCase() + request.requestType.slice(1)}
-                          </TableCell>
-                          <TableCell>
-                            {formatDistanceToNow(new Date(request.createdAt), { addSuffix: true })}
-                          </TableCell>
-                          <TableCell>
-                            {request.managerApproval ? (
-                              <Badge variant="outline" className={statusColors[request.managerApproval.status as keyof typeof statusColors]}>
-                                {request.managerApproval.status.charAt(0).toUpperCase() + request.managerApproval.status.slice(1)}
-                              </Badge>
-                            ) : (
-                              <Badge variant="outline">N/A</Badge>
-                            )}
-                          </TableCell>
-                          <TableCell>
-                            {request.securityApproval ? (
-                              <Badge variant="outline" className={statusColors[request.securityApproval.status as keyof typeof statusColors]}>
-                                {request.securityApproval.status.charAt(0).toUpperCase() + request.securityApproval.status.slice(1)}
-                              </Badge>
-                            ) : (
-                              <Badge variant="outline">N/A</Badge>
-                            )}
-                          </TableCell>
-                        </TableRow>
-                      ))
-                  )}
-                </TableBody>
-              </Table>
-            </CardContent>
-          </Card>
-        </TabsContent>
-        
-        <TabsContent value="rejected">
-          <Card>
-            <CardHeader>
-              <CardTitle>Rejected Requests</CardTitle>
-              <CardDescription>Access requests that have been rejected</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>Resource</TableHead>
-                    <TableHead>Type</TableHead>
-                    <TableHead>Requested</TableHead>
-                    <TableHead>Rejected By</TableHead>
-                    <TableHead>Rejection Reason</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {myRequests.filter(r => r.status === 'rejected').length === 0 ? (
-                    <TableRow>
-                      <TableCell colSpan={5} className="text-center py-4 text-muted-foreground">
-                        No rejected requests found
-                      </TableCell>
-                    </TableRow>
-                  ) : (
-                    myRequests
-                      .filter(r => r.status === 'rejected')
-                      .map((request) => (
-                        <TableRow key={request.id}>
-                          <TableCell className="font-medium">{request.resourceName}</TableCell>
-                          <TableCell>
-                            {request.requestType.charAt(0).toUpperCase() + request.requestType.slice(1)}
-                          </TableCell>
-                          <TableCell>
-                            {formatDistanceToNow(new Date(request.createdAt), { addSuffix: true })}
-                          </TableCell>
-                          <TableCell>
-                            {request.managerApproval?.status === 'rejected' ? 'Manager' : 
-                             request.securityApproval?.status === 'rejected' ? 'Security' : 'Unknown'}
-                          </TableCell>
-                          <TableCell>
-                            {request.managerApproval?.status === 'rejected' ? request.managerApproval.comments : 
-                             request.securityApproval?.status === 'rejected' ? request.securityApproval.comments : 'N/A'}
-                          </TableCell>
-                        </TableRow>
-                      ))
-                  )}
-                </TableBody>
-              </Table>
-            </CardContent>
-          </Card>
-        </TabsContent>
-      </Tabs>
-    </div>
-  );
-};
-
-export default AccessRequests;
+        </

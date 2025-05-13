@@ -1,4 +1,3 @@
-
 export interface User {
   id: string;
   email: string;
@@ -62,6 +61,8 @@ export interface AccessRequest {
   environmentType?: string;
   complianceFramework?: string;
   approvalChain?: ApprovalStep[];
+  accessType?: 'permanent' | 'temporary';
+  resourceHierarchy?: 'Organization' | 'Tenant' | 'Environment/Region' | 'Project/RG' | 'Resources/Services';
 }
 
 export interface ApprovalStep {
@@ -128,7 +129,7 @@ export interface AccessReviewSummary {
   averageResponseTime: number;
 }
 
-// Enhanced job function and access types
+// Updated Job Function to include the Cloud specific roles
 export type JobFunction = 
   // CPE Platform Engineering Roles
   | 'Cloud Account Owner'
@@ -172,30 +173,6 @@ export type JobFunction =
   | 'Department Manager'
   | 'Executive'
   | 'System Owner';
-
-export type AccessType =
-  // Data Access Types
-  | 'Sensitive Data Access'
-  | 'Business Data Access'
-  | 'Customer Data Access'
-  | 'Internal Data Access'
-  // System Access Types
-  | 'Production System Access'
-  | 'Development Environment Access'
-  | 'Test Environment Access'
-  | 'Admin Console Access'
-  // Function Access Types
-  | 'Read Only'
-  | 'Standard User'
-  | 'Power User'
-  | 'Administrator'
-  | 'Approver'
-  | 'Auditor'
-  // Security Level Access Types
-  | 'Public'
-  | 'Internal'
-  | 'Confidential'
-  | 'Restricted';
 
 // Additional interface definitions for the enhanced access request form
 export interface JobFunctionDefinition {
