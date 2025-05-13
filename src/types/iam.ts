@@ -130,7 +130,22 @@ export interface AccessReviewSummary {
 
 // Enhanced job function and access types
 export type JobFunction = 
-  // IT/Engineering Roles
+  // CPE Platform Engineering Roles
+  | 'Cloud Account Owner'
+  | 'Cloud IAM Administrator'
+  | 'Cloud IAM Reader'
+  | 'Cloud Platform Tenant Administrator'
+  | 'Cloud Platform Administrator'
+  | 'Cloud Platform Contributor'
+  | 'Cloud Platform Reader'
+  | 'Cloud Project Administrator'
+  | 'Cloud Project Contributor'
+  | 'Cloud Project Reader'
+  | 'Cloud Platform Security Administrator'
+  | 'Cloud Platform Security Contributor'
+  | 'Cloud Platform Security Reader'
+  | 'Cloud Platform FinOps Administrator'
+  | 'Cloud Platform Site Reliability Engineer'
   | 'System Administrator' 
   | 'Network Administrator'
   | 'Database Administrator'
