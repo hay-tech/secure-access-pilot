@@ -1,4 +1,3 @@
-
 import React, { createContext, useContext, useState } from 'react';
 import { User, Role, Permission, AccessRequest, AuditLog, AccessReview, ApprovalStep } from '../types/iam';
 import { users, roles, permissions, accessRequests, auditLogs, accessReviews } from '../data/mockData';
@@ -191,14 +190,20 @@ export const IAMProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     const now = new Date().toISOString();
     
     // Generate approval chain based on compliance framework and resource hierarchy
-    let approvalChain: ApprovalStep[] = request.approvalChain ? request.approvalChain.map(approver => ({
-      approverId: approver.id || approver.approverId,
-      approverName: approver.name || approver.approverName,
-      approverTitle: approver.title || approver.approverTitle,
-      approverType: (approver.type || approver.approverType) as 'manager' | 'resource-owner' | 'security' | 'compliance',
-      status: 'pending',
-      reason: approver.reason
-    })) : [];
+    let approvalChain: ApprovalStep[] = [];
+    
+    if (request.approvalChain) {
+      // Convert the incoming approval chain to the correct ApprovalStep type
+      approvalChain = request.approvalChain.map(approver => ({
+        approverId: approver.approverId || approver.id || "",
+        approverName: approver.approverName || approver.name || "",
+        approverTitle: approver.approverTitle || approver.title || "",
+        approverType: (approver.approverType || approver.type || "manager") as 'manager' | 'resource-owner' | 'security' | 'compliance',
+        status: 'pending',
+        comments: approver.comments,
+        reason: approver.reason
+      }));
+    }
     
     // Handle expiration for temporary access
     let expiresAt = request.expiresAt;

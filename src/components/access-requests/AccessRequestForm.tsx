@@ -93,7 +93,7 @@ export const getApprovalChain = (resources: string[], jobFunction: string) => {
   
   // For CJIS and Commercial, use the approval matrix based on resource hierarchy
   let approvalTypes: string[] = [];
-  const resourceHierarchy = selectedResource.resourceHierarchy;
+  const resourceHierarchy = selectedResource.resourceHierarchy || "Resources/Services";
   const complianceType = selectedResource.compliance === 'cjis' ? 'cjis' : 'commercial';
   
   // Get the appropriate approval chain from the matrix
@@ -273,8 +273,15 @@ export const AccessRequestForm: React.FC<AccessRequestFormProps> = ({ onSuccess,
         expiresAt: data.accessType === 'temporary' && data.expirationDate ? 
                    data.expirationDate.toISOString() : undefined,
         complianceFramework: primaryResource?.compliance,
-        resourceHierarchy: primaryResource?.resourceHierarchy,
-        approvalChain: generatedApprovalChain
+        resourceHierarchy: primaryResource?.resourceHierarchy as "Organization" | "Tenant" | "Environment/Region" | "Project/RG" | "Resources/Services" || "Resources/Services",
+        approvalChain: generatedApprovalChain.map(approver => ({
+          approverId: approver?.id || "",
+          approverName: approver?.name || "",
+          approverTitle: approver?.title || "",
+          approverType: (approver?.type || "manager") as 'manager' | 'resource-owner' | 'security' | 'compliance',
+          status: 'pending',
+          reason: approver?.reason
+        }))
       });
       
       // Reset form and close dialog

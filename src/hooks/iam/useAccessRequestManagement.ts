@@ -6,7 +6,7 @@ import { useIAMStore } from './useIAMStore';
 export const useAccessRequestManagement = () => {
   const { accessRequests, setAccessRequests, users, setUsers, auditLogs, setAuditLogs } = useIAMStore();
   
-  const logActivity = async (eventType: string, userId: string, details: string) => {
+  const logActivity = async (eventType: "login" | "logout" | "access_request" | "approval" | "role_change" | "permission_change", userId: string, details: string) => {
     const newLog = {
       id: `log${auditLogs.length + 1}`,
       eventType,
@@ -39,11 +39,12 @@ export const useAccessRequestManagement = () => {
     if (request.approvalChain) {
       // Convert the incoming approval chain to the correct ApprovalStep type
       approvalChain = request.approvalChain.map(approver => ({
-        approverId: approver.id || approver.approverId,
-        approverName: approver.name || approver.approverName,
-        approverTitle: approver.title || approver.approverTitle,
-        approverType: (approver.type || approver.approverType) as 'manager' | 'resource-owner' | 'security' | 'compliance',
+        approverId: approver.approverId || approver.id || "",
+        approverName: approver.approverName || approver.name || "",
+        approverTitle: approver.approverTitle || approver.title || "",
+        approverType: (approver.approverType || approver.type || "manager") as 'manager' | 'resource-owner' | 'security' | 'compliance',
         status: 'pending',
+        comments: approver.comments,
         reason: approver.reason
       }));
     }

@@ -5,7 +5,11 @@ import { useIAMStore } from './useIAMStore';
 export const useActivityLogging = () => {
   const { auditLogs, setAuditLogs } = useIAMStore();
 
-  const logActivity = async (eventType: AuditLog['eventType'], userId: string, details: string): Promise<AuditLog> => {
+  const logActivity = async (
+    eventType: AuditLog['eventType'], 
+    userId: string, 
+    details: string
+  ): Promise<AuditLog> => {
     const newLog: AuditLog = {
       id: `log${auditLogs.length + 1}`,
       eventType,
