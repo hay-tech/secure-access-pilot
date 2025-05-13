@@ -1,3 +1,4 @@
+
 import type { Config } from "tailwindcss";
 
 export default {
@@ -61,6 +62,18 @@ export default {
 					'accent-foreground': 'hsl(var(--sidebar-accent-foreground))',
 					border: 'hsl(var(--sidebar-border))',
 					ring: 'hsl(var(--sidebar-ring))'
+				},
+				// IAM specific colors
+				iam: {
+					'primary': '#2563eb',
+					'primary-light': '#3b82f6',
+					'secondary': '#64748b',
+					'accent': '#818cf8',
+					'success': '#10b981',
+					'warning': '#f59e0b',
+					'danger': '#ef4444',
+					'background': '#f8fafc',
+					'card': '#ffffff',
 				}
 			},
 			borderRadius: {
