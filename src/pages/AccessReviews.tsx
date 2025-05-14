@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { useIAM } from '@/contexts/IAMContext';
@@ -23,6 +22,12 @@ const AccessReviews: React.FC = () => {
     getPermissionGapsByEnvironment 
   } = useAccessReviewManagement();
   const { regulatoryEnvironments, detectPermissionGaps } = useJobFunctionMapping();
+  
+  // Fix type casting for regulatoryEnvironments
+  const typedRegulatoryEnvironments = regulatoryEnvironments.map(env => ({
+    ...env,
+    riskLevel: env.riskLevel as "Low" | "Medium" | "High" | "Critical"
+  }));
   
   const [currentTab, setCurrentTab] = useState('federal');
   const [userGapsByEnvironment, setUserGapsByEnvironment] = useState<Record<string, Array<{ user: User; gaps: PermissionGap[] }>>>({});
@@ -164,7 +169,7 @@ const AccessReviews: React.FC = () => {
         <AccessReviewTabs
           currentTab={currentTab}
           setCurrentTab={setCurrentTab}
-          regulatoryEnvironments={regulatoryEnvironments}
+          regulatoryEnvironments={typedRegulatoryEnvironments}
           userGapsByEnvironment={userGapsByEnvironment}
           onApproveGap={handleApproveGap}
           onCompleteReview={handleCompleteReview}
