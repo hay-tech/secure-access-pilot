@@ -1,5 +1,5 @@
 
-import { AccessReview, PermissionGap, User } from '../../types/iam';
+import { AccessReview, PermissionGap, User, JobFunction } from '../../types/iam';
 import { useAccessReviewCore } from './useAccessReviewCore';
 import { usePermissionGapReview } from './usePermissionGapReview';
 import { useAccessReviewCompletion } from './useAccessReviewCompletion';
@@ -37,7 +37,8 @@ export const useAccessReviewManagement = () => {
         // Check if the user has a jobFunction that matches the environment
         if (!user.jobFunction) return false;
         const { getEnvironmentsForJobFunction } = useJobFunctionMapping();
-        const allowedEnvironments = getEnvironmentsForJobFunction(user.jobFunction);
+        // Type cast user.jobFunction to JobFunction since we already checked it's not undefined
+        const allowedEnvironments = getEnvironmentsForJobFunction(user.jobFunction as JobFunction);
         return allowedEnvironments.includes(environment);
       })
       .map(user => {
