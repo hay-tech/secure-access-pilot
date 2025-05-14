@@ -1,13 +1,13 @@
 
-import { User } from '../../types/iam';
+import { User, AuditLog } from '../../types/iam';
 import { toast } from 'sonner';
 import { useIAMStore } from './useIAMStore';
 
 export const useUserManagement = () => {
   const { users, setUsers, setAuditLogs, auditLogs } = useIAMStore();
 
-  const logActivity = async (eventType: string, userId: string, details: string) => {
-    const newLog = {
+  const logActivity = async (eventType: AuditLog['eventType'], userId: string, details: string) => {
+    const newLog: AuditLog = {
       id: `log${auditLogs.length + 1}`,
       eventType,
       userId,
