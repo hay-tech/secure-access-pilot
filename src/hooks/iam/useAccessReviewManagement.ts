@@ -1,6 +1,5 @@
-
 import { useState } from 'react';
-import { AccessReview, AuditLog, PermissionGap, AccessReviewLog } from '../../types/iam';
+import { AccessReview, AuditLog, PermissionGap, AccessReviewLog, User, JobFunction } from '../../types/iam';
 import { toast } from '@/components/ui/use-toast';
 import { useIAMStore } from './useIAMStore';
 import { useJobFunctionMapping } from './useJobFunctionMapping';
@@ -49,7 +48,7 @@ export const useAccessReviewManagement = () => {
       ...review,
       id: `review${accessReviews.length + 1}`,
       createdAt: new Date().toISOString(),
-      status: review.status || 'pending',
+      status: (review.status as "pending" | "completed" | "overdue") || 'pending',
     };
     
     // Detect permission gaps if not provided
@@ -177,11 +176,11 @@ export const useAccessReviewManagement = () => {
     if (reviewIndex === -1) return null;
     
     const review = accessReviews[reviewIndex];
-    const updatedReview = { 
+    const updatedReview: AccessReview = { 
       ...review, 
       decision, 
       comments, 
-      status: 'completed' 
+      status: 'completed' as const 
     };
     
     const newReviews = [...accessReviews];

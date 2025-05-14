@@ -232,7 +232,13 @@ const AccessReviews: React.FC = () => {
           {regulatoryEnvironments.map(env => (
             <TabsContent key={env.id} value={env.name.toLowerCase()}>
               <UserAccessReviewTable
-                regulatoryEnvironment={env}
+                regulatoryEnvironment={{
+                  id: env.id,
+                  name: env.name,
+                  description: env.description,
+                  complianceFrameworks: env.complianceFrameworks,
+                  riskLevel: env.riskLevel as "Low" | "Medium" | "High" | "Critical"
+                }}
                 userGaps={userGapsByEnvironment[env.name.toLowerCase()] || []}
                 onApproveGap={handleApproveGap}
                 onCompleteReview={handleCompleteReview}
