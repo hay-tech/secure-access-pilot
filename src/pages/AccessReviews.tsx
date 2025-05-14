@@ -1,17 +1,14 @@
 
 import React, { useState, useEffect } from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useAuth } from '@/contexts/AuthContext';
 import { useIAM } from '@/contexts/IAMContext';
 import { useAccessReviewManagement } from '@/hooks/iam/useAccessReviewManagement';
 import { useJobFunctionMapping } from '@/hooks/iam/useJobFunctionMapping';
-import UserAccessReviewTable from '@/components/access-reviews/UserAccessReviewTable';
 import AccessReviewLogTable from '@/components/access-reviews/AccessReviewLogTable';
-import { User, PermissionGap, RegulatoryEnvironment } from '@/types/iam';
-import { Badge } from "@/components/ui/badge";
+import { User, PermissionGap } from '@/types/iam';
 import { toast } from "@/components/ui/use-toast";
-import { Shield, Calendar, Users, ListCheck } from "lucide-react";
+import AccessReviewCards from '@/components/access-reviews/AccessReviewCards';
+import AccessReviewTabs from '@/components/access-reviews/AccessReviewTabs';
 
 const AccessReviews: React.FC = () => {
   const { currentUser } = useAuth();
@@ -135,6 +132,17 @@ const AccessReviews: React.FC = () => {
     });
   };
 
+  // Calculate total metrics for cards
+  const totalUsersWithGaps = Object.values(userGapsByEnvironment).reduce(
+    (total, envGaps) => total + envGaps.length, 0
+  );
+  
+  const totalPermissionGaps = Object.values(userGapsByEnvironment).reduce(
+    (total, envGaps) => total + envGaps.reduce(
+      (envTotal, { gaps }) => envTotal + gaps.length, 0
+    ), 0
+  );
+
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
@@ -147,105 +155,20 @@ const AccessReviews: React.FC = () => {
       </div>
 
       <div className="grid gap-6">
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <ListCheck className="h-6 w-6 text-primary" />
-              Access Reviews Overview
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
-              <Card>
-                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                  <CardTitle className="text-sm font-medium">
-                    Pending Reviews
-                  </CardTitle>
-                  <Calendar className="h-4 w-4 text-muted-foreground" />
-                </CardHeader>
-                <CardContent>
-                  <div className="text-2xl font-bold">
-                    {accessReviews.filter(r => r.status === 'pending').length}
-                  </div>
-                </CardContent>
-              </Card>
-              <Card>
-                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                  <CardTitle className="text-sm font-medium">
-                    Users with Permission Gaps
-                  </CardTitle>
-                  <Users className="h-4 w-4 text-muted-foreground" />
-                </CardHeader>
-                <CardContent>
-                  <div className="text-2xl font-bold">
-                    {Object.values(userGapsByEnvironment).reduce((total, envGaps) => total + envGaps.length, 0)}
-                  </div>
-                </CardContent>
-              </Card>
-              <Card>
-                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                  <CardTitle className="text-sm font-medium">
-                    Total Permission Gaps
-                  </CardTitle>
-                  <Shield className="h-4 w-4 text-muted-foreground" />
-                </CardHeader>
-                <CardContent>
-                  <div className="text-2xl font-bold">
-                    {Object.values(userGapsByEnvironment).reduce((total, envGaps) => 
-                      total + envGaps.reduce((envTotal, { gaps }) => envTotal + gaps.length, 0), 0)}
-                  </div>
-                </CardContent>
-              </Card>
-              <Card>
-                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                  <CardTitle className="text-sm font-medium">
-                    Completed Reviews
-                  </CardTitle>
-                  <ListCheck className="h-4 w-4 text-muted-foreground" />
-                </CardHeader>
-                <CardContent>
-                  <div className="text-2xl font-bold">
-                    {accessReviews.filter(r => r.status === 'completed').length}
-                  </div>
-                </CardContent>
-              </Card>
-            </div>
-          </CardContent>
-        </Card>
+        <AccessReviewCards 
+          accessReviews={accessReviews}
+          totalPermissionGaps={totalPermissionGaps}
+          totalUsersWithGaps={totalUsersWithGaps}
+        />
 
-        <Tabs defaultValue="federal" value={currentTab} onValueChange={setCurrentTab}>
-          <TabsList className="grid grid-cols-4 mb-4">
-            {regulatoryEnvironments.map(env => (
-              <TabsTrigger key={env.id} value={env.name.toLowerCase()}>
-                <div className="flex items-center gap-2">
-                  <span>{env.name}</span>
-                  {userGapsByEnvironment[env.name.toLowerCase()]?.length > 0 && (
-                    <Badge variant="destructive" className="ml-1">
-                      {userGapsByEnvironment[env.name.toLowerCase()].length}
-                    </Badge>
-                  )}
-                </div>
-              </TabsTrigger>
-            ))}
-          </TabsList>
-
-          {regulatoryEnvironments.map(env => (
-            <TabsContent key={env.id} value={env.name.toLowerCase()}>
-              <UserAccessReviewTable
-                regulatoryEnvironment={{
-                  id: env.id,
-                  name: env.name,
-                  description: env.description,
-                  complianceFrameworks: env.complianceFrameworks,
-                  riskLevel: env.riskLevel as "Low" | "Medium" | "High" | "Critical"
-                }}
-                userGaps={userGapsByEnvironment[env.name.toLowerCase()] || []}
-                onApproveGap={handleApproveGap}
-                onCompleteReview={handleCompleteReview}
-              />
-            </TabsContent>
-          ))}
-        </Tabs>
+        <AccessReviewTabs
+          currentTab={currentTab}
+          setCurrentTab={setCurrentTab}
+          regulatoryEnvironments={regulatoryEnvironments}
+          userGapsByEnvironment={userGapsByEnvironment}
+          onApproveGap={handleApproveGap}
+          onCompleteReview={handleCompleteReview}
+        />
 
         <AccessReviewLogTable logs={accessReviewLogs || []} />
       </div>
