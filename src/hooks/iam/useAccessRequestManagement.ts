@@ -1,13 +1,13 @@
 
-import { AccessRequest, ApprovalStep } from '../../types/iam';
+import { AccessRequest, ApprovalStep, AuditLog } from '../../types/iam';
 import { toast } from 'sonner';
 import { useIAMStore } from './useIAMStore';
 
 export const useAccessRequestManagement = () => {
   const { accessRequests, setAccessRequests, users, setUsers, auditLogs, setAuditLogs } = useIAMStore();
   
-  const logActivity = async (eventType: "login" | "logout" | "access_request" | "approval" | "role_change" | "permission_change", userId: string, details: string) => {
-    const newLog = {
+  const logActivity = async (eventType: AuditLog['eventType'], userId: string, details: string) => {
+    const newLog: AuditLog = {
       id: `log${auditLogs.length + 1}`,
       eventType,
       userId,
@@ -39,9 +39,9 @@ export const useAccessRequestManagement = () => {
     if (request.approvalChain) {
       // Convert the incoming approval chain to the correct ApprovalStep type
       approvalChain = request.approvalChain.map(approver => ({
-        approverId: approver.approverId || approver.id || "",
-        approverName: approver.approverName || approver.name || "",
-        approverTitle: approver.approverTitle || approver.title || "",
+        approverId: approver.approverId || (approver.id as string) || "",
+        approverName: approver.approverName || (approver.name as string) || "",
+        approverTitle: approver.approverTitle || (approver.title as string) || "",
         approverType: (approver.approverType || approver.type || "manager") as 'manager' | 'resource-owner' | 'security' | 'compliance',
         status: 'pending',
         comments: approver.comments,

@@ -74,6 +74,11 @@ export interface ApprovalStep {
   comments?: string;
   timestamp?: string;
   reason?: string;
+  // Compatibility properties for approval chain mapping
+  id?: string;  
+  name?: string;
+  title?: string;
+  type?: string;
 }
 
 export interface AuditLog {
