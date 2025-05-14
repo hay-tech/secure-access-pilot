@@ -1,3 +1,4 @@
+
 export interface User {
   id: string;
   email: string;
@@ -103,6 +104,8 @@ export interface AccessReview {
   status?: 'pending' | 'completed' | 'overdue';
   violationType?: 'SoD' | 'Excessive' | 'Dormant' | 'Critical' | 'Mismatch';
   daysOverdue?: number;
+  regulatoryEnvironment?: string;
+  permissionGaps?: PermissionGap[];
 }
 
 export interface AccessViolation {
@@ -216,4 +219,45 @@ export interface Approver {
   name: string;
   title: string;
   type: string;
+}
+
+// New types for User Access Review Workflow
+export interface PermissionGap {
+  userId: string;
+  permissionId?: string;
+  roleId?: string;
+  gapType: 'excess' | 'missing';
+  description: string;
+  severity: 'Low' | 'Medium' | 'High' | 'Critical';
+  approved?: boolean;
+  justification?: string;
+}
+
+export interface RegulatoryEnvironment {
+  id: string;
+  name: string;
+  description: string;
+  complianceFrameworks: string[];
+  riskLevel: 'Low' | 'Medium' | 'High' | 'Critical';
+}
+
+export interface JobFunctionPermissionMapping {
+  jobFunction: JobFunction;
+  permissions: string[];
+  resources: string[];
+  environmentRestrictions?: string[];
+}
+
+export interface AccessReviewLog {
+  id: string;
+  reviewId: string;
+  approverId: string;
+  approvedUserId: string;
+  environment: string;
+  jobFunctions: string[];
+  permissionsGranted: string[];
+  groupsMembership: string[];
+  timestamp: string;
+  decision: 'maintain' | 'revoke' | 'modify';
+  justification?: string;
 }

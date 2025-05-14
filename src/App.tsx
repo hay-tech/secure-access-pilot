@@ -11,6 +11,7 @@ import Login from "./pages/Login";
 import Dashboard from "./pages/Dashboard";
 import AccessRequests from "./pages/AccessRequests";
 import Approvals from "./pages/Approvals";
+import AccessReviews from "./pages/AccessReviews";
 import Users from "./pages/Users";
 import Profile from "./pages/Profile";
 import NotFound from "./pages/NotFound";
@@ -33,6 +34,7 @@ const App = () => (
                 <Route path="dashboard" element={<Dashboard />} />
                 <Route path="requests" element={<AccessRequests />} />
                 <Route path="approvals" element={<Approvals />} />
+                <Route path="access-reviews" element={<AccessReviews />} />
                 <Route path="users" element={<Users />} />
                 <Route path="profile" element={<Profile />} />
                 {/* Add other protected routes here */}
