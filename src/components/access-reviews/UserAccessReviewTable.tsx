@@ -5,7 +5,8 @@ import { Button } from "@/components/ui/button";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { User, PermissionGap, RegulatoryEnvironment } from "@/types/iam";
 import { Textarea } from "@/components/ui/textarea";
-import { Shield, ShieldCheck, ShieldX, Check, X } from "lucide-react";
+import { Shield, ShieldCheck, ShieldX, Check, X, Info } from "lucide-react";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 
 interface UserAccessReviewTableProps {
   regulatoryEnvironment: RegulatoryEnvironment;
@@ -63,7 +64,27 @@ const UserAccessReviewTable: React.FC<UserAccessReviewTableProps> = ({
                   <TableCell>
                     {user.firstName} {user.lastName}
                   </TableCell>
-                  <TableCell>{user.jobFunction || 'Not assigned'}</TableCell>
+                  <TableCell>
+                    <div className="flex items-center gap-2">
+                      {user.jobFunction || 'Not assigned'}
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <Button variant="ghost" size="icon" className="h-5 w-5 rounded-full p-0">
+                            <Info className="h-4 w-4" />
+                            <span className="sr-only">Job function info</span>
+                          </Button>
+                        </TooltipTrigger>
+                        <TooltipContent className="max-w-md">
+                          <p className="font-semibold">Allowed Actions:</p>
+                          <ul className="list-disc pl-5 text-xs mt-1">
+                            <li>Read IAM users and roles</li>
+                            <li>Approve access requests</li>
+                            <li>Review permissions</li>
+                          </ul>
+                        </TooltipContent>
+                      </Tooltip>
+                    </div>
+                  </TableCell>
                   <TableCell>
                     {/* Display user groups/roles would go here */}
                     {user.roleIds.length} roles assigned
@@ -81,28 +102,32 @@ const UserAccessReviewTable: React.FC<UserAccessReviewTableProps> = ({
                   </TableCell>
                   <TableCell>
                     <div className="flex space-x-2">
-                      <Button
-                        size="sm"
-                        variant="outline"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          onCompleteReview(user.id, 'maintain', 'Job function still valid');
-                        }}
-                      >
-                        <Check className="mr-1 h-4 w-4" />
-                        Approve All
-                      </Button>
-                      <Button
-                        size="sm"
-                        variant="destructive"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          onCompleteReview(user.id, 'revoke', 'Job function no longer valid');
-                        }}
-                      >
-                        <X className="mr-1 h-4 w-4" />
-                        Reject All
-                      </Button>
+                      <div>
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            onCompleteReview(user.id, 'maintain', 'Job function still valid');
+                          }}
+                        >
+                          <Check className="mr-1 h-4 w-4" />
+                          Approve Job Function
+                        </Button>
+                      </div>
+                      <div>
+                        <Button
+                          size="sm"
+                          variant="destructive"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            onCompleteReview(user.id, 'revoke', 'Job function no longer valid');
+                          }}
+                        >
+                          <X className="mr-1 h-4 w-4" />
+                          Reject Job Function
+                        </Button>
+                      </div>
                     </div>
                   </TableCell>
                 </TableRow>
@@ -148,7 +173,7 @@ const UserAccessReviewTable: React.FC<UserAccessReviewTableProps> = ({
                                     )}
                                   >
                                     <Check className="mr-1 h-4 w-4" />
-                                    Approve
+                                    Approve Permission
                                   </Button>
                                   <Button
                                     size="sm"
@@ -161,7 +186,7 @@ const UserAccessReviewTable: React.FC<UserAccessReviewTableProps> = ({
                                     )}
                                   >
                                     <X className="mr-1 h-4 w-4" />
-                                    Reject
+                                    Reject Permission
                                   </Button>
                                 </div>
                               )}

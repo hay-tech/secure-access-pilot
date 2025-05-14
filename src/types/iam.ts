@@ -1,4 +1,3 @@
-
 export interface User {
   id: string;
   email: string;
@@ -64,6 +63,11 @@ export interface AccessRequest {
   approvalChain?: ApprovalStep[];
   accessType?: 'permanent' | 'temporary';
   resourceHierarchy?: 'Organization' | 'Tenant' | 'Environment/Region' | 'Project/RG' | 'Resources/Services';
+  // New fields for enhanced access request form
+  cloudEnvironment?: string;
+  accessDurationType?: 'permanent' | 'temporary';
+  temporaryAccessDuration?: '1 day' | '3 days' | '5 days';
+  businessJustification?: string;
 }
 
 export interface ApprovalStep {
@@ -106,6 +110,10 @@ export interface AccessReview {
   daysOverdue?: number;
   regulatoryEnvironment?: string;
   permissionGaps?: PermissionGap[];
+  // New fields for alignment check
+  actualPermissions?: string[];
+  approvedPermissions?: string[];
+  permissionDiscrepancies?: boolean;
 }
 
 export interface AccessViolation {
@@ -182,13 +190,15 @@ export type JobFunction =
   | 'Executive'
   | 'System Owner';
 
-// Additional interface definitions for the enhanced access request form
+// New interface for detailed job function definition
 export interface JobFunctionDefinition {
   id: string;
   title: string;
   description: string;
-  defaultPermissions: string[];
-  recommendedResources: string[];
+  actions: string[];
+  environmentRestrictions?: string[];
+  defaultPermissions?: string[];
+  recommendedResources?: string[];
 }
 
 export interface TargetResource {
@@ -260,4 +270,15 @@ export interface AccessReviewLog {
   timestamp: string;
   decision: 'maintain' | 'revoke' | 'modify';
   justification?: string;
+}
+
+// New interface for permission comparison
+export interface PermissionComparisonResult {
+  userId: string;
+  userName: string;
+  jobFunction?: string;
+  hasApprovalRecord: boolean;
+  permissionsMatch: boolean;
+  excessPermissions: string[];
+  missingPermissions: string[];
 }

@@ -15,6 +15,7 @@ import AccessReviews from "./pages/AccessReviews";
 import Users from "./pages/Users";
 import Profile from "./pages/Profile";
 import NotFound from "./pages/NotFound";
+import JobFunctions from "./pages/JobFunctions";
 
 const queryClient = new QueryClient();
 
@@ -37,6 +38,7 @@ const App = () => (
                 <Route path="access-reviews" element={<AccessReviews />} />
                 <Route path="users" element={<Users />} />
                 <Route path="profile" element={<Profile />} />
+                <Route path="job-functions" element={<JobFunctions />} />
                 {/* Add other protected routes here */}
               </Route>
               

@@ -40,7 +40,7 @@ const Sidebar: React.FC = () => {
   if (!currentUser) return null;
   
   const canManageUsers = hasPermission(currentUser.id, 'users', 'read');
-  const canManageRoles = hasPermission(currentUser.id, 'roles', 'read');
+  const canManageJobFunctions = hasPermission(currentUser.id, 'roles', 'read');
   const canViewReports = hasPermission(currentUser.id, 'reports', 'read');
   const canRunAudits = hasPermission(currentUser.id, 'audits', 'create');
   const canApproveRequests = hasPermission(currentUser.id, 'access_requests', 'approve');
@@ -83,10 +83,15 @@ const Sidebar: React.FC = () => {
                 label="Approvals" 
               />
             )}
+            <SidebarItem 
+              to="/access-reviews" 
+              icon={<Shield className="h-5 w-5" />} 
+              label="User Access Reviews & Validation" 
+            />
           </div>
         </div>
         
-        {(canManageUsers || canManageRoles) && (
+        {(canManageUsers || canManageJobFunctions) && (
           <div className="px-3 py-2">
             <h2 className="mb-2 px-4 text-lg font-semibold tracking-tight">
               Administration
@@ -99,11 +104,11 @@ const Sidebar: React.FC = () => {
                   label="Users" 
                 />
               )}
-              {canManageRoles && (
+              {canManageJobFunctions && (
                 <SidebarItem 
-                  to="/roles" 
+                  to="/job-functions" 
                   icon={<Shield className="h-5 w-5" />} 
-                  label="Roles" 
+                  label="Job Functions" 
                 />
               )}
               {(canViewReports || canRunAudits) && (
