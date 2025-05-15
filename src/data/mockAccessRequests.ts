@@ -11,6 +11,8 @@ export const accessRequests: AccessRequest[] = [
     requestType: 'role',
     status: 'pending',
     justification: 'Need analysis capabilities for the new project',
+    environment: 'AWS-CCCS-Prod',
+    jobFunction:'Cloud Platform Administrator',    
     managerApproval: {
       approverId: 'user2',
       status: 'pending',
@@ -29,6 +31,8 @@ export const accessRequests: AccessRequest[] = [
     resourceName: 'View Reports Permission',
     requestType: 'permission',
     status: 'approved',
+    environment: 'Azure-Federal-Prod',
+    jobFunction:'Cloud Platform Contributor',    
     justification: 'Required for quarterly project reporting',
     managerApproval: {
       approverId: 'user2',
@@ -53,6 +57,8 @@ export const accessRequests: AccessRequest[] = [
     requestType: 'system',
     status: 'rejected',
     justification: 'Need to run performance analysis',
+    environment: 'GCP-CJIS-Prod',
+    jobFunction:'Cloud Platform Security Administrator',    
     managerApproval: {
       approverId: 'user2',
       status: 'approved',
