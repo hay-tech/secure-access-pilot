@@ -24,6 +24,7 @@ const Dashboard: React.FC = () => {
     roles,
     getUserRoles, 
     getUserPermissions,
+    getUserLastname,
     hasPermission
   } = useIAM();
   
