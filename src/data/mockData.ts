@@ -1,3 +1,4 @@
+
 import { User, Role, Permission, AccessRequest, AuditLog, AccessReview, AccessViolation } from '../types/iam';
 
 // Mock Permissions
@@ -352,6 +353,7 @@ export const accessReviews: AccessReview[] = [
     decision: 'maintain',
     comments: 'Role is appropriate for current responsibilities',
     createdAt: '2023-05-01T10:00:00Z',
+    updatedAt: '2023-05-01T11:30:00Z',
     status: 'completed'
   },
   {
@@ -362,6 +364,7 @@ export const accessReviews: AccessReview[] = [
     decision: 'maintain',
     comments: 'Role is appropriate for current responsibilities',
     createdAt: '2023-05-01T10:30:00Z',
+    updatedAt: '2023-05-01T12:15:00Z',
     status: 'completed'
   },
   {
@@ -372,6 +375,7 @@ export const accessReviews: AccessReview[] = [
     decision: 'revoke',
     comments: 'No longer required for current responsibilities',
     createdAt: '2023-05-02T11:15:00Z',
+    updatedAt: '2023-05-02T14:45:00Z',
     status: 'completed'
   },
   {
@@ -381,6 +385,7 @@ export const accessReviews: AccessReview[] = [
     permissionId: 'perm8',
     decision: 'maintain',
     createdAt: '2023-05-10T09:00:00Z',
+    updatedAt: '2023-05-10T09:00:00Z',
     dueDate: '2023-05-15T09:00:00Z',
     status: 'pending',
     daysOverdue: 5
@@ -392,6 +397,7 @@ export const accessReviews: AccessReview[] = [
     roleId: 'role4',
     decision: 'maintain',
     createdAt: '2023-05-11T15:00:00Z',
+    updatedAt: '2023-05-11T15:00:00Z',
     dueDate: '2023-05-18T15:00:00Z',
     status: 'pending',
     daysOverdue: 2
@@ -403,6 +409,7 @@ export const accessReviews: AccessReview[] = [
     permissionId: 'perm6',
     decision: 'revoke',
     createdAt: '2023-05-09T11:30:00Z',
+    updatedAt: '2023-05-09T11:30:00Z',
     dueDate: '2023-05-12T11:30:00Z',
     status: 'overdue',
     daysOverdue: 8,

@@ -97,6 +97,7 @@ const AccessReviews: React.FC = () => {
         subjectId: userId,
         decision: 'modify',
         status: 'pending',
+        updatedAt: new Date().toISOString(), // Add the updatedAt field
         regulatoryEnvironment: currentTab,
         permissionGaps: detectPermissionGaps(userId)
       });
@@ -140,6 +141,7 @@ const AccessReviews: React.FC = () => {
         decision,
         comments,
         status: 'pending',
+        updatedAt: new Date().toISOString(), // Add the updatedAt field
         regulatoryEnvironment: currentTab,
         permissionGaps: detectPermissionGaps(userId)
       });
