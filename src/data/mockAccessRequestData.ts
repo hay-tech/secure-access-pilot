@@ -1,5 +1,5 @@
 
-import { ComplianceEnvironment, EnvironmentType, TargetResource, JobFunctionDefinition, Approver } from '../types/iam';
+import { ComplianceEnvironment, EnvironmentType, TargetResource, Approver } from '../types/iam';
 
 // Additional data for enhanced Access Request form
 export const complianceEnvironments: ComplianceEnvironment[] = [
