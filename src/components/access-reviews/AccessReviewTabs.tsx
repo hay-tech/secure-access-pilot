@@ -12,6 +12,8 @@ interface AccessReviewTabsProps {
   userGapsByEnvironment: Record<string, Array<{ user: User; gaps: PermissionGap[] }>>;
   onApproveGap: (userId: string, gapIndex: number, approved: boolean, justification?: string) => Promise<void>;
   onCompleteReview: (userId: string, decision: 'maintain' | 'revoke' | 'modify', comments?: string) => Promise<void>;
+  totalUsersWithGaps?: number;
+  totalPermissionGaps?: number;
 }
 
 const AccessReviewTabs: React.FC<AccessReviewTabsProps> = ({
@@ -20,7 +22,9 @@ const AccessReviewTabs: React.FC<AccessReviewTabsProps> = ({
   regulatoryEnvironments,
   userGapsByEnvironment,
   onApproveGap,
-  onCompleteReview
+  onCompleteReview,
+  totalUsersWithGaps,
+  totalPermissionGaps
 }) => {
   return (
     <Tabs defaultValue="federal" value={currentTab} onValueChange={setCurrentTab}>
