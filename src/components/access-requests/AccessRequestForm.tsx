@@ -36,7 +36,7 @@ import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover
 import { ApprovalChainPreview } from './ApprovalChainPreview';
 import { ResourceSelectionList } from './ResourceSelectionList';
 
-// Define form schema with access type and expiration date
+// Define form schema with access type and temporary duration
 const accessRequestSchema = z.object({
   jobFunction: z.string().min(1, { message: "Please select a job function" }),
   resources: z.array(z.string()).min(1, { message: "Please select at least one resource" }),
@@ -48,26 +48,35 @@ const accessRequestSchema = z.object({
   accessType: z.enum(['permanent', 'temporary'], {
     required_error: "Please select an access type",
   }),
-  expirationDate: z.date().optional()
-    .refine(date => {
-      if (!date) return true;
-      return date > new Date();
-    }, {
-      message: "Expiration date must be in the future",
-    }),
+  tempDuration: z.string().optional(),
+  projectName: z.string().optional(),
 });
 
-// Add conditional validation for expirationDate when accessType is 'temporary'
+// Add conditional validation for tempDuration when accessType is 'temporary'
 const conditionalAccessRequestSchema = z.intersection(
   accessRequestSchema,
   z.object({
-    expirationDate: z.date().optional(),
+    tempDuration: z.string().optional(),
+    projectName: z.string().optional(),
   })
 ).refine(
-  (data) => !(data.accessType === 'temporary' && !data.expirationDate),
+  (data) => !(data.accessType === 'temporary' && !data.tempDuration),
   {
-    message: "Expiration date is required for temporary access",
-    path: ['expirationDate'],
+    message: "Duration is required for temporary access",
+    path: ['tempDuration'],
+  }
+).refine(
+  (data) => {
+    // Check if job function has "project" in the name and require projectName
+    const selectedJob = jobFunctionDefinitions.find(jf => jf.id === data.jobFunction);
+    if (selectedJob && selectedJob.title.toLowerCase().includes('project') && !data.projectName) {
+      return false;
+    }
+    return true;
+  },
+  {
+    message: "Project name is required for this job function",
+    path: ['projectName'],
   }
 );
 
@@ -178,6 +187,7 @@ export const AccessRequestForm: React.FC<AccessRequestFormProps> = ({ onSuccess,
   const [environmentFilter, setEnvironmentFilter] = useState('');
   const [approvalChain, setApprovalChain] = useState<any[]>([]);
   const [riskScore, setRiskScore] = useState({ score: 0, level: 'Low' });
+  const [showProjectField, setShowProjectField] = useState(false);
 
   const form = useForm<AccessRequestFormValues>({
     resolver: zodResolver(conditionalAccessRequestSchema),
@@ -188,7 +198,8 @@ export const AccessRequestForm: React.FC<AccessRequestFormProps> = ({ onSuccess,
       complianceFilter: '',
       environmentFilter: '',
       accessType: 'permanent',
-      expirationDate: undefined
+      tempDuration: '',
+      projectName: '',
     },
   });
 
@@ -223,6 +234,29 @@ export const AccessRequestForm: React.FC<AccessRequestFormProps> = ({ onSuccess,
   const watchedResources = form.watch('resources');
   const watchedJobFunction = form.watch('jobFunction');
   const watchedAccessType = form.watch('accessType');
+  const watchedEnvironmentFilter = form.watch('environmentFilter');
+  
+  // Set default compliance framework when Development environment is selected
+  useEffect(() => {
+    if (environmentFilter === 'dev') {
+      const commercialUs = complianceEnvironments.find(env => env.name === 'Commercial (US)')?.id || '';
+      setComplianceFilter(commercialUs);
+      form.setValue('complianceFilter', commercialUs);
+    }
+  }, [environmentFilter, form]);
+
+  // Check if job function contains "project" to show project field
+  useEffect(() => {
+    if (watchedJobFunction) {
+      const jobFunction = jobFunctionDefinitions.find(jf => jf.id === watchedJobFunction);
+      if (jobFunction && jobFunction.title.toLowerCase().includes('project')) {
+        setShowProjectField(true);
+      } else {
+        setShowProjectField(false);
+        form.setValue('projectName', '');
+      }
+    }
+  }, [watchedJobFunction, form]);
   
   // Update approval chain when resources or job function changes
   useEffect(() => {
@@ -251,6 +285,15 @@ export const AccessRequestForm: React.FC<AccessRequestFormProps> = ({ onSuccess,
   const onSubmit = async (data: AccessRequestFormValues) => {
     if (!currentUser) return;
     
+    // Calculate expiration date based on selected duration
+    let expiresAt: string | undefined = undefined;
+    if (data.accessType === 'temporary' && data.tempDuration) {
+      const days = parseInt(data.tempDuration, 10);
+      const expirationDate = new Date();
+      expirationDate.setDate(expirationDate.getDate() + days);
+      expiresAt = expirationDate.toISOString();
+    }
+    
     // Collect resource names for the selected resources
     const selectedResources = targetResources.filter(resource => data.resources.includes(resource.id));
     const resourceNames = selectedResources.map(resource => resource.name).join(', ');
@@ -270,10 +313,10 @@ export const AccessRequestForm: React.FC<AccessRequestFormProps> = ({ onSuccess,
         requestType: 'role',
         justification: data.justification,
         accessType: data.accessType,
-        expiresAt: data.accessType === 'temporary' && data.expirationDate ? 
-                   data.expirationDate.toISOString() : undefined,
+        expiresAt: expiresAt,
         complianceFramework: primaryResource?.compliance,
         resourceHierarchy: primaryResource?.resourceHierarchy as "Organization" | "Tenant" | "Environment/Region" | "Project/RG" | "Resources/Services" || "Resources/Services",
+        projectName: data.projectName,
         approvalChain: generatedApprovalChain.map(approver => ({
           approverId: approver?.id || "",
           approverName: approver?.name || "",
@@ -393,39 +436,61 @@ export const AccessRequestForm: React.FC<AccessRequestFormProps> = ({ onSuccess,
               )}
             />
             
-            {/* Resource filters */}
+            {/* Project name field (conditional) */}
+            {showProjectField && (
+              <FormField
+                control={form.control}
+                name="projectName"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Project Name</FormLabel>
+                    <FormDescription>
+                      Enter the name of the project you're working on.
+                    </FormDescription>
+                    <FormControl>
+                      <Input {...field} placeholder="Project name" />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            )}
+            
+            {/* Resource filters - Swapped order of Environment and Compliance */}
             {selectedJobFunction && (
               <div className="grid grid-cols-2 gap-4 p-4 bg-gray-50 rounded-md">
                 <div>
-                  <Label htmlFor="compliance-filter">Compliance Framework</Label>
+                  <Label htmlFor="environment-filter">Environment</Label>
                   <Select
-                    value={complianceFilter}
-                    onValueChange={setComplianceFilter}
+                    value={environmentFilter}
+                    onValueChange={(value) => {
+                      setEnvironmentFilter(value);
+                      form.setValue('environmentFilter', value);
+                    }}
                   >
-                    <SelectTrigger id="compliance-filter">
-                      <SelectValue placeholder="All frameworks" />
+                    <SelectTrigger id="environment-filter">
+                      <SelectValue placeholder="Select an environment" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="">All frameworks</SelectItem>
-                      {complianceEnvironments.map(ce => (
-                        <SelectItem key={ce.id} value={ce.id}>{ce.name}</SelectItem>
+                      {environmentTypes.map(et => (
+                        <SelectItem key={et.id} value={et.id}>{et.name}</SelectItem>
                       ))}
                     </SelectContent>
                   </Select>
                 </div>
                 <div>
-                  <Label htmlFor="environment-filter">Environment</Label>
+                  <Label htmlFor="compliance-filter">Compliance Framework</Label>
                   <Select
-                    value={environmentFilter}
-                    onValueChange={setEnvironmentFilter}
+                    value={complianceFilter}
+                    onValueChange={setComplianceFilter}
+                    disabled={environmentFilter === 'dev'}
                   >
-                    <SelectTrigger id="environment-filter">
-                      <SelectValue placeholder="All environments" />
+                    <SelectTrigger id="compliance-filter">
+                      <SelectValue placeholder="Select a framework" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="">All environments</SelectItem>
-                      {environmentTypes.map(et => (
-                        <SelectItem key={et.id} value={et.id}>{et.name}</SelectItem>
+                      {complianceEnvironments.map(ce => (
+                        <SelectItem key={ce.id} value={ce.id}>{ce.name}</SelectItem>
                       ))}
                     </SelectContent>
                   </Select>
@@ -531,47 +596,34 @@ export const AccessRequestForm: React.FC<AccessRequestFormProps> = ({ onSuccess,
               )}
             />
             
-            {/* Expiration Date (only if temporary access is selected) */}
+            {/* Temporary Duration Dropdown (only if temporary access is selected) */}
             {watchedAccessType === 'temporary' && (
               <FormField
                 control={form.control}
-                name="expirationDate"
+                name="tempDuration"
                 render={({ field }) => (
-                  <FormItem className="flex flex-col">
-                    <FormLabel>Expiration Date</FormLabel>
+                  <FormItem>
+                    <FormLabel>Access Duration</FormLabel>
                     <FormDescription>
-                      Select when this temporary access should expire.
+                      Select how many days you need temporary access.
                     </FormDescription>
-                    <Popover>
-                      <PopoverTrigger asChild>
-                        <FormControl>
-                          <Button
-                            variant={"outline"}
-                            className={cn(
-                              "w-full pl-3 text-left font-normal",
-                              !field.value && "text-muted-foreground"
-                            )}
-                          >
-                            {field.value ? (
-                              format(field.value, "PPP")
-                            ) : (
-                              <span>Pick a date</span>
-                            )}
-                            <Calendar className="ml-auto h-4 w-4 opacity-50" />
-                          </Button>
-                        </FormControl>
-                      </PopoverTrigger>
-                      <PopoverContent className="w-auto p-0" align="start">
-                        <CalendarComponent
-                          mode="single"
-                          selected={field.value}
-                          onSelect={field.onChange}
-                          disabled={(date) => date < new Date()}
-                          initialFocus
-                          className={cn("p-3 pointer-events-auto")}
-                        />
-                      </PopoverContent>
-                    </Popover>
+                    <Select
+                      onValueChange={field.onChange}
+                      defaultValue={field.value}
+                    >
+                      <FormControl>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Select duration" />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        <SelectItem value="1">1 Day</SelectItem>
+                        <SelectItem value="2">2 Days</SelectItem>
+                        <SelectItem value="3">3 Days</SelectItem>
+                        <SelectItem value="4">4 Days</SelectItem>
+                        <SelectItem value="5">5 Days</SelectItem>
+                      </SelectContent>
+                    </Select>
                     <FormMessage />
                   </FormItem>
                 )}

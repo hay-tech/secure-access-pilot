@@ -16,6 +16,7 @@ import Users from "./pages/Users";
 import Profile from "./pages/Profile";
 import NotFound from "./pages/NotFound";
 import JobFunctions from "./pages/JobFunctions";
+import Reports from "./pages/Reports";
 
 const queryClient = new QueryClient();
 
@@ -36,6 +37,7 @@ const App = () => (
                 <Route path="requests" element={<AccessRequests />} />
                 <Route path="approvals" element={<Approvals />} />
                 <Route path="access-reviews" element={<AccessReviews />} />
+                <Route path="reports" element={<Reports />} />
                 <Route path="users" element={<Users />} />
                 <Route path="profile" element={<Profile />} />
                 <Route path="job-functions" element={<JobFunctions />} />

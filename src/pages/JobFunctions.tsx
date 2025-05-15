@@ -59,7 +59,6 @@ const JobFunctions: React.FC = () => {
                       <TableHead>Job Function</TableHead>
                       <TableHead>Description</TableHead>
                       <TableHead>Required Actions</TableHead>
-                      <TableHead>Environments</TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
@@ -76,17 +75,12 @@ const JobFunctions: React.FC = () => {
                             </ul>
                           </div>
                         </TableCell>
-                        <TableCell>
-                          {jobFunction.environmentRestrictions?.length 
-                            ? jobFunction.environmentRestrictions.join(', ')
-                            : 'All Environments'}
-                        </TableCell>
                       </TableRow>
                     ))}
                     
                     {filteredJobFunctions.length === 0 && (
                       <TableRow>
-                        <TableCell colSpan={4} className="h-24 text-center">
+                        <TableCell colSpan={3} className="h-24 text-center">
                           No job functions found for this environment.
                         </TableCell>
                       </TableRow>

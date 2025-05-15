@@ -9,6 +9,9 @@ import { User, PermissionGap } from '@/types/iam';
 import { toast } from "@/components/ui/use-toast";
 import AccessReviewCards from '@/components/access-reviews/AccessReviewCards';
 import AccessReviewTabs from '@/components/access-reviews/AccessReviewTabs';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { BarChart, Bar, Cell, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, PieChart, Pie } from 'recharts';
+import { CheckCircle, XCircle, Clock } from 'lucide-react';
 
 const AccessReviews: React.FC = () => {
   const { currentUser } = useAuth();
@@ -32,6 +35,25 @@ const AccessReviews: React.FC = () => {
   
   const [currentTab, setCurrentTab] = useState('federal');
   const [userGapsByEnvironment, setUserGapsByEnvironment] = useState<Record<string, Array<{ user: User; gaps: PermissionGap[] }>>>({});
+  
+  // Generate mock data for charts
+  const accessComplianceData = [
+    { name: 'Federal', compliant: 89, noncompliant: 11 },
+    { name: 'CJIS', compliant: 95, noncompliant: 5 },
+    { name: 'CCCS', compliant: 92, noncompliant: 8 },
+    { name: 'Commercial (US)', compliant: 87, noncompliant: 13 },
+    { name: 'Commercial (UK)', compliant: 91, noncompliant: 9 },
+    { name: 'Commercial (AU)', compliant: 94, noncompliant: 6 },
+  ];
+  
+  // Review status data by manager
+  const reviewStatusByManagerData = [
+    { name: 'John Smith', completed: 12, pending: 3, inProgress: 2 },
+    { name: 'Sarah Johnson', completed: 8, pending: 5, inProgress: 1 },
+    { name: 'Michael Chen', completed: 15, pending: 0, inProgress: 0 },
+    { name: 'Anita Patel', completed: 6, pending: 8, inProgress: 4 },
+    { name: 'David Wilson', completed: 10, pending: 2, inProgress: 1 },
+  ];
   
   useEffect(() => {
     if (!currentUser) return;
@@ -159,6 +181,65 @@ const AccessReviews: React.FC = () => {
       </div>
 
       <div className="grid gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          {/* Access Compliance Overview Chart */}
+          <Card>
+            <CardHeader>
+              <CardTitle>Access Compliance Overview</CardTitle>
+              <CardDescription>
+                Compliance status across environments
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="h-[300px]">
+                <ResponsiveContainer width="100%" height="100%">
+                  <BarChart
+                    data={accessComplianceData}
+                    margin={{ top: 20, right: 30, left: 20, bottom: 40 }}
+                  >
+                    <CartesianGrid strokeDasharray="3 3" />
+                    <XAxis dataKey="name" angle={-45} textAnchor="end" height={70} />
+                    <YAxis />
+                    <Tooltip />
+                    <Legend />
+                    <Bar dataKey="compliant" name="Compliant %" stackId="a" fill="#4ade80" />
+                    <Bar dataKey="noncompliant" name="Non-compliant %" stackId="a" fill="#f87171" />
+                  </BarChart>
+                </ResponsiveContainer>
+              </div>
+            </CardContent>
+          </Card>
+          
+          {/* Access Reviews Status Chart */}
+          <Card>
+            <CardHeader>
+              <CardTitle>Access Reviews Status by Manager</CardTitle>
+              <CardDescription>
+                Completed vs. Pending vs. In-Progress reviews
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="h-[300px]">
+                <ResponsiveContainer width="100%" height="100%">
+                  <BarChart
+                    data={reviewStatusByManagerData}
+                    margin={{ top: 20, right: 30, left: 20, bottom: 40 }}
+                  >
+                    <CartesianGrid strokeDasharray="3 3" />
+                    <XAxis dataKey="name" angle={-45} textAnchor="end" height={70} />
+                    <YAxis />
+                    <Tooltip />
+                    <Legend />
+                    <Bar dataKey="completed" name="Completed" fill="#4ade80" />
+                    <Bar dataKey="pending" name="Pending" fill="#fbbf24" />
+                    <Bar dataKey="inProgress" name="In-Progress" fill="#60a5fa" />
+                  </BarChart>
+                </ResponsiveContainer>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+        
         <AccessReviewCards 
           accessReviews={accessReviews}
           totalPermissionGaps={totalPermissionGaps}

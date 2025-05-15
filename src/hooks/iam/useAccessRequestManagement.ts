@@ -65,7 +65,8 @@ export const useAccessRequestManagement = () => {
       createdAt: now,
       updatedAt: now,
       expiresAt,
-      approvalChain
+      approvalChain,
+      projectName: request.projectName,
     };
     
     setAccessRequests(prev => [...prev, newRequest]);

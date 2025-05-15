@@ -28,7 +28,7 @@ const Navbar: React.FC = () => {
           <div className="flex items-center">
             <Link to="/" className="flex items-center">
               <Shield className="h-8 w-8 text-iam-primary mr-2" />
-              <span className="text-2xl font-bold text-gray-900">IAM Portal</span>
+              <span className="text-2xl font-bold text-gray-900">CPE Cloud IAM Portal</span>
             </Link>
           </div>
           <div className="flex items-center">
