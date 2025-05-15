@@ -1,7 +1,5 @@
 
-import React, { useState, useEffect } from 'react';
-import { useAuth } from '../../contexts/AuthContext';
-import { useIAM } from '../../contexts/IAMContext';
+import React from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -14,8 +12,7 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { Badge } from '@/components/ui/badge';
-import { format } from 'date-fns';
-import { HelpCircle, AlertCircle, CheckCircle, Info, Calendar } from 'lucide-react';
+import { HelpCircle, AlertCircle, CheckCircle } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { 
   Form, 
@@ -26,152 +23,11 @@ import {
   FormLabel, 
   FormMessage 
 } from '@/components/ui/form';
-import { useForm } from 'react-hook-form';
-import { z } from 'zod';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { jobFunctionDefinitions, targetResources, approvers, complianceEnvironments, environmentTypes, resourceHierarchyLevels, approvalMatrix } from '../../data/mockData';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
-import { Calendar as CalendarComponent } from '@/components/ui/calendar';
-import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
+import { complianceEnvironments, environmentTypes, jobFunctionDefinitions } from '../../data/mockData';
 import { ApprovalChainPreview } from './ApprovalChainPreview';
 import { ResourceSelectionList } from './ResourceSelectionList';
-
-// Define form schema with access type and temporary duration
-const accessRequestSchema = z.object({
-  jobFunction: z.string().min(1, { message: "Please select a job function" }),
-  resources: z.array(z.string()).min(1, { message: "Please select at least one resource" }),
-  justification: z.string()
-    .min(10, { message: "Please provide a detailed justification (at least 10 characters)" })
-    .max(500, { message: "Justification is too long (maximum 500 characters)" }),
-  complianceFilter: z.string().optional(),
-  environmentFilter: z.string().optional(),
-  accessType: z.enum(['permanent', 'temporary'], {
-    required_error: "Please select an access type",
-  }),
-  tempDuration: z.string().optional(),
-  projectName: z.string().optional(),
-});
-
-// Add conditional validation for tempDuration when accessType is 'temporary'
-const conditionalAccessRequestSchema = z.intersection(
-  accessRequestSchema,
-  z.object({
-    tempDuration: z.string().optional(),
-    projectName: z.string().optional(),
-  })
-).refine(
-  (data) => !(data.accessType === 'temporary' && !data.tempDuration),
-  {
-    message: "Duration is required for temporary access",
-    path: ['tempDuration'],
-  }
-).refine(
-  (data) => {
-    // Check if job function has "project" in the name and require projectName
-    const selectedJob = jobFunctionDefinitions.find(jf => jf.id === data.jobFunction);
-    if (selectedJob && selectedJob.title.toLowerCase().includes('project') && !data.projectName) {
-      return false;
-    }
-    return true;
-  },
-  {
-    message: "Project name is required for this job function",
-    path: ['projectName'],
-  }
-);
-
-export type AccessRequestFormValues = z.infer<typeof conditionalAccessRequestSchema>;
-
-// Extract approval chain based on selected resources, job function, and compliance framework
-export const getApprovalChain = (resources: string[], jobFunction: string) => {
-  if (!resources.length) return [];
-
-  // Get the first selected resource for determining the approval flow
-  const selectedResource = targetResources.find(r => resources.includes(r.id));
-  if (!selectedResource) return [{ ...approvers[0], reason: "Default manager approval" }];
-
-  // For sovereign environments (Federal, CCCS, CCCS-AWS), route to Sovereign Operations team
-  const complianceEnv = complianceEnvironments.find(c => c.id === selectedResource.compliance);
-  
-  if (complianceEnv && complianceEnv.sovereignOps) {
-    return [
-      { ...approvers[0], reason: "Default manager approval" }, // Manager
-      { ...approvers[4], reason: `Sovereign environment (${complianceEnv.name}) approval required` } // Sovereign Ops
-    ];
-  }
-  
-  // For CJIS and Commercial, use the approval matrix based on resource hierarchy
-  let approvalTypes: string[] = [];
-  const resourceHierarchy = selectedResource.resourceHierarchy || "Resources/Services";
-  const complianceType = selectedResource.compliance === 'cjis' ? 'cjis' : 'commercial';
-  
-  // Get the appropriate approval chain from the matrix
-  if (approvalMatrix[complianceType] && approvalMatrix[complianceType][resourceHierarchy]) {
-    approvalTypes = approvalMatrix[complianceType][resourceHierarchy];
-  } else {
-    // Fallback to default approval chain
-    approvalTypes = approvalMatrix.default[resourceHierarchy] || ['manager'];
-  }
-  
-  // Map approval types to actual approver objects
-  return approvalTypes.map(type => {
-    const approverObj = approvers.find(a => a.type === type);
-    if (!approverObj) return null;
-    
-    let reason = "Required approver";
-    
-    switch (type) {
-      case 'manager':
-        reason = "Default manager approval";
-        break;
-      case 'security':
-        reason = "Security review required";
-        break;
-      case 'compliance':
-        reason = "Compliance review required";
-        break;
-      case 'org-owner':
-        reason = "Organization-level access requires owner approval";
-        break;
-      case 'tenant-admin':
-        reason = "Tenant-level access requires administrator approval";
-        break;
-      case 'env-owner':
-        reason = "Environment-level access requires owner approval";
-        break;
-      case 'project-owner':
-        reason = "Project-level access requires owner approval";
-        break;
-      case 'resource-owner':
-        reason = "Resource-specific access requires owner approval";
-        break;
-    }
-    
-    return { ...approverObj, reason };
-  }).filter(Boolean);
-};
-
-// Calculate risk score based on selected resources
-export const calculateRiskScore = (resources: string[]) => {
-  const selectedResources = targetResources.filter(r => resources.includes(r.id));
-  let riskScore = 0;
-  
-  // Count high risk resources
-  const highRisk = selectedResources.filter(r => r.riskLevel === 'High').length;
-  const mediumRisk = selectedResources.filter(r => r.riskLevel === 'Medium').length;
-  const lowRisk = selectedResources.filter(r => r.riskLevel === 'Low').length;
-  
-  riskScore = highRisk * 10 + mediumRisk * 5 + lowRisk * 2;
-  
-  // Add extra points for sensitive or privileged resources
-  if (selectedResources.some(r => r.isSensitive)) riskScore += 5;
-  if (selectedResources.some(r => r.isPrivileged)) riskScore += 10;
-  
-  return {
-    score: riskScore,
-    level: riskScore >= 15 ? 'High' : riskScore >= 8 ? 'Medium' : 'Low'
-  };
-};
+import { useAccessRequestForm } from '../../hooks/useAccessRequestForm';
 
 interface AccessRequestFormProps {
   onSuccess: () => void;
@@ -179,190 +35,24 @@ interface AccessRequestFormProps {
 }
 
 export const AccessRequestForm: React.FC<AccessRequestFormProps> = ({ onSuccess, onCancel }) => {
-  const { currentUser } = useAuth();
-  const { createAccessRequest } = useIAM();
-  const [formStep, setFormStep] = useState(1);
-  const [selectedJobFunction, setSelectedJobFunction] = useState('');
-  const [complianceFilter, setComplianceFilter] = useState('');
-  const [environmentFilter, setEnvironmentFilter] = useState('');
-  const [approvalChain, setApprovalChain] = useState<any[]>([]);
-  const [riskScore, setRiskScore] = useState({ score: 0, level: 'Low' });
-  const [showProjectField, setShowProjectField] = useState(false);
-
-  const form = useForm<AccessRequestFormValues>({
-    resolver: zodResolver(conditionalAccessRequestSchema),
-    defaultValues: {
-      jobFunction: '',
-      resources: [],
-      justification: '',
-      complianceFilter: '',
-      environmentFilter: '',
-      accessType: 'permanent',
-      tempDuration: '',
-      projectName: '',
-    },
-  });
-
-  // Filter resources based on selected job function and filters
-  const getFilteredResources = () => {
-    let filtered = [...targetResources];
-    
-    // Filter by job function recommendations
-    if (selectedJobFunction) {
-      const jobFunction = jobFunctionDefinitions.find(jf => jf.id === selectedJobFunction);
-      if (jobFunction) {
-        filtered = filtered.filter(resource => 
-          jobFunction.recommendedResources.includes(resource.id)
-        );
-      }
-    }
-    
-    // Apply compliance filter
-    if (complianceFilter) {
-      filtered = filtered.filter(resource => resource.compliance === complianceFilter);
-    }
-    
-    // Apply environment filter
-    if (environmentFilter) {
-      filtered = filtered.filter(resource => resource.environment === environmentFilter);
-    }
-    
-    return filtered;
-  };
-
-  // Watch for form value changes
-  const watchedResources = form.watch('resources');
-  const watchedJobFunction = form.watch('jobFunction');
-  const watchedAccessType = form.watch('accessType');
-  const watchedEnvironmentFilter = form.watch('environmentFilter');
-  
-  // Set default compliance framework when Development environment is selected
-  useEffect(() => {
-    if (environmentFilter === 'dev') {
-      const commercialUs = complianceEnvironments.find(env => env.name === 'Commercial (US)')?.id || '';
-      setComplianceFilter(commercialUs);
-      form.setValue('complianceFilter', commercialUs);
-    }
-  }, [environmentFilter, form]);
-
-  // Check if job function contains "project" to show project field
-  useEffect(() => {
-    if (watchedJobFunction) {
-      const jobFunction = jobFunctionDefinitions.find(jf => jf.id === watchedJobFunction);
-      if (jobFunction && jobFunction.title.toLowerCase().includes('project')) {
-        setShowProjectField(true);
-      } else {
-        setShowProjectField(false);
-        form.setValue('projectName', '');
-      }
-    }
-  }, [watchedJobFunction, form]);
-  
-  // Update approval chain when resources or job function changes
-  useEffect(() => {
-    if (watchedResources.length > 0) {
-      setApprovalChain(getApprovalChain(watchedResources, watchedJobFunction));
-      setRiskScore(calculateRiskScore(watchedResources));
-    } else {
-      setApprovalChain([]);
-      setRiskScore({ score: 0, level: 'Low' });
-    }
-  }, [watchedResources, watchedJobFunction]);
-  
-  // Handle job function selection
-  useEffect(() => {
-    if (watchedJobFunction) {
-      setSelectedJobFunction(watchedJobFunction);
-      
-      // Auto-select recommended resources
-      const jobFunction = jobFunctionDefinitions.find(jf => jf.id === watchedJobFunction);
-      if (jobFunction) {
-        form.setValue('resources', jobFunction.recommendedResources);
-      }
-    }
-  }, [watchedJobFunction, form]);
-
-  const onSubmit = async (data: AccessRequestFormValues) => {
-    if (!currentUser) return;
-    
-    // Calculate expiration date based on selected duration
-    let expiresAt: string | undefined = undefined;
-    if (data.accessType === 'temporary' && data.tempDuration) {
-      const days = parseInt(data.tempDuration, 10);
-      const expirationDate = new Date();
-      expirationDate.setDate(expirationDate.getDate() + days);
-      expiresAt = expirationDate.toISOString();
-    }
-    
-    // Collect resource names for the selected resources
-    const selectedResources = targetResources.filter(resource => data.resources.includes(resource.id));
-    const resourceNames = selectedResources.map(resource => resource.name).join(', ');
-    
-    // Get the first resource for determining compliance and resource hierarchy
-    const primaryResource = selectedResources[0];
-    
-    // Generate approval chain
-    const generatedApprovalChain = getApprovalChain(data.resources, data.jobFunction);
-    
-    try {
-      // Create access request with enhanced data
-      await createAccessRequest({
-        userId: currentUser.id,
-        resourceId: data.resources.join(','),
-        resourceName: resourceNames,
-        requestType: 'role',
-        justification: data.justification,
-        accessType: data.accessType,
-        expiresAt: expiresAt,
-        complianceFramework: primaryResource?.compliance,
-        resourceHierarchy: primaryResource?.resourceHierarchy as "Organization" | "Tenant" | "Environment/Region" | "Project/RG" | "Resources/Services" || "Resources/Services",
-        projectName: data.projectName,
-        approvalChain: generatedApprovalChain.map(approver => ({
-          approverId: approver?.id || "",
-          approverName: approver?.name || "",
-          approverTitle: approver?.title || "",
-          approverType: (approver?.type || "manager") as 'manager' | 'resource-owner' | 'security' | 'compliance',
-          status: 'pending',
-          reason: approver?.reason
-        }))
-      });
-      
-      // Reset form and close dialog
-      form.reset();
-      setFormStep(1);
-      onSuccess();
-    } catch (error) {
-      console.error("Failed to submit access request:", error);
-    }
-  };
-  
-  const nextStep = () => {
-    form.trigger(['jobFunction', 'resources']);
-    const jobFunctionValid = !!form.getValues('jobFunction');
-    const resourcesValid = form.getValues('resources').length > 0;
-    
-    if (jobFunctionValid && resourcesValid) {
-      setFormStep(2);
-    }
-  };
-  
-  const prevStep = () => {
-    setFormStep(1);
-  };
-  
-  const renderRiskBadge = (level: string) => {
-    const colors = {
-      High: 'bg-red-100 text-red-800 border-red-300',
-      Medium: 'bg-yellow-100 text-yellow-800 border-yellow-300',
-      Low: 'bg-green-100 text-green-800 border-green-300',
-    };
-    
-    return (
-      <Badge variant="outline" className={colors[level as keyof typeof colors]}>
-        {level} Risk
-      </Badge>
-    );
-  };
+  const {
+    form,
+    formStep,
+    selectedJobFunction,
+    complianceFilter,
+    setComplianceFilter,
+    environmentFilter,
+    setEnvironmentFilter,
+    approvalChain,
+    riskScore,
+    showProjectField,
+    getFilteredResources,
+    nextStep,
+    prevStep,
+    onSubmit,
+    watchedResources,
+    watchedAccessType
+  } = useAccessRequestForm(onSuccess, onCancel);
 
   return (
     <Form {...form}>
@@ -409,10 +99,7 @@ export const AccessRequestForm: React.FC<AccessRequestFormProps> = ({ onSuccess,
                     Select the role that aligns with your current responsibilities. This determines your recommended access profile.
                   </FormDescription>
                   <Select
-                    onValueChange={(value) => {
-                      field.onChange(value);
-                      setSelectedJobFunction(value);
-                    }}
+                    onValueChange={field.onChange}
                     value={field.value}
                   >
                     <FormControl>
