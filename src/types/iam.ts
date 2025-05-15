@@ -33,7 +33,7 @@ export interface Permission {
   action: 'create' | 'read' | 'update' | 'delete' | 'approve';
   description: string;
   category?: 'Data' | 'System' | 'Function' | 'Security';
-  level?: 'Basic' | 'Elevated' | 'Admin';
+  level?: 'Reader' | 'Contributor' | 'Admin';
 }
 
 export interface AccessRequest {
@@ -168,33 +168,7 @@ export type JobFunction =
   | 'Cloud Platform Security Contributor'
   | 'Cloud Platform Security Reader'
   | 'Cloud Platform FinOps Administrator'
-  | 'Cloud Platform Site Reliability Engineer'
-  | 'System Administrator' 
-  | 'Network Administrator'
-  | 'Database Administrator'
-  | 'DevOps Engineer'
-  | 'Software Engineer (Junior)'
-  | 'Software Engineer (Senior)'
-  | 'Software Architect'
-  | 'QA Engineer'
-  | 'Site Reliability Engineer'
-  // Business/Data Roles
-  | 'Data Analyst'
-  | 'Business Analyst'
-  | 'Data Scientist'
-  | 'Product Manager'
-  | 'Project Manager'
-  | 'Business Intelligence Developer'
-  // Security/Compliance Roles
-  | 'Security Analyst'
-  | 'Compliance Auditor'
-  | 'Risk Manager'
-  | 'Data Privacy Officer'
-  // Management Roles
-  | 'Team Lead'
-  | 'Department Manager'
-  | 'Executive'
-  | 'System Owner';
+  | 'Cloud Platform Site Reliability Engineer';
 
 // New interface for detailed job function definition
 export interface JobFunctionDefinition {
