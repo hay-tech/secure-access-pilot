@@ -153,7 +153,7 @@ const Dashboard: React.FC = () => {
           description="System-wide pending access requests"
           icon="pendingRequests"
         />
-        {userLastname !== Developer}
+        {userLastname !== "Developer"}
         <UserStatsCard
           title="Your Approvals"
           value={myPendingApprovals.length}
