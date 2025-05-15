@@ -37,7 +37,7 @@ const Reports: React.FC = () => {
     // For now, we'll show all users on all tabs
     
     // Filter by job function if set
-    if (filterJobFunction && (!user.jobFunctions || !user.jobFunctions.includes(filterJobFunction))) {
+    if (filterJobFunction && (!user.jobFunction || !user.jobFunction.includes(filterJobFunction))) {
       return false;
     }
     
