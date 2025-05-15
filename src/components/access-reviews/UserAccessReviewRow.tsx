@@ -6,6 +6,7 @@ import { User, PermissionGap } from "@/types/iam";
 import { Check, X, Info, ChevronDown, ChevronUp } from "lucide-react";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { Badge } from "@/components/ui/badge";
+import { toast } from "sonner";
 import PermissionGapItem from './PermissionGapItem';
 
 interface UserAccessReviewRowProps {
@@ -32,6 +33,26 @@ const UserAccessReviewRow: React.FC<UserAccessReviewRowProps> = ({
   const cspSubtype = user.cspSubtype || "Commercial";
 
   const hasCriticalGaps = gaps.some(g => g.severity === 'Critical' || g.severity === 'High');
+  
+  const handleApprove = async (e: React.MouseEvent) => {
+    e.stopPropagation();
+    try {
+      await onCompleteReview(user.id, 'maintain', 'Job function still valid');
+      toast.success("Access approved and added to accountability database");
+    } catch (error) {
+      toast.error("Failed to approve access");
+    }
+  };
+  
+  const handleReject = async (e: React.MouseEvent) => {
+    e.stopPropagation();
+    try {
+      await onCompleteReview(user.id, 'revoke', 'Job function no longer valid');
+      toast.success("Access rejected and added to accountability database");
+    } catch (error) {
+      toast.error("Failed to reject access");
+    }
+  };
 
   return (
     <React.Fragment>
@@ -80,10 +101,7 @@ const UserAccessReviewRow: React.FC<UserAccessReviewRowProps> = ({
               size="sm"
               variant="outline"
               className="bg-green-50 text-green-700 hover:bg-green-100 hover:text-green-800 border-green-200"
-              onClick={(e) => {
-                e.stopPropagation();
-                onCompleteReview(user.id, 'maintain', 'Job function still valid');
-              }}
+              onClick={handleApprove}
             >
               <Check className="mr-1 h-4 w-4" />
               Approve
@@ -92,10 +110,7 @@ const UserAccessReviewRow: React.FC<UserAccessReviewRowProps> = ({
               size="sm"
               variant="outline"
               className="bg-red-50 text-red-700 hover:bg-red-100 hover:text-red-800 border-red-200"
-              onClick={(e) => {
-                e.stopPropagation();
-                onCompleteReview(user.id, 'revoke', 'Job function no longer valid');
-              }}
+              onClick={handleReject}
             >
               <X className="mr-1 h-4 w-4" />
               Reject

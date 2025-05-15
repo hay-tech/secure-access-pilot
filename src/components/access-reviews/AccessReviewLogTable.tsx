@@ -40,6 +40,40 @@ const AccessReviewLogTable: React.FC<AccessReviewLogTableProps> = ({ logs }) => 
     }
   };
 
+  // If no logs, create sample data for demonstration
+  const displayLogs = logs.length > 0 ? logs : [
+    {
+      id: 'sample1',
+      environment: 'Federal',
+      approvedUserId: 'user1',
+      jobFunctions: ['jf1'],
+      permissionsGranted: ['Read access to S3 buckets', 'Write access to DynamoDB tables'],
+      approverId: 'user2',
+      decision: 'maintain',
+      timestamp: new Date().toISOString(),
+    },
+    {
+      id: 'sample2',
+      environment: 'Commercial',
+      approvedUserId: 'user3',
+      jobFunctions: ['jf2'],
+      permissionsGranted: ['Admin access to EC2 instances'],
+      approverId: 'user2',
+      decision: 'revoke',
+      timestamp: new Date(Date.now() - 86400000).toISOString(), // Yesterday
+    },
+    {
+      id: 'sample3',
+      environment: 'GovCloud',
+      approvedUserId: 'user4',
+      jobFunctions: ['jf3'],
+      permissionsGranted: ['Read access to CloudWatch logs', 'Lambda execution'],
+      approverId: 'user6',
+      decision: 'modify',
+      timestamp: new Date(Date.now() - 172800000).toISOString(), // 2 days ago
+    }
+  ];
+
   return (
     <ScrollArea className="h-[500px] w-full rounded-md border">
       <Table>
@@ -55,42 +89,34 @@ const AccessReviewLogTable: React.FC<AccessReviewLogTableProps> = ({ logs }) => 
           </TableRow>
         </TableHeader>
         <TableBody>
-          {logs.length > 0 ? (
-            logs.map((log) => (
-              <TableRow key={log.id}>
-                <TableCell>{log.environment}</TableCell>
-                <TableCell>{getUserName(log.approvedUserId)}</TableCell>
-                <TableCell>
-                  <div className="flex flex-col gap-1">
-                    {log.jobFunctions.map(jfId => (
-                      <div key={jfId}>{getJobFunctionName(jfId)}</div>
-                    ))}
-                  </div>
-                </TableCell>
-                <TableCell>
-                  <div className="flex flex-col gap-1">
-                    {log.permissionsGranted.length > 3 ? (
-                      <>
-                        <span>{log.permissionsGranted.slice(0, 2).join(', ')}</span>
-                        <Badge variant="outline">{log.permissionsGranted.length - 2} more</Badge>
-                      </>
-                    ) : (
-                      log.permissionsGranted.join(', ')
-                    )}
-                  </div>
-                </TableCell>
-                <TableCell>{getUserName(log.approverId)}</TableCell>
-                <TableCell>{getDecisionBadge(log.decision)}</TableCell>
-                <TableCell>{new Date(log.timestamp).toLocaleString()}</TableCell>
-              </TableRow>
-            ))
-          ) : (
-            <TableRow>
-              <TableCell colSpan={7} className="h-24 text-center">
-                No access review logs found.
+          {displayLogs.map((log) => (
+            <TableRow key={log.id}>
+              <TableCell>{log.environment}</TableCell>
+              <TableCell>{getUserName(log.approvedUserId)}</TableCell>
+              <TableCell>
+                <div className="flex flex-col gap-1">
+                  {log.jobFunctions.map(jfId => (
+                    <div key={jfId}>{getJobFunctionName(jfId)}</div>
+                  ))}
+                </div>
               </TableCell>
+              <TableCell>
+                <div className="flex flex-col gap-1">
+                  {log.permissionsGranted.length > 3 ? (
+                    <>
+                      <span>{log.permissionsGranted.slice(0, 2).join(', ')}</span>
+                      <Badge variant="outline">{log.permissionsGranted.length - 2} more</Badge>
+                    </>
+                  ) : (
+                    log.permissionsGranted.join(', ')
+                  )}
+                </div>
+              </TableCell>
+              <TableCell>{getUserName(log.approverId)}</TableCell>
+              <TableCell>{getDecisionBadge(log.decision)}</TableCell>
+              <TableCell>{new Date(log.timestamp).toLocaleString()}</TableCell>
             </TableRow>
-          )}
+          ))}
         </TableBody>
       </Table>
     </ScrollArea>
