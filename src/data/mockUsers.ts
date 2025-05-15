@@ -9,10 +9,10 @@ export const users: User[] = [
     firstName: 'Admin',
     lastName: 'User',
     roleIds: ['role1'],
-    department: 'IT',
+    department: 'Infrastructure',
     createdAt: '2023-01-16T08:00:00Z',
     lastLogin: '2023-05-10T14:32:00Z',
-    jobFunction: 'System Administrator',
+    jobFunction: 'CPE Platform Administrator',
     accessLevel: 'Administrator'
   },
   {
@@ -21,7 +21,7 @@ export const users: User[] = [
     firstName: 'John',
     lastName: 'Manager',
     roleIds: ['role2'],
-    department: 'Engineering',
+    department: 'DLT',
     createdAt: '2023-01-16T08:30:00Z',
     lastLogin: '2023-05-09T11:20:00Z',
     jobFunction: 'Department Manager',
@@ -33,11 +33,11 @@ export const users: User[] = [
     firstName: 'Alice',
     lastName: 'Developer',
     roleIds: ['role3'],
-    department: 'Engineering',
+    department: 'DLT',
     manager: 'user2',
     createdAt: '2023-01-16T09:00:00Z',
     lastLogin: '2023-05-10T09:15:00Z',
-    jobFunction: 'Software Engineer (Senior)',
+    jobFunction: 'CPE Platform Contributor',
     accessLevel: 'Power User'
   },
   {
@@ -46,11 +46,11 @@ export const users: User[] = [
     firstName: 'Bob',
     lastName: 'Developer',
     roleIds: ['role3'],
-    department: 'Engineering',
+    department: 'Security',
     manager: 'user2',
     createdAt: '2023-01-16T09:30:00Z',
     lastLogin: '2023-05-10T10:45:00Z',
-    jobFunction: 'Software Engineer (Junior)',
+    jobFunction: 'CPE Platform Security Administrator',
     accessLevel: 'Standard User'
   },
   {
@@ -62,7 +62,7 @@ export const users: User[] = [
     department: 'Data Science',
     createdAt: '2023-01-16T10:00:00Z',
     lastLogin: '2023-05-08T16:20:00Z',
-    jobFunction: 'Data Analyst',
+    jobFunction: 'CPE Platform Security Reader',
     accessLevel: 'Standard User'
   },
   {
@@ -71,10 +71,10 @@ export const users: User[] = [
     firstName: 'Mike',
     lastName: 'Compliance',
     roleIds: ['role5'],
-    department: 'Legal',
+    department: 'Security & Compliance',
     createdAt: '2023-01-16T10:30:00Z',
     lastLogin: '2023-05-09T15:10:00Z',
-    jobFunction: 'Compliance Auditor',
+    jobFunction: 'CPE Cloud Security Reader ',
     accessLevel: 'Auditor'
   },
 ];
