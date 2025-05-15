@@ -1,5 +1,5 @@
 
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { useAuth } from '../contexts/AuthContext';
 import { useIAM } from '../contexts/IAMContext';
 
@@ -10,6 +10,11 @@ import AccessViolationsCard from '../components/dashboard/AccessViolationsCard';
 import RoleDistributionTable from '../components/dashboard/RoleDistributionTable';
 import PendingAccessReviewsTable from '../components/dashboard/PendingAccessReviewsTable';
 import AccessReviewProgress from '../components/dashboard/AccessReviewProgress';
+import DashboardSkeleton from '../components/dashboard/DashboardSkeleton';
+
+// Import UI components
+import { ChartContainer, ChartTooltip, ChartTooltipContent } from '@/components/ui/chart';
+import { AspectRatio } from '@/components/ui/aspect-ratio';
 
 const Dashboard: React.FC = () => {
   const { currentUser } = useAuth();
@@ -22,8 +27,24 @@ const Dashboard: React.FC = () => {
     getUserPermissions,
     hasPermission
   } = useIAM();
+  
+  // Added loading state for dashboard
+  const [loading, setLoading] = useState(true);
+  
+  // Simulate loading for demo purposes
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setLoading(false);
+    }, 1000);
+    
+    return () => clearTimeout(timer);
+  }, []);
 
   if (!currentUser) return null;
+
+  if (loading) {
+    return <DashboardSkeleton />;
+  }
 
   const userRoles = getUserRoles(currentUser.id);
   const userPermissions = getUserPermissions(currentUser.id);
@@ -89,9 +110,18 @@ const Dashboard: React.FC = () => {
 
   return (
     <div className="space-y-6">
-      <div>
-        <h1 className="text-3xl font-bold">Dashboard</h1>
-        <p className="text-muted-foreground">Welcome back, {currentUser.firstName}!</p>
+      <div className="flex justify-between items-center">
+        <div>
+          <h1 className="text-3xl font-bold">Dashboard</h1>
+          <p className="text-muted-foreground">Welcome back, {currentUser.firstName}!</p>
+        </div>
+        <div className="text-sm text-muted-foreground">
+          <div className="flex items-center">
+            <span className="h-2 w-2 rounded-full bg-green-500 mr-2"></span>
+            <span>System Status: Operational</span>
+          </div>
+          <span className="text-xs">Last updated: {new Date().toLocaleString()}</span>
+        </div>
       </div>
       
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
@@ -126,10 +156,17 @@ const Dashboard: React.FC = () => {
 
       {canViewSystemStats && (
         <>
-          {/* Access Review Insights Section */}
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
-            <AccessComplianceCard data={accessMatchData} colors={ACCESS_COLORS} />
-            <AccessViolationsCard data={violationsData} />
+            <div className="h-full">
+              <AspectRatio ratio={16/9} className="bg-card border rounded-lg">
+                <AccessComplianceCard data={accessMatchData} colors={ACCESS_COLORS} />
+              </AspectRatio>
+            </div>
+            <div className="h-full">
+              <AspectRatio ratio={16/9} className="bg-card border rounded-lg">
+                <AccessViolationsCard data={violationsData} />
+              </AspectRatio>
+            </div>
           </div>
 
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
