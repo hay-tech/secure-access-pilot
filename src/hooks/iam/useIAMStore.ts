@@ -1,7 +1,14 @@
 
 import { useState } from 'react';
 import { User, Role, Permission, AccessRequest, AuditLog, AccessReview } from '../../types/iam';
-import { users as initialUsers, roles as initialRoles, permissions as initialPermissions, accessRequests as initialAccessRequests, auditLogs as initialAuditLogs, accessReviews as initialAccessReviews } from '../../data/mockData';
+import { 
+  users as initialUsers, 
+  roles as initialRoles, 
+  permissions as initialPermissions, 
+  accessRequests as initialAccessRequests, 
+  auditLogs as initialAuditLogs, 
+  accessReviews as initialAccessReviews 
+} from '../../data/mockData';
 
 // Create a central store to avoid circular dependencies
 export const useIAMStore = () => {
