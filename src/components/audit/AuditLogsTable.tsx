@@ -11,6 +11,12 @@ import {
 import { AuditLog, User } from '@/types/iam';
 import { Badge } from '@/components/ui/badge';
 import { format } from 'date-fns';
+import { 
+  Tooltip, 
+  TooltipContent, 
+  TooltipTrigger 
+} from '@/components/ui/tooltip';
+import { InfoIcon } from 'lucide-react';
 
 interface AuditLogsTableProps {
   logs: AuditLog[];
@@ -63,7 +69,21 @@ export const AuditLogsTable: React.FC<AuditLogsTableProps> = ({ logs, users }) =
                 </TableCell>
                 <TableCell>{getEventTypeDisplay(log.eventType)}</TableCell>
                 <TableCell>{getUserName(log.userId)}</TableCell>
-                <TableCell className="max-w-sm truncate">{log.details}</TableCell>
+                <TableCell className="max-w-sm truncate">
+                  <div className="flex items-center gap-1">
+                    {log.details}
+                    {log.details.length > 60 && (
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <InfoIcon className="h-4 w-4 text-muted-foreground cursor-help" />
+                        </TooltipTrigger>
+                        <TooltipContent>
+                          <p className="max-w-xs">{log.details}</p>
+                        </TooltipContent>
+                      </Tooltip>
+                    )}
+                  </div>
+                </TableCell>
                 <TableCell>{log.ipAddress || 'N/A'}</TableCell>
               </TableRow>
             ))
