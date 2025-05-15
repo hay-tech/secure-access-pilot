@@ -9,6 +9,7 @@ export interface User {
   createdAt: string;
   lastLogin?: string;
   jobFunction?: string;
+  jobFunctions?: string[];
   accessLevel?: string;
   csp?: string;
   cspSubtype?: string;
@@ -71,6 +72,7 @@ export interface AccessRequest {
   accessDurationType?: 'permanent' | 'temporary';
   temporaryAccessDuration?: '1 day' | '3 days' | '5 days';
   businessJustification?: string;
+  projectName?: string; // Add the missing projectName field
 }
 
 export interface ApprovalStep {
@@ -107,6 +109,7 @@ export interface AccessReview {
   decision: 'maintain' | 'revoke' | 'modify';
   comments?: string;
   createdAt: string;
+  updatedAt: string; // Add missing updatedAt field
   dueDate?: string;
   status?: 'pending' | 'completed' | 'overdue';
   violationType?: 'SoD' | 'Excessive' | 'Dormant' | 'Critical' | 'Mismatch';

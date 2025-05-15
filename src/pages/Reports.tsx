@@ -167,7 +167,7 @@ const Reports: React.FC = () => {
                         const reviewStatus = getReviewStatus(user.id);
                         const statusColor = getStatusColor(reviewStatus);
                         const userReview = accessReviews.find(r => r.subjectId === user.id);
-                        const lastReviewDate = userReview 
+                        const lastReviewDate = userReview && userReview.updatedAt
                           ? new Date(userReview.updatedAt).toLocaleDateString()
                           : 'Not reviewed';
                           
@@ -179,12 +179,20 @@ const Reports: React.FC = () => {
                             </TableCell>
                             <TableCell>
                               <div className="flex flex-wrap gap-1">
-                                {user.jobFunctions?.map(jfId => (
-                                  <Badge key={jfId} variant="outline" className="bg-blue-50">
-                                    {getJobFunctionName(jfId)}
-                                  </Badge>
-                                )) || (
-                                  <span className="text-muted-foreground">No job functions</span>
+                                {user.jobFunctions && user.jobFunctions.length > 0 ? (
+                                  user.jobFunctions.map(jfId => (
+                                    <Badge key={jfId} variant="outline" className="bg-blue-50">
+                                      {getJobFunctionName(jfId)}
+                                    </Badge>
+                                  ))
+                                ) : (
+                                  user.jobFunction ? (
+                                    <Badge variant="outline" className="bg-blue-50">
+                                      {getJobFunctionName(user.jobFunction)}
+                                    </Badge>
+                                  ) : (
+                                    <span className="text-muted-foreground">No job functions</span>
+                                  )
                                 )}
                               </div>
                             </TableCell>
