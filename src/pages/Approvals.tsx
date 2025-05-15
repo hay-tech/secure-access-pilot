@@ -23,7 +23,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog';
-import { formatDistanceToNow } from 'date-fns';
+import { formatDistanceToNow, format } from 'date-fns';
 import { Check, X } from 'lucide-react';
 
 const Approvals: React.FC = () => {
@@ -85,6 +85,15 @@ const Approvals: React.FC = () => {
     return user ? `${user.firstName} ${user.lastName}` : 'Unknown User';
   };
 
+  const getUserJobFunctions = (userId: string) => {
+    const user = users.find(u => u.id === userId);
+    return user?.jobFunctions?.join(', ') || 'N/A';
+  };
+
+  const getAccessType = (request: any) => {
+    return request.accessType === 'temporary' ? 'Temporary' : 'Permanent';
+  };
+
   return (
     <div className="space-y-6">
       <div>
@@ -108,38 +117,44 @@ const Approvals: React.FC = () => {
               <Table>
                 <TableHeader>
                   <TableRow>
+                    <TableHead>Environment</TableHead>
                     <TableHead>Requestor</TableHead>
-                    <TableHead>Resource</TableHead>
-                    <TableHead>Type</TableHead>
-                    <TableHead>Requested</TableHead>
+                    <TableHead>Job Function(s)</TableHead>
+                    <TableHead>Group(s)</TableHead>
+                    <TableHead>Request Type</TableHead>
                     <TableHead>Justification</TableHead>
+                    <TableHead>Request Date</TableHead>
                     <TableHead>Actions</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
                   {pendingApprovals.length === 0 ? (
                     <TableRow>
-                      <TableCell colSpan={6} className="text-center py-4 text-muted-foreground">
+                      <TableCell colSpan={8} className="text-center py-4 text-muted-foreground">
                         No pending approvals found
                       </TableCell>
                     </TableRow>
                   ) : (
                     pendingApprovals.map((request) => (
                       <TableRow key={request.id}>
+                        <TableCell>{request.environmentType || 'N/A'}</TableCell>
                         <TableCell className="font-medium">
                           {getUserName(request.userId)}
                         </TableCell>
-                        <TableCell>{request.resourceName}</TableCell>
+                        <TableCell>{getUserJobFunctions(request.userId)}</TableCell>
                         <TableCell>
-                          {request.requestType.charAt(0).toUpperCase() + request.requestType.slice(1)}
+                          {request.projectName || 'N/A'}
                         </TableCell>
                         <TableCell>
-                          {formatDistanceToNow(new Date(request.createdAt), { addSuffix: true })}
+                          {getAccessType(request)}
                         </TableCell>
                         <TableCell>
                           <div className="max-w-sm truncate" title={request.justification}>
                             {request.justification}
                           </div>
+                        </TableCell>
+                        <TableCell>
+                          {format(new Date(request.createdAt), 'MMM d, yyyy')}
                         </TableCell>
                         <TableCell>
                           <div className="flex space-x-2">
@@ -180,18 +195,21 @@ const Approvals: React.FC = () => {
               <Table>
                 <TableHeader>
                   <TableRow>
+                    <TableHead>Environment</TableHead>
                     <TableHead>Requestor</TableHead>
-                    <TableHead>Resource</TableHead>
-                    <TableHead>Type</TableHead>
+                    <TableHead>Job Function(s)</TableHead>
+                    <TableHead>Group(s)</TableHead>
+                    <TableHead>Request Type</TableHead>
+                    <TableHead>Justification</TableHead>
+                    <TableHead>Request Date</TableHead>
+                    <TableHead>Approval Date</TableHead>
                     <TableHead>Decision</TableHead>
-                    <TableHead>Decision Date</TableHead>
-                    <TableHead>Comments</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
                   {completedApprovals.length === 0 ? (
                     <TableRow>
-                      <TableCell colSpan={6} className="text-center py-4 text-muted-foreground">
+                      <TableCell colSpan={9} className="text-center py-4 text-muted-foreground">
                         No completed approvals found
                       </TableCell>
                     </TableRow>
@@ -202,12 +220,29 @@ const Approvals: React.FC = () => {
                       
                       return (
                         <TableRow key={request.id}>
+                          <TableCell>{request.environmentType || 'N/A'}</TableCell>
                           <TableCell className="font-medium">
                             {getUserName(request.userId)}
                           </TableCell>
-                          <TableCell>{request.resourceName}</TableCell>
+                          <TableCell>{getUserJobFunctions(request.userId)}</TableCell>
                           <TableCell>
-                            {request.requestType.charAt(0).toUpperCase() + request.requestType.slice(1)}
+                            {request.projectName || 'N/A'}
+                          </TableCell>
+                          <TableCell>
+                            {getAccessType(request)}
+                          </TableCell>
+                          <TableCell>
+                            <div className="max-w-sm truncate" title={request.justification}>
+                              {request.justification}
+                            </div>
+                          </TableCell>
+                          <TableCell>
+                            {format(new Date(request.createdAt), 'MMM d, yyyy')}
+                          </TableCell>
+                          <TableCell>
+                            {approval?.timestamp ? 
+                              format(new Date(approval.timestamp), 'MMM d, yyyy') : 
+                              'N/A'}
                           </TableCell>
                           <TableCell>
                             <Badge
@@ -218,16 +253,6 @@ const Approvals: React.FC = () => {
                             >
                               {approval?.status === 'approved' ? 'Approved' : 'Rejected'}
                             </Badge>
-                          </TableCell>
-                          <TableCell>
-                            {approval?.timestamp ? 
-                              formatDistanceToNow(new Date(approval.timestamp), { addSuffix: true }) : 
-                              'N/A'}
-                          </TableCell>
-                          <TableCell>
-                            <div className="max-w-sm truncate" title={approval?.comments}>
-                              {approval?.comments || 'No comments'}
-                            </div>
                           </TableCell>
                         </TableRow>
                       );
