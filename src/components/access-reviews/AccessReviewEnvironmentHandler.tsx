@@ -38,17 +38,17 @@ const AccessReviewEnvironmentHandler: React.FC<AccessReviewEnvironmentHandlerPro
       riskLevel: 'Medium' as const
     },
     {
-      id: 'healthcare',
-      name: 'Healthcare',
-      description: 'Healthcare industry compliance requirements',
-      complianceFrameworks: ['HIPAA', 'HITRUST'],
+      id: 'CCCS',
+      name: 'CCCS',
+      description: 'Canadian  compliance requirements',
+      complianceFrameworks: ['Protected-B', 'xProtect-A'],
       riskLevel: 'Critical' as const
     },
     {
-      id: 'financial',
-      name: 'Financial',
-      description: 'Financial industry compliance requirements',
-      complianceFrameworks: ['PCI-DSS', 'SOX'],
+      id: 'CJIS',
+      name: 'CJIS',
+      description: 'US Government compliance requirements',
+      complianceFrameworks: ['CJIS', 'SOC2'],
       riskLevel: 'High' as const
     }
   ];
