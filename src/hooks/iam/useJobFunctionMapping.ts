@@ -7,8 +7,7 @@ const jobFunctionMappings: JobFunctionPermissionMapping[] = [
   {
     jobFunction: 'Cloud IAM Administrator',
     permissions: ['iam:read', 'iam:create', 'iam:update', 'iam:delete'],
-    resources: ['users', 'roles', 'policies'],
-    environmentRestrictions: ['Commercial']
+    resources: ['users', 'roles', 'policies']
   },
   {
     jobFunction: 'Cloud IAM Reader',
@@ -33,8 +32,7 @@ const jobFunctionMappings: JobFunctionPermissionMapping[] = [
   {
     jobFunction: 'System Administrator',
     permissions: ['system:read', 'system:create', 'system:update', 'system:delete'],
-    resources: ['servers', 'applications', 'databases'],
-    environmentRestrictions: ['Commercial', 'Federal']
+    resources: ['servers', 'applications', 'databases']
   }
 ];
 
@@ -44,8 +42,7 @@ const jobFunctionDefinitions: JobFunctionDefinition[] = [
     id: 'jf1',
     title: 'Cloud Account Owner',
     description: 'This role is the main point of contact with the CSP provider, owns the relationship with the vendor, and has full access over the cloud environment.',
-    actions: ['Full Access'],
-    environmentRestrictions: ['Commercial', 'Federal', 'CJI', 'CCCS']
+    actions: ['Full Access']
   },
   {
     id: 'jf2',
@@ -58,8 +55,7 @@ const jobFunctionDefinitions: JobFunctionDefinition[] = [
       'Update federated identities', 
       'Read access and permissions',
       'Read audit access log'
-    ],
-    environmentRestrictions: ['Commercial', 'Federal']
+    ]
   },
   {
     id: 'jf3',
@@ -68,15 +64,13 @@ const jobFunctionDefinitions: JobFunctionDefinition[] = [
     actions: [
       'Read IAM users',
       'Read IAM roles and policies'
-    ],
-    environmentRestrictions: ['Commercial', 'Federal', 'CJI', 'CCCS']
+    ]
   },
   {
     id: 'jf4',
     title: 'Cloud Platform Tenant Administrator',
     description: 'CSP level administrator who creates the tenant, Resource Group and folders containing resource groups (environment owner)',
-    actions: ['Full Access'],
-    environmentRestrictions: ['Commercial']
+    actions: ['Create, Read, Update and Delete folders']
   },
   {
     id: 'jf5',
@@ -89,8 +83,7 @@ const jobFunctionDefinitions: JobFunctionDefinition[] = [
       'Create, Read, Update, and Delete Network (VPC, Route53, Subnets, Security groups, etc.)',
       'Create, Read, Update, and Delete Containers',
       'Create, Read, Update, and Delete Databases (SQL server, RDS, BigQuery, CloudSQL, DynamoDB, etc.)'
-    ],
-    environmentRestrictions: ['Commercial', 'Federal']
+    ]
   },
   {
     id: 'jf6',
@@ -102,8 +95,7 @@ const jobFunctionDefinitions: JobFunctionDefinition[] = [
       'Read and Update Network at the folder level',
       'Read and Update Containers at the folder level',
       'Read and Update Databases at the folder level'
-    ],
-    environmentRestrictions: ['Commercial', 'Federal', 'CJI']
+    ]
   },
   {
     id: 'jf7',
@@ -114,8 +106,7 @@ const jobFunctionDefinitions: JobFunctionDefinition[] = [
       'Read audit access log',
       'Read Logs from all projects',
       'Create, Read, Update, and Delete Alerts'
-    ],
-    environmentRestrictions: ['Commercial', 'Federal', 'CJI', 'CCCS']
+    ]
   },
   {
     id: 'jf8',
@@ -124,8 +115,7 @@ const jobFunctionDefinitions: JobFunctionDefinition[] = [
     actions: [
       'Create, Read, Update and Delete Users in the project',
       'Create, Read, Update and Delete cloud resources within a project'
-    ],
-    environmentRestrictions: ['Commercial', 'Federal']
+    ]
   },
   {
     id: 'jf9',
@@ -137,20 +127,103 @@ const jobFunctionDefinitions: JobFunctionDefinition[] = [
       'Create, Read, Update, Delete and assign IAM roles',
       'Read and Update permissions assigned to users',
       'Read audit access log'
-    ],
-    environmentRestrictions: ['Commercial', 'Federal', 'CJI']
+    ]
   },
   {
     id: 'jf10',
-    title: 'Security Analyst',
+    title: 'Cloud Platform Security Reader',
     description: 'Focuses on detection, analysis and response to security threats such as unauthorized access, cyber attacks, and vulnerabilities across the platform infrastructure',
     actions: [
       'Read IAM users, roles, and permissions',
       'Read audit access log',
       'Read Logs from all projects',
       'Read, Update Security ticketing and Alert management'
-    ],
-    environmentRestrictions: ['Commercial', 'Federal', 'CJI', 'CCCS']
+    ]
+  },
+  // Adding new job functions from the requirements
+  {
+    id: 'jf11',
+    title: 'Cloud Project Contributor',
+    description: 'A Cloud Platform contributor with limited privileges within their own project, to create resources and deploy services',
+    actions: [
+      'Create, Read, Update and Delete the following cloud resources within a project:',
+      'Compute, EC2',
+      'Storage (S3, buckets)',
+      'Network (VPC, Route53, Subnets, Security groups, etc.)',
+      'Containers',
+      'Databases (SQL server, RDS, BigQuery, CloudSQL, DynamoDB, etc.)'
+    ]
+  },
+  {
+    id: 'jf12',
+    title: 'Cloud Project Reader',
+    description: 'A Cloud Poject reader with limited privileges within their own project, to read logs',
+    actions: [
+      'Read audit access log within the project',
+      'Read Logs from a specific project',
+      'Create, Read, Update, and Delete Alerts for the project'
+    ]
+  },
+  {
+    id: 'jf13',
+    title: 'Cloud Platform Security Contributor',
+    description: 'Responsible for securing the cloud computing environment by designing, implementing, and optimizing security solutions across the platform in accordance with the relevant security regulations and industry standards',
+    actions: [
+      'Read and Update cloud resources',
+      'Read IAM users, IAM roles, access and permissions assigned to IAM users',
+      'Read audit access log',
+      'Create, Read, Update Security ticketing and Alert management'
+    ]
+  },
+  {
+    id: 'jf14',
+    title: 'Cloud Platform FinOps Administrator',
+    description: 'Manages the financial aspects of cloud platform usage within the organization including tracking cloud resource costs, forecasting usage, optimizing expenses, and ensuring the organization stays within budget. Implements cost saving strategies, automates workflows and analyzes spending',
+    actions: [
+      'Read and export billing details',
+      'Purchase and manage/read reservations and savings plan on all resources'
+    ]
+  },
+  {
+    id: 'jf15',
+    title: 'Cloud Platform Site Reliability Engineer',
+    description: 'An SRE Engineer\'s main responsibility is the availability and performance of the production systems. SREs need access to monitoring and alerting tools and incident management',
+    actions: [
+      'Read and Update cloud resources within a project',
+      'Read audit access log',
+      'Read Logs from all projects',
+      'Create, Update, Read and Delete Alerts'
+    ]
+  },
+  {
+    id: 'jf16',
+    title: 'Cloud SovOp Region Manager',
+    description: 'A Sovereign region manager has the sole responsibility to approve change management into a "Sovereign" production environment across an entire region. This role does not require an IAM account or direct access to the cloud environment. This user is cleared through the region governance requirements as detailed in the Role Management for MSI Sovereign Regions.',
+    actions: [
+      'Approves code changes and deployment to the Sovereign environment for their region'
+    ]
+  },
+  {
+    id: 'jf17',
+    title: 'Cloud Region SovOp',
+    description: 'A Sovereign operator is a DevOps or DevSecOps engineer who owns the reliability of a service in a particular sovereign environment across the region, as well as onboards other users.',
+    actions: [
+      'Read and Update cloud resources within a project',
+      'Read audit access log',
+      'Read Logs from all projects',
+      'Create, Update, Read and Delete Alerts'
+    ]
+  },
+  {
+    id: 'jf18',
+    title: 'Cloud Value Stream SovOp Engineer',
+    description: 'A Sovereign operator is a DevOps or DevSecOps engineer who owns the reliability of a service for their team\'s particular technology within the context of their project(s) in a specific sovereign environment.',
+    actions: [
+      'Read and Update cloud resources within a project',
+      'Read audit access log',
+      'Read Logs from their project',
+      'Create, Update, Read and Delete Alerts for their project'
+    ]
   }
 ];
 
@@ -174,8 +247,8 @@ export const useJobFunctionMapping = () => {
   };
 
   const getEnvironmentsForJobFunction = (jobFunction: JobFunction): string[] => {
-    const mapping = jobFunctionMappings.find(m => m.jobFunction === jobFunction);
-    return mapping?.environmentRestrictions || regulatoryEnvironments.map(env => env.name);
+    // In the updated version, all job functions can be used in all environments
+    return regulatoryEnvironments.map(env => env.name);
   };
 
   const getJobFunctionDefinition = (jobFunction: string): JobFunctionDefinition | undefined => {

@@ -36,16 +36,25 @@ export const useAccessReviewManagement = () => {
       .filter(user => {
         // Check if the user has a jobFunction that matches the environment
         if (!user.jobFunction) return false;
-        const { getEnvironmentsForJobFunction } = useJobFunctionMapping();
-        // Type cast user.jobFunction to JobFunction since we already checked it's not undefined
-        const allowedEnvironments = getEnvironmentsForJobFunction(user.jobFunction as JobFunction);
-        return allowedEnvironments.includes(environment);
+        
+        // In the updated version, we don't filter by environment restrictions
+        // Instead, we assume users can be assigned to any environment based on CSP settings
+        return true;
       })
       .map(user => {
         const gaps = detectPermissionGaps(user.id);
         return { user, gaps };
       })
       .filter(({ gaps }) => gaps.length > 0);
+  };
+  
+  const getUsersByCSP = (csp: string, subtype?: string): User[] => {
+    return users.filter(user => {
+      if (!user.csp) return false;
+      if (user.csp !== csp) return false;
+      if (subtype && user.cspSubtype !== subtype) return false;
+      return true;
+    });
   };
 
   return {
@@ -56,6 +65,7 @@ export const useAccessReviewManagement = () => {
     reviewPermissionGap,
     completeAccessReview,
     getAccessReviewsByManager,
-    getPermissionGapsByEnvironment
+    getPermissionGapsByEnvironment,
+    getUsersByCSP
   };
 };

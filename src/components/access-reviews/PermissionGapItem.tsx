@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { PermissionGap } from "@/types/iam";
 import { ShieldCheck, ShieldX, Check, X } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
 
 interface PermissionGapItemProps {
   gap: PermissionGap;
@@ -19,9 +20,42 @@ const PermissionGapItem: React.FC<PermissionGapItemProps> = ({
   onApproveGap
 }) => {
   const [justification, setJustification] = useState<string>('');
+  const [showJustification, setShowJustification] = useState<boolean>(false);
+  
+  const getSeverityColor = (severity: string) => {
+    switch(severity) {
+      case 'Critical': return 'bg-destructive text-destructive-foreground';
+      case 'High': return 'bg-destructive/80 text-destructive-foreground';
+      case 'Medium': return 'bg-amber-500 text-white';
+      default: return 'bg-amber-200 text-amber-800';
+    }
+  };
+
+  const handleApproveClick = async () => {
+    if (!showJustification) {
+      setShowJustification(true);
+      return;
+    }
+    await onApproveGap(userId, index, true, justification);
+    setShowJustification(false);
+  };
+
+  const handleRejectClick = async () => {
+    if (!showJustification) {
+      setShowJustification(true);
+      return;
+    }
+    await onApproveGap(userId, index, false, justification);
+    setShowJustification(false);
+  };
+
+  const handleCancelClick = () => {
+    setShowJustification(false);
+    setJustification('');
+  };
   
   return (
-    <div className="mb-6 bg-background rounded-md p-4 shadow-sm">
+    <div className="mb-4 bg-background rounded-md p-4 shadow-sm border">
       <div className="flex items-center justify-between mb-2">
         <div className="flex items-center space-x-2">
           {gap.gapType === 'excess' ? (
@@ -32,76 +66,93 @@ const PermissionGapItem: React.FC<PermissionGapItemProps> = ({
           <span className={`text-sm font-medium ${gap.gapType === 'excess' ? 'text-destructive' : 'text-warning'}`}>
             {gap.gapType === 'excess' ? 'Excess Permission' : 'Missing Permission'}
           </span>
-          <span className={`ml-2 rounded-full px-2 py-1 text-xs ${
-            gap.severity === 'Critical' ? 'bg-destructive text-destructive-foreground' :
-            gap.severity === 'High' ? 'bg-destructive/80 text-destructive-foreground' :
-            gap.severity === 'Medium' ? 'bg-amber-500 text-white' :
-            'bg-amber-200 text-amber-800'
-          }`}>
+          <Badge className={getSeverityColor(gap.severity)}>
             {gap.severity}
-          </span>
+          </Badge>
         </div>
         
-        {gap.approved === undefined && (
+        {gap.approved === undefined && !showJustification && (
           <div className="flex space-x-2">
             <Button
               size="sm"
               variant="outline"
-              onClick={() => onApproveGap(
-                userId, 
-                index, 
-                true, 
-                justification
-              )}
+              className="bg-green-50 text-green-700 hover:bg-green-100 hover:text-green-800 border-green-200"
+              onClick={handleApproveClick}
             >
               <Check className="mr-1 h-4 w-4" />
-              Approve Permission
+              Approve
             </Button>
             <Button
               size="sm"
-              variant="destructive"
-              onClick={() => onApproveGap(
-                userId, 
-                index, 
-                false,
-                justification
-              )}
+              variant="outline"
+              className="bg-red-50 text-red-700 hover:bg-red-100 hover:text-red-800 border-red-200"
+              onClick={handleRejectClick}
             >
               <X className="mr-1 h-4 w-4" />
-              Reject Permission
+              Reject
             </Button>
           </div>
         )}
         
         {gap.approved !== undefined && (
-          <div className={`flex items-center px-3 py-1 rounded-full text-sm ${
-            gap.approved ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
+          <Badge variant={gap.approved ? "outline" : "destructive"} className={`px-3 py-1 ${
+            gap.approved ? 'bg-green-100 text-green-800 border-green-200' : 'bg-red-100 text-red-800 border-red-200'
           }`}>
             {gap.approved ? (
               <>
-                <Check className="mr-1 h-4 w-4" />
+                <Check className="mr-1 h-4 w-4 inline" />
                 Approved
               </>
             ) : (
               <>
-                <X className="mr-1 h-4 w-4" />
+                <X className="mr-1 h-4 w-4 inline" />
                 Rejected
               </>
             )}
-          </div>
+          </Badge>
         )}
       </div>
       
       <p className="text-sm mb-3">{gap.description}</p>
       
-      {gap.approved === undefined && (
-        <div className="mt-2">
+      {showJustification && (
+        <div className="mt-4 space-y-4">
           <Textarea 
             placeholder="Enter justification for your decision..."
             value={justification}
             onChange={(e) => setJustification(e.target.value)}
             className="h-20"
           />
+          
+          <div className="flex justify-end space-x-2">
+            <Button
+              size="sm"
+              variant="outline"
+              onClick={handleCancelClick}
+            >
+              Cancel
+            </Button>
+            <Button
+              size="sm"
+              variant="outline"
+              className="bg-green-50 text-green-700 hover:bg-green-100 hover:text-green-800 border-green-200"
+              onClick={handleApproveClick}
+              disabled={!justification.trim()}
+            >
+              <Check className="mr-1 h-4 w-4" />
+              Approve
+            </Button>
+            <Button
+              size="sm"
+              variant="outline"
+              className="bg-red-50 text-red-700 hover:bg-red-100 hover:text-red-800 border-red-200"
+              onClick={handleRejectClick}
+              disabled={!justification.trim()}
+            >
+              <X className="mr-1 h-4 w-4" />
+              Reject
+            </Button>
+          </div>
         </div>
       )}
       
