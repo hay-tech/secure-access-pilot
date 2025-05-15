@@ -10,6 +10,9 @@ export interface User {
   lastLogin?: string;
   jobFunction?: string;
   accessLevel?: string;
+  csp?: string;
+  cspSubtype?: string;
+  securityLevel?: string;
 }
 
 export interface Role {

@@ -97,7 +97,6 @@ const AccessReviews: React.FC = () => {
       }
       
       toast({
-        title: "Success",
         description: `Permission ${approved ? 'approved' : 'rejected'} successfully`,
       });
     }
@@ -132,7 +131,6 @@ const AccessReviews: React.FC = () => {
     setUserGapsByEnvironment(updatedGaps);
     
     toast({
-      title: "Success",
       description: `User access review completed with status: ${decision}`,
     });
   };

@@ -48,7 +48,6 @@ export const useAccessReviewCore = () => {
     }
     
     toast({
-      title: "Success",
       description: "Access review completed successfully",
     });
     return newReview;
@@ -58,7 +57,6 @@ export const useAccessReviewCore = () => {
     const reviewIndex = accessReviews.findIndex(r => r.id === id);
     if (reviewIndex === -1) {
       toast({
-        title: "Error",
         description: `Access review with ID ${id} not found`,
         variant: "destructive",
       });
@@ -78,7 +76,6 @@ export const useAccessReviewCore = () => {
     );
     
     toast({
-      title: "Success",
       description: "Access review updated successfully",
     });
     return updatedReview;

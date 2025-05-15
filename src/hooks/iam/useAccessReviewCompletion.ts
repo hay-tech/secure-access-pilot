@@ -74,7 +74,6 @@ export const useAccessReviewCompletion = () => {
     }
     
     toast({
-      title: "Success",
       description: "Access review completed successfully",
     });
     

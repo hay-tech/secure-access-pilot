@@ -1,4 +1,3 @@
-
 import { AccessReview, PermissionGap } from '../../types/iam';
 import { useActivityLogging } from './useActivityLogging';
 import { useAccessReviewCore } from './useAccessReviewCore';
@@ -79,7 +78,6 @@ export const usePermissionGapReview = () => {
     );
     
     toast({
-      title: "Success",
       description: `Permission ${approved ? 'approved' : 'rejected'} successfully`,
     });
   };
