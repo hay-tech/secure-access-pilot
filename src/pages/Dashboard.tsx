@@ -2,13 +2,14 @@
 import React from 'react';
 import { useAuth } from '../contexts/AuthContext';
 import { useIAM } from '../contexts/IAMContext';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Progress } from '@/components/ui/progress';
-import { Shield, Users, ListCheck, AlertTriangle, FileText, X, AlertCircle, Clock } from 'lucide-react';
-import { 
-  BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, PieChart, Pie, Cell, Legend 
-} from 'recharts';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+
+// Import dashboard components
+import UserStatsCard from '../components/dashboard/UserStatsCard';
+import AccessComplianceCard from '../components/dashboard/AccessComplianceCard';
+import AccessViolationsCard from '../components/dashboard/AccessViolationsCard';
+import RoleDistributionTable from '../components/dashboard/RoleDistributionTable';
+import PendingAccessReviewsTable from '../components/dashboard/PendingAccessReviewsTable';
+import AccessReviewProgress from '../components/dashboard/AccessReviewProgress';
 
 const Dashboard: React.FC = () => {
   const { currentUser } = useAuth();
@@ -76,6 +77,13 @@ const Dashboard: React.FC = () => {
     { id: 'rev5', resource: 'Network Configuration', role: 'Network Administrator', daysOverdue: 9 }
   ];
 
+  // Progress data for access review
+  const progressItems = [
+    { label: 'Manager Reviews', value: 75 },
+    { label: 'Compliance Reviews', value: 45 },
+    { label: 'Overall Completion', value: 60 },
+  ];
+
   const COLORS = ['#10b981', '#f59e0b', '#ef4444']; // green, amber, red
   const ACCESS_COLORS = ['#3b82f6', '#4ade80']; // blue, green
 
@@ -87,230 +95,49 @@ const Dashboard: React.FC = () => {
       </div>
       
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Your Roles</CardTitle>
-            <Shield className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{userRoles.length}</div>
-            <p className="text-xs text-muted-foreground mt-1">
-              {userRoles.map(r => r.name).join(', ')}
-            </p>
-          </CardContent>
-        </Card>
+        <UserStatsCard 
+          title="Your Roles"
+          value={userRoles.length}
+          description={userRoles.map(r => r.name).join(', ')}
+          icon="roles"
+        />
         
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Permissions</CardTitle>
-            <Users className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{userPermissions.length}</div>
-            <p className="text-xs text-muted-foreground mt-1">
-              Across {new Set(userPermissions.map(p => p.resource)).size} resources
-            </p>
-          </CardContent>
-        </Card>
+        <UserStatsCard
+          title="Permissions"
+          value={userPermissions.length}
+          description={`Across ${new Set(userPermissions.map(p => p.resource)).size} resources`}
+          icon="permissions"
+        />
         
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Pending Requests</CardTitle>
-            <ListCheck className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{pendingRequests.length}</div>
-            <p className="text-xs text-muted-foreground mt-1">
-              System-wide pending access requests
-            </p>
-          </CardContent>
-        </Card>
+        <UserStatsCard
+          title="Pending Requests"
+          value={pendingRequests.length}
+          description="System-wide pending access requests"
+          icon="pendingRequests"
+        />
         
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Your Approvals</CardTitle>
-            <AlertTriangle className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{myPendingApprovals.length}</div>
-            <p className="text-xs text-muted-foreground mt-1">
-              Access requests waiting for your approval
-            </p>
-          </CardContent>
-        </Card>
+        <UserStatsCard
+          title="Your Approvals"
+          value={myPendingApprovals.length}
+          description="Access requests waiting for your approval"
+          icon="approvals"
+        />
       </div>
 
       {canViewSystemStats && (
         <>
           {/* Access Review Insights Section */}
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
-            <Card>
-              <CardHeader>
-                <CardTitle>Access Compliance Overview</CardTitle>
-                <CardDescription>Actual vs. approved access across the organization</CardDescription>
-              </CardHeader>
-              <CardContent className="h-80">
-                <div className="flex flex-col h-full">
-                  <div className="flex-1">
-                    <ResponsiveContainer width="100%" height="100%">
-                      <PieChart>
-                        <Pie
-                          data={accessMatchData}
-                          cx="50%"
-                          cy="50%"
-                          innerRadius={70}
-                          outerRadius={100}
-                          fill="#8884d8"
-                          dataKey="value"
-                          label={({name, percent}) => `${name}: ${(percent * 100).toFixed(0)}%`}
-                        >
-                          {accessMatchData.map((entry, index) => (
-                            <Cell key={`cell-${index}`} fill={ACCESS_COLORS[index % ACCESS_COLORS.length]} />
-                          ))}
-                        </Pie>
-                        <Legend />
-                        <Tooltip formatter={(value) => `${value}%`} />
-                      </PieChart>
-                    </ResponsiveContainer>
-                  </div>
-                  <div className="mt-4">
-                    <p className="text-sm text-center">
-                      <span className="font-medium text-blue-600">85%</span> of user access matches approved roles
-                    </p>
-                    <p className="text-sm text-center text-muted-foreground">
-                      {violationsData.reduce((acc, curr) => acc + curr.count, 0)} total violations found
-                    </p>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-
-            <Card>
-              <CardHeader>
-                <CardTitle>Access Violations by Type</CardTitle>
-                <CardDescription>Distribution of potential policy violations</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <div className="h-80">
-                  <ResponsiveContainer width="100%" height="100%">
-                    <BarChart
-                      data={violationsData}
-                      layout="vertical"
-                      margin={{ top: 20, right: 30, left: 100, bottom: 20 }}
-                    >
-                      <XAxis type="number" />
-                      <YAxis type="category" dataKey="type" width={80} />
-                      <Tooltip 
-                        formatter={(value, name, props) => [
-                          value, 
-                          props.payload.description
-                        ]} 
-                      />
-                      <Bar dataKey="count" fill="#3b82f6" radius={[0, 4, 4, 0]} />
-                    </BarChart>
-                  </ResponsiveContainer>
-                </div>
-              </CardContent>
-            </Card>
+            <AccessComplianceCard data={accessMatchData} colors={ACCESS_COLORS} />
+            <AccessViolationsCard data={violationsData} />
           </div>
 
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            <Card>
-              <CardHeader className="pb-3">
-                <div className="flex items-center justify-between">
-                  <CardTitle>Role to User Mapping</CardTitle>
-                  <Users className="h-4 w-4 text-muted-foreground" />
-                </div>
-                <CardDescription>Number of users assigned to each role</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead>Role Name</TableHead>
-                      <TableHead className="text-right">Users</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {roleDistribution.sort((a, b) => b.users - a.users).map((role) => (
-                      <TableRow key={role.name}>
-                        <TableCell>{role.name}</TableCell>
-                        <TableCell className="text-right">{role.users}</TableCell>
-                      </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
-              </CardContent>
-            </Card>
-
-            <Card>
-              <CardHeader className="pb-3">
-                <div className="flex items-center justify-between">
-                  <CardTitle>Pending Access Reviews</CardTitle>
-                  <Clock className="h-4 w-4 text-muted-foreground" />
-                </div>
-                <CardDescription>Reviews requiring attention</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead>Resource</TableHead>
-                      <TableHead>Role</TableHead>
-                      <TableHead className="text-right">Days Overdue</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {pendingReviewsData.map((review) => (
-                      <TableRow key={review.id}>
-                        <TableCell>{review.resource}</TableCell>
-                        <TableCell>{review.role}</TableCell>
-                        <TableCell className="text-right">
-                          <span className={`font-medium ${review.daysOverdue > 5 ? 'text-red-500' : 'text-amber-500'}`}>
-                            {review.daysOverdue}
-                          </span>
-                        </TableCell>
-                      </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
-              </CardContent>
-            </Card>
+            <RoleDistributionTable data={roleDistribution} />
+            <PendingAccessReviewsTable data={pendingReviewsData} />
           </div>
 
-          <Card>
-            <CardHeader>
-              <CardTitle>Access Review Progress</CardTitle>
-              <CardDescription>Status of current access review cycle</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-4">
-                <div className="space-y-2">
-                  <div className="flex items-center justify-between">
-                    <span className="text-sm font-medium">Manager Reviews</span>
-                    <span className="text-sm text-muted-foreground">75%</span>
-                  </div>
-                  <Progress value={75} className="h-2" />
-                </div>
-                
-                <div className="space-y-2">
-                  <div className="flex items-center justify-between">
-                    <span className="text-sm font-medium">Compliance Reviews</span>
-                    <span className="text-sm text-muted-foreground">45%</span>
-                  </div>
-                  <Progress value={45} className="h-2" />
-                </div>
-                
-                <div className="space-y-2">
-                  <div className="flex items-center justify-between">
-                    <span className="text-sm font-medium">Overall Completion</span>
-                    <span className="text-sm text-muted-foreground">60%</span>
-                  </div>
-                  <Progress value={60} className="h-2" />
-                </div>
-              </div>
-            </CardContent>
-          </Card>
+          <AccessReviewProgress progressItems={progressItems} />
         </>
       )}
     </div>
