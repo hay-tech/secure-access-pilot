@@ -46,8 +46,8 @@ const Login: React.FC = () => {
           <div className="inline-flex items-center justify-center mb-2">
             <Shield className="h-10 w-10 text-iam-primary" />
           </div>
-          <h1 className="text-3xl font-bold">CPE IAM Portal</h1>
-          <p className="text-gray-600">Identity and Access Management</p>
+          <h1 className="text-3xl font-bold">CPE Cloud IAM Portal</h1>
+          <p className="text-gray-600">Identity and Access Management Hub</p>
         </div>
         
         <Card>
