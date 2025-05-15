@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useState } from 'react';
 import { User, Role, Permission, AccessRequest, AuditLog, AccessReview, ApprovalStep } from '../types/iam';
-import { users, roles, permissions, accessRequests, auditLogs, accessReviews } from '../data/mockData';
+import { users, roles, permissions, accessRequests, auditLogs, accessReviews, accessViolations } from '../data/mockData';
 import { toast } from 'sonner';
 
 interface IAMContextType {
@@ -29,7 +29,8 @@ interface IAMContextType {
   approveAccessRequest: (id: string, approverId: string, approverType: 'manager' | 'security', approved: boolean, comments?: string) => Promise<AccessRequest | null>;
   
   // Logging
-  logActivity: (eventType: AuditLog['eventType'], userId: string, details: string) => Promise<AuditLog>;
+  logActivity: (eventType: AuditLog['eventType'], userId: string, details: string) => Promise<void>;
+  getAuditLogsForUser: (userId: string) => AuditLog[];
   
   // Access reviews
   createAccessReview: (review: Omit<AccessReview, 'id' | 'createdAt'>) => Promise<AccessReview>;
@@ -334,19 +335,28 @@ export const IAMProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   };
 
   // Logging
-  const logActivity = async (eventType: AuditLog['eventType'], userId: string, details: string): Promise<AuditLog> => {
+  const logActivity = async (
+    eventType: AuditLog['eventType'], 
+    userId: string, 
+    details: string
+  ) => {
     const newLog: AuditLog = {
-      id: `log${auditLogsState.length + 1}`,
+      id: `log-${Date.now()}`,
       eventType,
       userId,
       details,
-      ipAddress: '127.0.0.1', // In a real app, this would be the actual IP
-      timestamp: new Date().toISOString(),
+      ipAddress: '127.0.0.1', // example IP, in real app would be captured
+      timestamp: new Date().toISOString()
     };
+    
     setAuditLogs(prev => [newLog, ...prev]);
-    return newLog;
+    return;
   };
-
+  
+  const getAuditLogsForUser = (userId: string) => {
+    return auditLogsState.filter(log => log.userId === userId);
+  };
+  
   // Access reviews
   const createAccessReview = async (review: Omit<AccessReview, 'id' | 'createdAt'>): Promise<AccessReview> => {
     const newReview: AccessReview = {
@@ -429,6 +439,7 @@ export const IAMProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     approveAccessRequest,
     
     logActivity,
+    getAuditLogsForUser,
     
     createAccessReview,
     

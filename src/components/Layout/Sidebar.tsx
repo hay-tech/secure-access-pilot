@@ -1,134 +1,62 @@
 
-import React from 'react';
-import { NavLink } from 'react-router-dom';
-import { useAuth } from '../../contexts/AuthContext';
-import { useIAM } from '../../contexts/IAMContext';
-import { cn } from '@/lib/utils';
+import { Link, useLocation } from "react-router-dom";
+import { cn } from "@/lib/utils";
 import { 
-  User, 
+  LayoutDashboard, 
   Users, 
+  ClipboardList, 
   Shield, 
-  ListCheck, 
+  CheckSquare, 
   FileText, 
-  Settings,
-  BarChart4
-} from 'lucide-react';
+  Briefcase,
+  Clock,
+  User
+} from "lucide-react";
 
-const SidebarItem: React.FC<{
-  to: string;
-  icon: React.ReactNode;
+interface SidebarItemProps {
+  icon: React.ElementType;
   label: string;
-}> = ({ to, icon, label }) => (
-  <NavLink
-    to={to}
-    className={({ isActive }) =>
-      cn(
-        'flex items-center gap-3 rounded-lg px-3 py-2 text-gray-900 transition-all hover:text-iam-primary',
-        isActive ? 'bg-iam-primary/10 text-iam-primary font-medium' : 'hover:bg-gray-100'
-      )
-    }
-  >
-    {icon}
-    <span>{label}</span>
-  </NavLink>
-);
+  href: string;
+  active: boolean;
+}
 
-const Sidebar: React.FC = () => {
-  const { currentUser } = useAuth();
-  const { hasPermission } = useIAM();
-  
-  if (!currentUser) return null;
-  
-  const canManageUsers = hasPermission(currentUser.id, 'users', 'read');
-  const canManageJobFunctions = hasPermission(currentUser.id, 'roles', 'read');
-  const canViewReports = hasPermission(currentUser.id, 'reports', 'read');
-  const canRunAudits = hasPermission(currentUser.id, 'audits', 'create');
-  const canApproveRequests = hasPermission(currentUser.id, 'access_requests', 'approve');
-
+const SidebarItem: React.FC<SidebarItemProps> = ({ icon: Icon, label, href, active }) => {
   return (
-    <div className="flex flex-col h-full border-r bg-white p-3 w-64">
-      <div className="space-y-4 py-4">
-        <div className="px-3 py-2">
-          <h2 className="mb-2 px-4 text-lg font-semibold tracking-tight">
-            Dashboard
-          </h2>
-          <div className="space-y-1">
-            <SidebarItem 
-              to="/dashboard" 
-              icon={<BarChart4 className="h-5 w-5" />} 
-              label="Overview" 
-            />
-            <SidebarItem 
-              to="/profile" 
-              icon={<User className="h-5 w-5" />} 
-              label="My Profile" 
-            />
-          </div>
-        </div>
-        
-        <div className="px-3 py-2">
-          <h2 className="mb-2 px-4 text-lg font-semibold tracking-tight">
-            Access Management
-          </h2>
-          <div className="space-y-1">
-            <SidebarItem 
-              to="/requests" 
-              icon={<ListCheck className="h-5 w-5" />} 
-              label="Access Requests" 
-            />
-            {canApproveRequests && (
-              <SidebarItem 
-                to="/approvals" 
-                icon={<Shield className="h-5 w-5" />} 
-                label="Approvals" 
-              />
-            )}
-            <SidebarItem 
-              to="/access-reviews" 
-              icon={<Shield className="h-5 w-5" />} 
-              label="User Access Reviews & Validation" 
-            />
-          </div>
-        </div>
-        
-        {(canManageUsers || canManageJobFunctions) && (
-          <div className="px-3 py-2">
-            <h2 className="mb-2 px-4 text-lg font-semibold tracking-tight">
-              Administration
-            </h2>
-            <div className="space-y-1">
-              {canManageUsers && (
-                <SidebarItem 
-                  to="/users" 
-                  icon={<Users className="h-5 w-5" />} 
-                  label="Users" 
-                />
-              )}
-              {canManageJobFunctions && (
-                <SidebarItem 
-                  to="/job-functions" 
-                  icon={<Shield className="h-5 w-5" />} 
-                  label="Job Functions" 
-                />
-              )}
-              {(canViewReports || canRunAudits) && (
-                <SidebarItem 
-                  to="/reports" 
-                  icon={<FileText className="h-5 w-5" />} 
-                  label="Reports" 
-                />
-              )}
-              <SidebarItem 
-                to="/settings" 
-                icon={<Settings className="h-5 w-5" />} 
-                label="Settings" 
-              />
-            </div>
-          </div>
-        )}
-      </div>
-    </div>
+    <Link
+      to={href}
+      className={cn(
+        "flex items-center gap-3 rounded-lg px-3 py-2 text-sm transition-all",
+        active
+          ? "bg-primary text-primary-foreground"
+          : "text-muted-foreground hover:bg-secondary hover:text-secondary-foreground"
+      )}
+    >
+      <Icon className="h-4 w-4" />
+      <span>{label}</span>
+    </Link>
   );
 };
 
-export default Sidebar;
+export function Sidebar() {
+  const location = useLocation();
+  const pathname = location.pathname;
+
+  return (
+    <div className="hidden lg:flex flex-col gap-6 border-r bg-background px-2 py-4 h-full">
+      <div className="flex flex-col gap-1">
+        <h2 className="px-4 text-lg font-semibold">Navigation</h2>
+        <SidebarItem icon={LayoutDashboard} label="Dashboard" href="/dashboard" active={pathname === '/dashboard'} />
+        <SidebarItem icon={Users} label="Users" href="/users" active={pathname === '/users'} />
+        <SidebarItem icon={ClipboardList} label="Access Requests" href="/requests" active={pathname === '/requests'} />
+        <SidebarItem icon={Shield} label="Access Reviews" href="/reviews" active={pathname === '/reviews'} />
+        <SidebarItem icon={CheckSquare} label="Approvals" href="/approvals" active={pathname === '/approvals'} />
+        <SidebarItem icon={FileText} label="Reports" href="/reports" active={pathname === '/reports'} />
+        <SidebarItem icon={Briefcase} label="Job Functions" href="/job-functions" active={pathname === '/job-functions'} />
+        <SidebarItem icon={Clock} label="Audit Logs" href="/audit-logs" active={pathname === '/audit-logs'} />
+      </div>
+      <div className="mt-auto">
+        <SidebarItem icon={User} label="Profile" href="/profile" active={pathname === '/profile'} />
+      </div>
+    </div>
+  );
+}
