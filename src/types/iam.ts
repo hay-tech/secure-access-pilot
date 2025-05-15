@@ -216,12 +216,14 @@ export interface TargetResource {
   isSensitive?: boolean;
   isPrivileged?: boolean;
   recommendedFor: string[];
+  resourceHierarchy?: string;
 }
 
 export interface ComplianceEnvironment {
   id: string;
   name: string;
   description: string;
+  sovereignOps: boolean;
 }
 
 export interface EnvironmentType {
