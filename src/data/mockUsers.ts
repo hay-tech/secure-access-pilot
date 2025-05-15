@@ -38,7 +38,7 @@ export const users: User[] = [
     createdAt: '2023-01-16T09:00:00Z',
     lastLogin: '2023-05-10T09:15:00Z',
     jobFunction: 'CPE Platform Contributor',
-    accessLevel: 'Power User'
+    accessLevel: 'Contributor'
   },
   {
     id: 'user4',

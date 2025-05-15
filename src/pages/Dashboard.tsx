@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../contexts/AuthContext';
 import { useIAM } from '../contexts/IAMContext';
@@ -9,7 +10,6 @@ import RoleDistributionTable from '../components/dashboard/RoleDistributionTable
 import PendingAccessReviewsTable from '../components/dashboard/PendingAccessReviewsTable';
 import AccessReviewProgress from '../components/dashboard/AccessReviewProgress';
 import DashboardSkeleton from '../components/dashboard/DashboardSkeleton';
-import AtsCard from '../components/dashboard/AtsCard';
 
 // Import UI components
 import { ChartContainer, ChartTooltip, ChartTooltipContent } from '@/components/ui/chart';
@@ -47,6 +47,7 @@ const Dashboard: React.FC = () => {
 
   const userRoles = getUserRoles(currentUser.id);
   const userPermissions = getUserPermissions(currentUser.id);
+  const userLastname = getUserLastname(currentUser, userLastname);
   
   // Get job functions directly from the user object instead of from roles
   const userJobFunctions = currentUser.jobFunction ? [currentUser.jobFunction] : 
@@ -105,17 +106,6 @@ const Dashboard: React.FC = () => {
     { id: 'rev5', resource: 'GCP-CJIS-Prod', role: 'CPE Platform Security Administrator', daysOverdue: 2 }
   ];
 
-  // Sample data for ATS Chart
-  const atsData = [
-    { month: 'Jan', visits: 320 },
-    { month: 'Feb', visits: 280 },
-    { month: 'Mar', visits: 310 },
-    { month: 'Apr', visits: 340 },
-    { month: 'May', visits: 490 },
-    { month: 'Jun', visits: 430 },
-    { month: 'Jul', visits: 380 },
-  ];
-
   // Progress data for access review
   const progressItems = [
     { label: 'Manager Reviews', value: 75 },
@@ -163,7 +153,7 @@ const Dashboard: React.FC = () => {
           description="System-wide pending access requests"
           icon="pendingRequests"
         />
-        
+        {userLastname !== Developer}
         <UserStatsCard
           title="Your Approvals"
           value={myPendingApprovals.length}
@@ -174,14 +164,11 @@ const Dashboard: React.FC = () => {
 
       {canViewSystemStats && (
         <>
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+          <div className="grid grid-cols-1 lg:grid-cols-1 gap-6 mb-6">
             <div className="h-full">
               <AspectRatio ratio={16/9} className="bg-card border rounded-lg">
                 <AccessComplianceCard data={accessMatchData} colors={ACCESS_COLORS} />
               </AspectRatio>
-            </div>
-            <div className="h-full">
-              <AtsCard data={atsData} />
             </div>
           </div>
 
