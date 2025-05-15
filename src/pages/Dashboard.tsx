@@ -98,11 +98,11 @@ const Dashboard: React.FC = () => {
 
   // Mock data for pending reviews table
   const pendingReviewsData = [
-    { id: 'rev1', resource: 'Production Database', role: 'Database Administrator', daysOverdue: 5 },
-    { id: 'rev2', resource: 'Financial Reports', role: 'Business Analyst', daysOverdue: 3 },
-    { id: 'rev3', resource: 'Source Code Repository', role: 'Software Engineer', daysOverdue: 7 },
-    { id: 'rev4', resource: 'Customer Data', role: 'Data Analyst', daysOverdue: 2 },
-    { id: 'rev5', resource: 'Network Configuration', role: 'Network Administrator', daysOverdue: 9 }
+    { id: 'rev1', resource: 'Azure-Federal-Prod', role: 'CPE Platform Administrator', daysOverdue: 5 },
+    { id: 'rev2', resource: 'Azure-Federal-Stage', role: 'CPE IAM Administrator', daysOverdue: 9 },
+    { id: 'rev3', resource: 'AWS-CCCS-Prod', role: 'CPE Platform Site Reliability Engineers Analyst', daysOverdue: 3 },
+    { id: 'rev4', resource: 'GCP-Commercial (US)-Prod', role: 'CPE Platform COntributor', daysOverdue: 7 },
+    { id: 'rev5', resource: 'GCP-CJIS-Prod', role: 'CPE Platform Security Administrator', daysOverdue: 2 }
   ];
 
   // Progress data for access review
