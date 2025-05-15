@@ -40,7 +40,7 @@ const AccessReviewEnvironmentHandler: React.FC<AccessReviewEnvironmentHandlerPro
     {
       id: 'cccs',
       name: 'CCCS',
-      description: 'Canadian  compliance requirements',
+      description: 'Canadian Center For Cybersecurity compliance requirements',
       complianceFrameworks: ['Protected-B', 'Protect-A'],
       riskLevel: 'High' as const
     },
