@@ -47,7 +47,7 @@ const Dashboard: React.FC = () => {
 
   const userRoles = getUserRoles(currentUser.id);
   const userPermissions = getUserPermissions(currentUser.id);
-  const userLastname = getUserLastname(currentUser, userLastname);
+  const userLastname = getUserLastname(currentUser.userLastname);
   
   // Get job functions directly from the user object instead of from roles
   const userJobFunctions = currentUser.jobFunction ? [currentUser.jobFunction] : 
