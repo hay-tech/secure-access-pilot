@@ -10,5 +10,5 @@ export const toast = (options: { description?: string; variant?: "default" | "de
   return sonnerToast(options.description);
 };
 
-export { useToast as useToastOriginal };
+// Export the original useToast hook
 export { useToastOriginal as useToast };
