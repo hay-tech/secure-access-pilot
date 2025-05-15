@@ -62,6 +62,7 @@ export interface AccessRequest {
   // Enhanced fields
   riskScore?: number;
   riskLevel?: 'Low' | 'Medium' | 'High';
+  environment?: string; // Added this property to match usage in mockAccessRequests.ts
   environmentType?: string;
   complianceFramework?: string;
   approvalChain?: ApprovalStep[];
@@ -72,7 +73,9 @@ export interface AccessRequest {
   accessDurationType?: 'permanent' | 'temporary';
   temporaryAccessDuration?: '1 day' | '3 days' | '5 days';
   businessJustification?: string;
-  projectName?: string; // Add the missing projectName field
+  projectName?: string;
+  // Add jobFunction to match usage in mockAccessRequests.ts
+  jobFunction?: string;
 }
 
 export interface ApprovalStep {
