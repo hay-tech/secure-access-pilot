@@ -12,6 +12,7 @@ import PermissionGapItem from './PermissionGapItem';
 interface UserAccessReviewRowProps {
   user: User;
   gaps: PermissionGap[];
+  environment: string;
   onApproveGap: (userId: string, gapIndex: number, approved: boolean, justification?: string) => Promise<void>;
   onCompleteReview: (userId: string, decision: 'maintain' | 'revoke' | 'modify', comments?: string) => Promise<void>;
 }
@@ -19,6 +20,7 @@ interface UserAccessReviewRowProps {
 const UserAccessReviewRow: React.FC<UserAccessReviewRowProps> = ({
   user,
   gaps,
+  environment,
   onApproveGap,
   onCompleteReview
 }) => {
@@ -27,10 +29,6 @@ const UserAccessReviewRow: React.FC<UserAccessReviewRowProps> = ({
   const handleToggleExpand = () => {
     setIsExpanded(!isExpanded);
   };
-
-  // Get CSP details from user if available
-  const csp = user.csp || "Azure";
-  const cspSubtype = user.cspSubtype || "Commercial";
 
   const hasCriticalGaps = gaps.some(g => g.severity === 'Critical' || g.severity === 'High');
   
@@ -57,6 +55,7 @@ const UserAccessReviewRow: React.FC<UserAccessReviewRowProps> = ({
   return (
     <React.Fragment>
       <TableRow className="cursor-pointer hover:bg-muted/50" onClick={handleToggleExpand}>
+        <TableCell>{environment}</TableCell>
         <TableCell>
           <div className="flex items-center gap-2">
             {user.firstName} {user.lastName}
@@ -82,8 +81,6 @@ const UserAccessReviewRow: React.FC<UserAccessReviewRowProps> = ({
             </Tooltip>
           </div>
         </TableCell>
-        <TableCell>{csp}</TableCell>
-        <TableCell>{cspSubtype}</TableCell>
         <TableCell>
           <div className="flex items-center space-x-1">
             <span className="font-medium">{gaps.length}</span>
@@ -121,7 +118,7 @@ const UserAccessReviewRow: React.FC<UserAccessReviewRowProps> = ({
       
       {isExpanded && (
         <TableRow>
-          <TableCell colSpan={7} className="p-0">
+          <TableCell colSpan={5} className="p-0">
             <div className="bg-muted/30 p-4">
               <h4 className="font-medium mb-4">Permission Gaps</h4>
               
