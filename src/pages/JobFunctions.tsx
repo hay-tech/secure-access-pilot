@@ -76,7 +76,7 @@ const JobFunctions: React.FC = () => {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="text-3xl font-bold tracking-tight">Job Functions</h2>
+          <h2 className="text-3xl font-bold tracking-tight">Cloud-Agnostic Job Functions</h2>
           <p className="text-muted-foreground">
             Manage and view job functions and their associated permissions.
           </p>
@@ -88,24 +88,24 @@ const JobFunctions: React.FC = () => {
       </div>
 
       <Tabs defaultValue="all" value={currentTab} onValueChange={setCurrentTab}>
-        <div className="flex items-center justify-between mb-4">
-          <TabsList className="grid" style={{ gridTemplateColumns: `repeat(${regulatoryEnvironments.length + 1}, minmax(0, 1fr))` }}>
-            <TabsTrigger value="all" className="gap-2">
-              <EnvironmentBadge environment="All" active={currentTab === 'all'} count={environmentCounts['all']} />
-            </TabsTrigger>
-            {regulatoryEnvironments.map(env => {
-              const envName = env.name.toLowerCase();
-              return (
-                <TabsTrigger key={env.id} value={envName} className="gap-2">
-                  <EnvironmentBadge 
-                    environment={env.name} 
-                    active={currentTab === envName} 
-                    count={environmentCounts[envName] || 0}
-                  />
-                </TabsTrigger>
-              );
-            })}
-          </TabsList>
+         <div className="flex items-center justify-between mb-4">
+     //     <TabsList className="grid" style={{ gridTemplateColumns: `repeat(${regulatoryEnvironments.length + 1}, minmax(0, 1fr))` }}>
+     //       <TabsTrigger value="all" className="gap-2">
+     //         <EnvironmentBadge environment="All" active={currentTab === 'all'} count={environmentCounts['all']} />
+     //       </TabsTrigger>
+     //       {regulatoryEnvironments.map(env => {
+     //         const envName = env.name.toLowerCase();
+     //         return (
+     //           <TabsTrigger key={env.id} value={envName} className="gap-2">
+     //             <EnvironmentBadge 
+     //               environment={env.name} 
+     //               active={currentTab === envName} 
+     //               count={environmentCounts[envName] || 0}
+     //             />
+     //           </TabsTrigger>
+     //         );
+     //       })}
+     //     </TabsList>
           <div className="flex gap-2">
             {searchText && (
               <Button
