@@ -1,97 +1,99 @@
 
 import React from 'react';
 import { Table, TableHeader, TableRow, TableHead, TableBody, TableCell } from "@/components/ui/table";
-import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
-import { AccessReviewLog } from "@/types/iam";
+import { ScrollArea } from "@/components/ui/scroll-area";
 import { Badge } from "@/components/ui/badge";
-import { FileText, Calendar } from "lucide-react";
+import { useIAM } from '@/contexts/IAMContext';
+import { AccessReviewLog } from '@/types/iam';
+import { jobFunctionDefinitions } from '@/data/mockJobFunctions';
 
 interface AccessReviewLogTableProps {
   logs: AccessReviewLog[];
 }
 
 const AccessReviewLogTable: React.FC<AccessReviewLogTableProps> = ({ logs }) => {
-  const formatDate = (dateString: string) => {
-    const date = new Date(dateString);
-    return new Intl.DateTimeFormat('en-US', {
-      year: 'numeric',
-      month: 'short',
-      day: 'numeric',
-      hour: 'numeric',
-      minute: 'numeric'
-    }).format(date);
+  const { users } = useIAM();
+  
+  // Get job function name from ID
+  const getJobFunctionName = (id: string) => {
+    const jobFunction = jobFunctionDefinitions.find(jf => jf.id === id);
+    return jobFunction ? jobFunction.title : id;
+  };
+  
+  // Get user name from ID
+  const getUserName = (userId: string) => {
+    const user = users.find(u => u.id === userId);
+    return user ? `${user.firstName} ${user.lastName}` : userId;
+  };
+  
+  // Get decision badge style
+  const getDecisionBadge = (decision: string) => {
+    switch (decision) {
+      case 'maintain':
+        return <Badge className="bg-green-100 text-green-800 border-green-300">Approved</Badge>;
+      case 'revoke':
+        return <Badge className="bg-red-100 text-red-800 border-red-300">Revoked</Badge>;
+      case 'modify':
+        return <Badge className="bg-blue-100 text-blue-800 border-blue-300">Modified</Badge>;
+      default:
+        return <Badge>{decision}</Badge>;
+    }
   };
 
   return (
-    <Card className="w-full">
-      <CardHeader>
-        <CardTitle className="flex items-center gap-2">
-          <FileText className="h-6 w-6 text-primary" />
-          Approval Accountability Log
-        </CardTitle>
-      </CardHeader>
-      <CardContent>
-        <Table>
-          <TableHeader>
-            <TableRow>
-              <TableHead className="w-[180px]">Date/Time</TableHead>
-              <TableHead>Approver</TableHead>
-              <TableHead>User</TableHead>
-              <TableHead>Environment</TableHead>
-              <TableHead>Job Function</TableHead>
-              <TableHead>Decision</TableHead>
-              <TableHead>Permissions</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {logs.map((log) => (
+    <ScrollArea className="h-[500px] w-full rounded-md border">
+      <Table>
+        <TableHeader>
+          <TableRow>
+            <TableHead>Environment</TableHead>
+            <TableHead>User</TableHead>
+            <TableHead>Job Function</TableHead>
+            <TableHead>Permissions</TableHead>
+            <TableHead>Approver</TableHead>
+            <TableHead>Decision</TableHead>
+            <TableHead>Date/Time</TableHead>
+          </TableRow>
+        </TableHeader>
+        <TableBody>
+          {logs.length > 0 ? (
+            logs.map((log) => (
               <TableRow key={log.id}>
-                <TableCell className="flex items-center gap-2 whitespace-nowrap">
-                  <Calendar className="h-4 w-4 text-muted-foreground" />
-                  {formatDate(log.timestamp)}
-                </TableCell>
-                <TableCell>{log.approverId}</TableCell>
-                <TableCell>{log.approvedUserId}</TableCell>
+                <TableCell>{log.environment}</TableCell>
+                <TableCell>{getUserName(log.approvedUserId)}</TableCell>
                 <TableCell>
-                  <Badge>{log.environment}</Badge>
-                </TableCell>
-                <TableCell>
-                  {log.jobFunctions.map((jf, i) => (
-                    <Badge key={i} variant="outline" className="mr-1">
-                      {jf}
-                    </Badge>
-                  ))}
+                  <div className="flex flex-col gap-1">
+                    {log.jobFunctions.map(jfId => (
+                      <div key={jfId}>{getJobFunctionName(jfId)}</div>
+                    ))}
+                  </div>
                 </TableCell>
                 <TableCell>
-                  <Badge 
-                    variant={log.decision === 'maintain' ? 'default' : 
-                           log.decision === 'revoke' ? 'destructive' : 
-                           'outline'}
-                  >
-                    {log.decision === 'maintain' ? 'Approved' : 
-                     log.decision === 'revoke' ? 'Revoked' : 
-                     'Modified'}
-                  </Badge>
+                  <div className="flex flex-col gap-1">
+                    {log.permissionsGranted.length > 3 ? (
+                      <>
+                        <span>{log.permissionsGranted.slice(0, 2).join(', ')}</span>
+                        <Badge variant="outline">{log.permissionsGranted.length - 2} more</Badge>
+                      </>
+                    ) : (
+                      log.permissionsGranted.join(', ')
+                    )}
+                  </div>
                 </TableCell>
-                <TableCell>
-                  <span className="text-muted-foreground text-sm">
-                    {log.permissionsGranted.length} permissions
-                  </span>
-                </TableCell>
+                <TableCell>{getUserName(log.approverId)}</TableCell>
+                <TableCell>{getDecisionBadge(log.decision)}</TableCell>
+                <TableCell>{new Date(log.timestamp).toLocaleString()}</TableCell>
               </TableRow>
-            ))}
-            
-            {logs.length === 0 && (
-              <TableRow>
-                <TableCell colSpan={7} className="h-24 text-center">
-                  No approval logs found.
-                </TableCell>
-              </TableRow>
-            )}
-          </TableBody>
-        </Table>
-      </CardContent>
-    </Card>
+            ))
+          ) : (
+            <TableRow>
+              <TableCell colSpan={7} className="h-24 text-center">
+                No access review logs found.
+              </TableCell>
+            </TableRow>
+          )}
+        </TableBody>
+      </Table>
+    </ScrollArea>
   );
 };
 

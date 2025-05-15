@@ -10,7 +10,6 @@ import { JobFunctionDefinition } from '@/types/iam';
 // Import refactored components
 import SearchBar from '@/components/job-functions/SearchBar';
 import JobFunctionTable from '@/components/job-functions/JobFunctionTable';
-import EnvironmentTabs from '@/components/job-functions/EnvironmentTabs';
 import EmptyJobFunctionState from '@/components/job-functions/EmptyJobFunctionState';
 
 const JobFunctions: React.FC = () => {
@@ -19,16 +18,9 @@ const JobFunctions: React.FC = () => {
   const [selectedJobFunction, setSelectedJobFunction] = useState<JobFunctionDefinition | null>(null);
   const [searchText, setSearchText] = useState('');
   
-  // Filter job functions by environment if needed and by search text
+  // Filter job functions by search text only (removed environment filtering)
   const filteredJobFunctions = useMemo(() => {
     let filtered = jobFunctionDefinitions;
-    
-    // Filter by environment
-    if (currentTab !== 'all') {
-      filtered = filtered.filter(jf => 
-        !jf.environmentRestrictions?.length || 
-        jf.environmentRestrictions?.includes(currentTab));
-    }
     
     // Filter by search text
     if (searchText.trim()) {
@@ -39,7 +31,7 @@ const JobFunctions: React.FC = () => {
     }
     
     return filtered;
-  }, [jobFunctionDefinitions, currentTab, searchText]);
+  }, [jobFunctionDefinitions, searchText]);
 
   // When environment tab changes, maintain selected job function if it's available in the new environment
   React.useEffect(() => {
@@ -49,24 +41,10 @@ const JobFunctions: React.FC = () => {
         setSelectedJobFunction(null);
       }
     }
-  }, [currentTab, filteredJobFunctions, selectedJobFunction]);
+  }, [filteredJobFunctions, selectedJobFunction]);
 
-  // Count job functions by environment
-  const environmentCounts = useMemo(() => {
-    const counts = {
-      all: jobFunctionDefinitions.length,
-    };
-    
-    regulatoryEnvironments.forEach(env => {
-      const envName = env.name.toLowerCase();
-      counts[envName] = jobFunctionDefinitions.filter(jf => 
-        !jf.environmentRestrictions?.length || 
-        jf.environmentRestrictions?.includes(envName)
-      ).length;
-    });
-    
-    return counts;
-  }, [jobFunctionDefinitions, regulatoryEnvironments]);
+  // Count job functions (simplified as we removed environment filtering)
+  const totalJobFunctions = jobFunctionDefinitions.length;
 
   return (
     <div className="space-y-6">
@@ -83,15 +61,8 @@ const JobFunctions: React.FC = () => {
         </Button>
       </div>
 
-      <Tabs defaultValue="all" value={currentTab} onValueChange={setCurrentTab}>
+      <Tabs defaultValue="all" value={currentTab}>
         <div className="flex items-center justify-between mb-4">
-          {/* Uncomment to use the EnvironmentTabs component */}
-          {/* <EnvironmentTabs 
-            currentTab={currentTab}
-            regulatoryEnvironments={regulatoryEnvironments}
-            environmentCounts={environmentCounts}
-          /> */}
-          
           <SearchBar searchText={searchText} setSearchText={setSearchText} />
         </div>
 

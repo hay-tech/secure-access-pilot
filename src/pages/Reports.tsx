@@ -13,10 +13,10 @@ import { useIAM } from '@/contexts/IAMContext';
 import { useJobFunctionMapping } from '@/hooks/iam/useJobFunctionMapping';
 import { Badge } from '@/components/ui/badge';
 import { toast } from 'sonner';
+import { jobFunctionDefinitions } from '@/data/mockJobFunctions';
 
 const Reports: React.FC = () => {
   const { users, accessReviews } = useIAM();
-  const { jobFunctionDefinitions } = useJobFunctionMapping();
   const [currentTab, setCurrentTab] = useState('federal');
   const [filterJobFunction, setFilterJobFunction] = useState('');
   const [searchQuery, setSearchQuery] = useState('');
@@ -37,7 +37,7 @@ const Reports: React.FC = () => {
     // For now, we'll show all users on all tabs
     
     // Filter by job function if set
-    if (filterJobFunction && (!user.jobFunction || !user.jobFunction.includes(filterJobFunction))) {
+    if (filterJobFunction && (!user.jobFunctions || !user.jobFunctions.includes(filterJobFunction))) {
       return false;
     }
     
