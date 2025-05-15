@@ -14,7 +14,6 @@ import { AccessRequest } from '../../types/iam';
 
 interface CompletedApprovalsTableProps {
   completedApprovals: AccessRequest[];
-  currentUserId: string;
   getUserName: (userId: string) => string;
   getUserJobFunctions: (userId: string) => string;
   getAccessType: (request: any) => string;
@@ -22,7 +21,6 @@ interface CompletedApprovalsTableProps {
 
 const CompletedApprovalsTable: React.FC<CompletedApprovalsTableProps> = ({
   completedApprovals,
-  currentUserId,
   getUserName,
   getUserJobFunctions,
   getAccessType,
@@ -51,8 +49,9 @@ const CompletedApprovalsTable: React.FC<CompletedApprovalsTableProps> = ({
           </TableRow>
         ) : (
           completedApprovals.map((request) => {
-            const isManager = request.managerApproval?.approverId === currentUserId;
-            const approval = isManager ? request.managerApproval : request.securityApproval;
+            // Get approval details - we'll determine this from the request itself
+            const isManagerApproval = request.managerApproval?.status !== 'pending';
+            const approval = isManagerApproval ? request.managerApproval : request.securityApproval;
             
             return (
               <TableRow key={request.id}>

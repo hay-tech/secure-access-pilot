@@ -9,7 +9,6 @@ interface ApprovalsTabContentProps {
   activeTab: 'pending' | 'completed';
   pendingApprovals: AccessRequest[];
   completedApprovals: AccessRequest[];
-  currentUserId: string;
   getUserName: (userId: string) => string;
   getUserJobFunctions: (userId: string) => string;
   getAccessType: (request: any) => string;
@@ -20,7 +19,6 @@ const ApprovalsTabContent: React.FC<ApprovalsTabContentProps> = ({
   activeTab,
   pendingApprovals,
   completedApprovals,
-  currentUserId,
   getUserName,
   getUserJobFunctions,
   getAccessType,
@@ -55,7 +53,6 @@ const ApprovalsTabContent: React.FC<ApprovalsTabContentProps> = ({
           <CardContent>
             <CompletedApprovalsTable
               completedApprovals={completedApprovals}
-              currentUserId={currentUserId}
               getUserName={getUserName}
               getUserJobFunctions={getUserJobFunctions}
               getAccessType={getAccessType}
