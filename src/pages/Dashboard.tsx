@@ -47,7 +47,10 @@ const Dashboard: React.FC = () => {
 
   const userRoles = getUserRoles(currentUser.id);
   const userPermissions = getUserPermissions(currentUser.id);
-  const userJobFunctions = userRoles.map(role => role.jobFunction).filter(Boolean);
+  
+  // Get job functions directly from the user object instead of from roles
+  const userJobFunctions = currentUser.jobFunction ? [currentUser.jobFunction] : 
+                          currentUser.jobFunctions ? currentUser.jobFunctions : [];
   
   const pendingRequests = accessRequests.filter(r => r.status === 'pending');
   const myPendingApprovals = pendingRequests.filter(r => 
@@ -64,13 +67,16 @@ const Dashboard: React.FC = () => {
     { name: 'Rejected', value: accessRequests.filter(r => r.status === 'rejected').length },
   ];
   
-  // Data for job function distribution instead of role distribution
+  // Data for job function distribution - get directly from users
   const jobFunctionCounts: Record<string, number> = {};
   users.forEach(user => {
-    const userRoles = roles.filter(role => user.roleIds.includes(role.id));
-    userRoles.forEach(role => {
-      if (role.jobFunction) {
-        jobFunctionCounts[role.jobFunction] = (jobFunctionCounts[role.jobFunction] || 0) + 1;
+    // Get job functions directly from user
+    const jobFunctions = user.jobFunction ? [user.jobFunction] : 
+                       user.jobFunctions ? user.jobFunctions : [];
+    
+    jobFunctions.forEach(jobFunction => {
+      if (jobFunction) {
+        jobFunctionCounts[jobFunction] = (jobFunctionCounts[jobFunction] || 0) + 1;
       }
     });
   });
