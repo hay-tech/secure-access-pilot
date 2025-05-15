@@ -1,9 +1,10 @@
 
-import React, { useState } from 'react';
+import React from 'react';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
-import { Info } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
+import { Info, ShieldCheck } from "lucide-react";
 import { JobFunctionDefinition } from '@/types/iam';
 
 interface JobFunctionSelectorProps {
@@ -17,9 +18,17 @@ const JobFunctionSelector: React.FC<JobFunctionSelectorProps> = ({
   onSelect,
   currentJobFunction
 }) => {
-  const [selectedJobFunctionId, setSelectedJobFunctionId] = useState<string>(
+  const [selectedJobFunctionId, setSelectedJobFunctionId] = React.useState<string>(
     currentJobFunction?.id || ''
   );
+
+  React.useEffect(() => {
+    if (currentJobFunction) {
+      setSelectedJobFunctionId(currentJobFunction.id);
+    } else {
+      setSelectedJobFunctionId('');
+    }
+  }, [currentJobFunction]);
 
   const handleSelectChange = (value: string) => {
     setSelectedJobFunctionId(value);
@@ -32,6 +41,7 @@ const JobFunctionSelector: React.FC<JobFunctionSelectorProps> = ({
   return (
     <div className="flex flex-col space-y-4">
       <div className="flex items-center space-x-2">
+        <ShieldCheck className="h-5 w-5 text-primary" />
         <h3 className="text-lg font-medium">Select Job Function</h3>
         <Tooltip>
           <TooltipTrigger asChild>
@@ -47,18 +57,34 @@ const JobFunctionSelector: React.FC<JobFunctionSelectorProps> = ({
 
       <div className="flex items-center space-x-2">
         <Select value={selectedJobFunctionId} onValueChange={handleSelectChange}>
-          <SelectTrigger className="w-[300px]">
+          <SelectTrigger className="w-full">
             <SelectValue placeholder="Select a job function" />
           </SelectTrigger>
-          <SelectContent>
+          <SelectContent className="max-h-[300px]">
             {jobFunctions.map((jf) => (
-              <SelectItem key={jf.id} value={jf.id}>
-                {jf.title}
+              <SelectItem key={jf.id} value={jf.id} className="flex items-center justify-between py-2">
+                <div className="flex flex-col">
+                  {jf.title}
+                  <span className="text-xs text-muted-foreground">{jf.description.substring(0, 50)}...</span>
+                </div>
               </SelectItem>
             ))}
           </SelectContent>
         </Select>
       </div>
+      
+      {currentJobFunction?.environmentRestrictions?.length > 0 && (
+        <div className="mt-2">
+          <p className="text-sm text-muted-foreground mb-1">Environment Restrictions:</p>
+          <div className="flex flex-wrap gap-1">
+            {currentJobFunction.environmentRestrictions.map(env => (
+              <Badge key={env} variant="outline" className="bg-amber-50 text-amber-700 border-amber-200">
+                {env}
+              </Badge>
+            ))}
+          </div>
+        </div>
+      )}
     </div>
   );
 };
