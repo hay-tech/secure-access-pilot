@@ -6,7 +6,6 @@ import { useIAM } from '../contexts/IAMContext';
 // Import dashboard components
 import UserStatsCard from '../components/dashboard/UserStatsCard';
 import AccessComplianceCard from '../components/dashboard/AccessComplianceCard';
-import AccessViolationsCard from '../components/dashboard/AccessViolationsCard';
 import RoleDistributionTable from '../components/dashboard/RoleDistributionTable';
 import PendingAccessReviewsTable from '../components/dashboard/PendingAccessReviewsTable';
 import AccessReviewProgress from '../components/dashboard/AccessReviewProgress';
@@ -48,6 +47,7 @@ const Dashboard: React.FC = () => {
 
   const userRoles = getUserRoles(currentUser.id);
   const userPermissions = getUserPermissions(currentUser.id);
+  const userJobFunctions = userRoles.map(role => role.jobFunction).filter(Boolean);
   
   const pendingRequests = accessRequests.filter(r => r.status === 'pending');
   const myPendingApprovals = pendingRequests.filter(r => 
@@ -64,10 +64,20 @@ const Dashboard: React.FC = () => {
     { name: 'Rejected', value: accessRequests.filter(r => r.status === 'rejected').length },
   ];
   
-  // Chart data for role distribution
-  const roleDistribution = roles.map(role => ({
-    name: role.name,
-    users: users.filter(user => user.roleIds.includes(role.id)).length,
+  // Data for job function distribution instead of role distribution
+  const jobFunctionCounts: Record<string, number> = {};
+  users.forEach(user => {
+    const userRoles = roles.filter(role => user.roleIds.includes(role.id));
+    userRoles.forEach(role => {
+      if (role.jobFunction) {
+        jobFunctionCounts[role.jobFunction] = (jobFunctionCounts[role.jobFunction] || 0) + 1;
+      }
+    });
+  });
+  
+  const jobFunctionDistribution = Object.entries(jobFunctionCounts).map(([name, users]) => ({
+    name,
+    users,
   }));
 
   // New data for access review insights
@@ -78,15 +88,6 @@ const Dashboard: React.FC = () => {
   const accessMatchData = [
     { name: 'Matched Access', value: 85 },
     { name: 'Unmatched Access', value: 15 }
-  ];
-
-  // Mock data for violations by type
-  const violationsData = [
-    { type: 'SoD', count: 12, description: 'Segregation of Duties' },
-    { type: 'Excessive', count: 18, description: 'Excessive Permissions' },
-    { type: 'Dormant', count: 7, description: 'Unused Access (90+ days)' },
-    { type: 'Critical', count: 5, description: 'Critical System Exceptions' },
-    { type: 'Mismatch', count: 10, description: 'Role-Permission Mismatch' }
   ];
 
   // Mock data for pending reviews table
@@ -126,9 +127,9 @@ const Dashboard: React.FC = () => {
       
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         <UserStatsCard 
-          title="Your Roles"
-          value={userRoles.length}
-          description={userRoles.map(r => r.name).join(', ')}
+          title="Your Job Function(s)"
+          value={userJobFunctions.length || 0}
+          description={userJobFunctions.join(', ') || 'No job functions assigned'}
           icon="roles"
         />
         
@@ -156,21 +157,16 @@ const Dashboard: React.FC = () => {
 
       {canViewSystemStats && (
         <>
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+          <div className="grid grid-cols-1 lg:grid-cols-1 gap-6 mb-6">
             <div className="h-full">
               <AspectRatio ratio={16/9} className="bg-card border rounded-lg">
                 <AccessComplianceCard data={accessMatchData} colors={ACCESS_COLORS} />
               </AspectRatio>
             </div>
-            <div className="h-full">
-              <AspectRatio ratio={16/9} className="bg-card border rounded-lg">
-                <AccessViolationsCard data={violationsData} />
-              </AspectRatio>
-            </div>
           </div>
 
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            <RoleDistributionTable data={roleDistribution} />
+            <RoleDistributionTable data={jobFunctionDistribution} title="Job Function to User Mapping" description="Number of users assigned to each job function" />
             <PendingAccessReviewsTable data={pendingReviewsData} />
           </div>
 
