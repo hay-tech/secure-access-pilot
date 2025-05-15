@@ -5,6 +5,11 @@ import { Textarea } from "@/components/ui/textarea";
 import { PermissionGap } from "@/types/iam";
 import { ShieldCheck, ShieldX, Check, X } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
+import { 
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger 
+} from "@/components/ui/tooltip";
 
 interface PermissionGapItemProps {
   gap: PermissionGap;
@@ -21,6 +26,7 @@ const PermissionGapItem: React.FC<PermissionGapItemProps> = ({
 }) => {
   const [justification, setJustification] = useState<string>('');
   const [showJustification, setShowJustification] = useState<boolean>(false);
+  const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
   
   const getSeverityColor = (severity: string) => {
     switch(severity) {
@@ -36,8 +42,19 @@ const PermissionGapItem: React.FC<PermissionGapItemProps> = ({
       setShowJustification(true);
       return;
     }
-    await onApproveGap(userId, index, true, justification);
-    setShowJustification(false);
+
+    if (justification.trim().length === 0) return;
+
+    setIsSubmitting(true);
+    try {
+      await onApproveGap(userId, index, true, justification);
+      setShowJustification(false);
+      setJustification('');
+    } catch (error) {
+      console.error('Error approving gap:', error);
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const handleRejectClick = async () => {
@@ -45,8 +62,19 @@ const PermissionGapItem: React.FC<PermissionGapItemProps> = ({
       setShowJustification(true);
       return;
     }
-    await onApproveGap(userId, index, false, justification);
-    setShowJustification(false);
+
+    if (justification.trim().length === 0) return;
+
+    setIsSubmitting(true);
+    try {
+      await onApproveGap(userId, index, false, justification);
+      setShowJustification(false);
+      setJustification('');
+    } catch (error) {
+      console.error('Error rejecting gap:', error);
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const handleCancelClick = () => {
@@ -78,6 +106,7 @@ const PermissionGapItem: React.FC<PermissionGapItemProps> = ({
               variant="outline"
               className="bg-green-50 text-green-700 hover:bg-green-100 hover:text-green-800 border-green-200"
               onClick={handleApproveClick}
+              disabled={isSubmitting}
             >
               <Check className="mr-1 h-4 w-4" />
               Approve
@@ -87,6 +116,7 @@ const PermissionGapItem: React.FC<PermissionGapItemProps> = ({
               variant="outline"
               className="bg-red-50 text-red-700 hover:bg-red-100 hover:text-red-800 border-red-200"
               onClick={handleRejectClick}
+              disabled={isSubmitting}
             >
               <X className="mr-1 h-4 w-4" />
               Reject
@@ -114,6 +144,28 @@ const PermissionGapItem: React.FC<PermissionGapItemProps> = ({
       </div>
       
       <p className="text-sm mb-3">{gap.description}</p>
+
+      {/* Display actual vs approved job functions */}
+      {(gap.actualJobFunction || gap.approvedJobFunction) && (
+        <div className="mt-2 mb-3 flex flex-col gap-1.5">
+          {gap.actualJobFunction && (
+            <div className="text-sm">
+              <span className="font-medium">Actual:</span>{" "}
+              <Badge variant="outline" className="bg-blue-50 ml-1">
+                {gap.actualJobFunction}
+              </Badge>
+            </div>
+          )}
+          {gap.approvedJobFunction && (
+            <div className="text-sm">
+              <span className="font-medium">Approved:</span>{" "}
+              <Badge variant="outline" className="bg-green-50 ml-1">
+                {gap.approvedJobFunction}
+              </Badge>
+            </div>
+          )}
+        </div>
+      )}
       
       {showJustification && (
         <div className="mt-4 space-y-4">
@@ -129,6 +181,7 @@ const PermissionGapItem: React.FC<PermissionGapItemProps> = ({
               size="sm"
               variant="outline"
               onClick={handleCancelClick}
+              disabled={isSubmitting}
             >
               Cancel
             </Button>
@@ -137,7 +190,7 @@ const PermissionGapItem: React.FC<PermissionGapItemProps> = ({
               variant="outline"
               className="bg-green-50 text-green-700 hover:bg-green-100 hover:text-green-800 border-green-200"
               onClick={handleApproveClick}
-              disabled={!justification.trim()}
+              disabled={!justification.trim() || isSubmitting}
             >
               <Check className="mr-1 h-4 w-4" />
               Approve
@@ -147,7 +200,7 @@ const PermissionGapItem: React.FC<PermissionGapItemProps> = ({
               variant="outline"
               className="bg-red-50 text-red-700 hover:bg-red-100 hover:text-red-800 border-red-200"
               onClick={handleRejectClick}
-              disabled={!justification.trim()}
+              disabled={!justification.trim() || isSubmitting}
             >
               <X className="mr-1 h-4 w-4" />
               Reject

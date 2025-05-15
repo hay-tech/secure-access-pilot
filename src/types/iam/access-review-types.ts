@@ -75,6 +75,9 @@ export interface PermissionGap {
   severity: 'Low' | 'Medium' | 'High' | 'Critical';
   approved?: boolean;
   justification?: string;
+  // New fields for job function comparison
+  actualJobFunction?: string;
+  approvedJobFunction?: string;
 }
 
 export interface PermissionComparisonResult {
