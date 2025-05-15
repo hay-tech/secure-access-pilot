@@ -38,14 +38,14 @@ const AccessReviewEnvironmentHandler: React.FC<AccessReviewEnvironmentHandlerPro
       riskLevel: 'Medium' as const
     },
     {
-      id: 'CCCS',
+      id: 'cccs',
       name: 'CCCS',
       description: 'Canadian  compliance requirements',
-      complianceFrameworks: ['Protected-B', 'xProtect-A'],
-      riskLevel: 'Critical' as const
+      complianceFrameworks: ['Protected-B', 'Protect-A'],
+      riskLevel: 'High' as const
     },
     {
-      id: 'CJIS',
+      id: 'cjis',
       name: 'CJIS',
       description: 'US Government compliance requirements',
       complianceFrameworks: ['CJIS', 'SOC2'],
