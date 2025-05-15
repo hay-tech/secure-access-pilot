@@ -33,7 +33,7 @@ export interface Permission {
   action: 'create' | 'read' | 'update' | 'delete' | 'approve';
   description: string;
   category?: 'Data' | 'System' | 'Function' | 'Security';
-  level?: 'Reader' | 'Contributor' | 'Admin';
+  level?: 'Reader' | 'Contributor' | 'Admin' | 'Basic' | 'Elevated';
 }
 
 export interface AccessRequest {
@@ -168,7 +168,10 @@ export type JobFunction =
   | 'Cloud Platform Security Contributor'
   | 'Cloud Platform Security Reader'
   | 'Cloud Platform FinOps Administrator'
-  | 'Cloud Platform Site Reliability Engineer';
+  | 'Cloud Platform Site Reliability Engineer'
+  // Additional roles
+  | 'Security Analyst'
+  | 'System Administrator';
 
 // New interface for detailed job function definition
 export interface JobFunctionDefinition {
