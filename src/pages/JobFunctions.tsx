@@ -89,23 +89,23 @@ const JobFunctions: React.FC = () => {
 
       <Tabs defaultValue="all" value={currentTab} onValueChange={setCurrentTab}>
          <div className="flex items-center justify-between mb-4">
-     //     <TabsList className="grid" style={{ gridTemplateColumns: `repeat(${regulatoryEnvironments.length + 1}, minmax(0, 1fr))` }}>
-     //       <TabsTrigger value="all" className="gap-2">
-     //         <EnvironmentBadge environment="All" active={currentTab === 'all'} count={environmentCounts['all']} />
-     //       </TabsTrigger>
-     //       {regulatoryEnvironments.map(env => {
-     //         const envName = env.name.toLowerCase();
-     //         return (
-     //           <TabsTrigger key={env.id} value={envName} className="gap-2">
-     //             <EnvironmentBadge 
-     //               environment={env.name} 
-     //               active={currentTab === envName} 
-     //               count={environmentCounts[envName] || 0}
-     //             />
-     //           </TabsTrigger>
-     //         );
-     //       })}
-     //     </TabsList>
+          {/* <TabsList className="grid" style={{ gridTemplateColumns: `repeat(${regulatoryEnvironments.length + 1}, minmax(0, 1fr))` }}>
+            <TabsTrigger value="all" className="gap-2">
+              <EnvironmentBadge environment="All" active={currentTab === 'all'} count={environmentCounts['all']} />
+            </TabsTrigger>
+            {regulatoryEnvironments.map(env => {
+              const envName = env.name.toLowerCase();
+              return (
+                <TabsTrigger key={env.id} value={envName} className="gap-2">
+                  <EnvironmentBadge 
+                    environment={env.name} 
+                    active={currentTab === envName} 
+                    count={environmentCounts[envName] || 0}
+                  />
+                </TabsTrigger>
+              );
+            })}
+          </TabsList> */}
           <div className="flex gap-2">
             {searchText && (
               <Button
