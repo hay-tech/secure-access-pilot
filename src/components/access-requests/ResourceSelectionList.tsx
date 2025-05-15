@@ -4,7 +4,7 @@ import { resourceHierarchyLevels, complianceEnvironments, environmentTypes } fro
 import { FormControl, FormField, FormItem, FormMessage } from '@/components/ui/form';
 import { Badge } from '@/components/ui/badge';
 import { Control } from 'react-hook-form';
-import { AccessRequestFormValues } from './AccessRequestForm';
+import { AccessRequestFormValues } from '../../hooks/useAccessRequestForm';
 
 // Component is kept for future use but no longer shown in the form
 interface ResourceSelectionListProps {

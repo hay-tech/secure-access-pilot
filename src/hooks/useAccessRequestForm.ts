@@ -11,6 +11,7 @@ import {
   approvers,
   complianceEnvironments
 } from '../data/mockData';
+import { getApprovalChain, calculateRiskScore } from '../utils/accessRequestUtils';
 
 // Define form schema with access type and temporary duration
 const accessRequestSchema = z.object({

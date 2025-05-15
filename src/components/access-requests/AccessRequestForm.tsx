@@ -27,7 +27,10 @@ import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { complianceEnvironments, environmentTypes, jobFunctionDefinitions } from '../../data/mockData';
 import { ApprovalChainPreview } from './ApprovalChainPreview';
 import { ResourceSelectionList } from './ResourceSelectionList';
-import { useAccessRequestForm } from '../../hooks/useAccessRequestForm';
+import { useAccessRequestForm, AccessRequestFormValues } from '../../hooks/useAccessRequestForm';
+
+// Export the type for use in other components
+export type { AccessRequestFormValues } from '../../hooks/useAccessRequestForm';
 
 interface AccessRequestFormProps {
   onSuccess: () => void;
