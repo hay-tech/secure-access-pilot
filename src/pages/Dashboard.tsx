@@ -10,7 +10,6 @@ import RoleDistributionTable from '../components/dashboard/RoleDistributionTable
 import PendingAccessReviewsTable from '../components/dashboard/PendingAccessReviewsTable';
 import AccessReviewProgress from '../components/dashboard/AccessReviewProgress';
 import DashboardSkeleton from '../components/dashboard/DashboardSkeleton';
-import AtsCard from '../components/dashboard/AtsCard';
 
 // Import UI components
 import { ChartContainer, ChartTooltip, ChartTooltipContent } from '@/components/ui/chart';
@@ -113,16 +112,6 @@ const Dashboard: React.FC = () => {
     { label: 'Overall Completion', value: 60 },
   ];
 
-  // Data for ATS chart
-  const atsData = [
-    { month: 'Jan', visits: 1200 },
-    { month: 'Feb', visits: 1800 },
-    { month: 'Mar', visits: 1600 },
-    { month: 'Apr', visits: 2200 },
-    { month: 'May', visits: 2500 },
-    { month: 'Jun', visits: 2300 },
-  ];
-
   const COLORS = ['#10b981', '#f59e0b', '#ef4444']; // green, amber, red
   const ACCESS_COLORS = ['#3b82f6', '#4ade80']; // blue, green
 
@@ -174,15 +163,10 @@ const Dashboard: React.FC = () => {
 
       {canViewSystemStats && (
         <>
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+          <div className="grid grid-cols-1 lg:grid-cols-1 gap-6 mb-6">
             <div className="h-full">
               <AspectRatio ratio={16/9} className="bg-card border rounded-lg">
                 <AccessComplianceCard data={accessMatchData} colors={ACCESS_COLORS} />
-              </AspectRatio>
-            </div>
-            <div className="h-full">
-              <AspectRatio ratio={16/9} className="bg-card border rounded-lg">
-                <AtsCard data={atsData} title="Application Traffic" description="Monthly traffic metrics" />
               </AspectRatio>
             </div>
           </div>
