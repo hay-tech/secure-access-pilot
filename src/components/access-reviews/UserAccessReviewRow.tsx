@@ -30,7 +30,6 @@ const UserAccessReviewRow: React.FC<UserAccessReviewRowProps> = ({
   // Get CSP details from user if available
   const csp = user.csp || "Azure";
   const cspSubtype = user.cspSubtype || "Commercial";
-  const securityLevel = user.securityLevel || "NIST 800-53 Moderate";
 
   const hasCriticalGaps = gaps.some(g => g.severity === 'Critical' || g.severity === 'High');
 
@@ -64,7 +63,6 @@ const UserAccessReviewRow: React.FC<UserAccessReviewRowProps> = ({
         </TableCell>
         <TableCell>{csp}</TableCell>
         <TableCell>{cspSubtype}</TableCell>
-        <TableCell>{securityLevel}</TableCell>
         <TableCell>
           <div className="flex items-center space-x-1">
             <span className="font-medium">{gaps.length}</span>
