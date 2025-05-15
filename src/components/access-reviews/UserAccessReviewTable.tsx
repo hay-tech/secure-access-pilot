@@ -36,7 +36,6 @@ const UserAccessReviewTable: React.FC<UserAccessReviewTableProps> = ({
               <TableHead>Job Function</TableHead>
               <TableHead>CSP</TableHead>
               <TableHead>CSP Subtype</TableHead>
-              <TableHead>Security Level</TableHead>
               <TableHead>Permission Gaps</TableHead>
               <TableHead>Actions</TableHead>
             </TableRow>
