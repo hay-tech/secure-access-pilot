@@ -6,14 +6,12 @@ import { AccessReview } from '@/types/iam';
 
 interface AccessReviewCardsProps {
   accessReviews: AccessReview[];
-  totalPermissionGaps: number;
-  totalUsersWithGaps: number;
+  totalPermissionGaps?: number;
+  totalUsersWithGaps?: number;
 }
 
 const AccessReviewCards: React.FC<AccessReviewCardsProps> = ({ 
-  accessReviews,
-  totalPermissionGaps,
-  totalUsersWithGaps
+  accessReviews
 }) => {
   // Calculate stats from access reviews
   const pendingReviews = accessReviews.filter(review => review.status === 'pending').length;
@@ -21,37 +19,7 @@ const AccessReviewCards: React.FC<AccessReviewCardsProps> = ({
   const overdueReviews = accessReviews.filter(review => review.status === 'overdue').length;
   
   return (
-    <div className="grid gap-4 grid-cols-1 md:grid-cols-2 lg:grid-cols-4">
-      <Card>
-        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-          <CardTitle className="text-sm font-medium">
-            Users with Permission Gaps
-          </CardTitle>
-          <XCircle className="h-4 w-4 text-red-500" />
-        </CardHeader>
-        <CardContent>
-          <div className="text-2xl font-bold">{totalUsersWithGaps}</div>
-          <p className="text-xs text-muted-foreground">
-            Users requiring review
-          </p>
-        </CardContent>
-      </Card>
-      
-      <Card>
-        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-          <CardTitle className="text-sm font-medium">
-            Total Permission Gaps
-          </CardTitle>
-          <XCircle className="h-4 w-4 text-red-500" />
-        </CardHeader>
-        <CardContent>
-          <div className="text-2xl font-bold">{totalPermissionGaps}</div>
-          <p className="text-xs text-muted-foreground">
-            Permissions to review
-          </p>
-        </CardContent>
-      </Card>
-      
+    <div className="grid gap-4 grid-cols-1 md:grid-cols-2 lg:grid-cols-2">
       <Card>
         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
           <CardTitle className="text-sm font-medium">

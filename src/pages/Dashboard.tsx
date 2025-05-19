@@ -59,13 +59,6 @@ const Dashboard: React.FC = () => {
   
   const canViewSystemStats = hasPermission(currentUser.id, 'reports', 'read');
   
-  // Chart data for access request status
-  const statusData = [
-    { name: 'Approved', value: accessRequests.filter(r => r.status === 'approved').length },
-    { name: 'Pending', value: accessRequests.filter(r => r.status === 'pending').length },
-    { name: 'Rejected', value: accessRequests.filter(r => r.status === 'rejected').length },
-  ];
-  
   // Data for job function distribution - get directly from users
   const jobFunctionCounts: Record<string, number> = {};
   users.forEach(user => {
@@ -85,18 +78,33 @@ const Dashboard: React.FC = () => {
     users,
   }));
 
-  // New data for access review insights
-  const pendingReviews = accessReviews.filter(r => r.status === 'pending' || r.status === 'overdue');
-  const overdueReviews = pendingReviews.filter(r => r.daysOverdue && r.daysOverdue > 0);
-  
-  // Mock data for pending reviews table
-  const pendingReviewsData = [
-    { id: 'rev1', resource: 'Azure-Federal-Prod', role: 'CPE Platform Administrator', daysOverdue: 5 },
-    { id: 'rev2', resource: 'Azure-Federal-Stage', role: 'CPE IAM Administrator', daysOverdue: 9 },
-    { id: 'rev3', resource: 'AWS-CCCS-Prod', role: 'CPE Platform Site Reliability Engineers Analyst', daysOverdue: 3 },
-    { id: 'rev4', resource: 'GCP-Commercial (US)-Prod', role: 'CPE Platform Contributor', daysOverdue: 7 },
-    { id: 'rev5', resource: 'GCP-CJIS-Prod', role: 'CPE Platform Security Administrator', daysOverdue: 2 }
-  ];
+  // Get actual pending reviews for the table - matching the access review data
+  const pendingReviewsData = accessReviews
+    .filter(r => r.status === 'pending' || r.status === 'overdue')
+    .map(review => {
+      // Get the resource name from the review or use a default
+      let resource = 'Unknown Resource';
+      let role = 'Unknown Role';
+      
+      if (review.regulatoryEnvironment) {
+        resource = review.regulatoryEnvironment;
+      }
+      
+      if (review.roleId) {
+        const foundRole = roles.find(r => r.id === review.roleId);
+        if (foundRole) {
+          role = foundRole.name;
+        }
+      }
+      
+      return {
+        id: review.id,
+        resource,
+        role,
+        daysOverdue: review.daysOverdue || 0
+      };
+    })
+    .slice(0, 5); // Limit to 5 reviews for the dashboard
 
   // Progress data for access review
   const progressItems = [

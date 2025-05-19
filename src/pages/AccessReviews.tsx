@@ -18,13 +18,6 @@ const AccessReviews: React.FC = () => {
   // Get users with permission gaps (including unauthorized users)
   const federalGaps = getPermissionGapsByEnvironment('federal');
   
-  // Calculate total metrics
-  const totalPermissionGaps = federalGaps.reduce(
-    (sum, item) => sum + item.gaps.length, 0
-  );
-  
-  const totalUsersWithGaps = federalGaps.length;
-  
   // Filter out unauthorized users specifically
   const unauthorizedUsers = federalGaps.filter(item => 
     item.gaps.some(gap => gap.gapType === 'unauthorized_user')
@@ -43,12 +36,6 @@ const AccessReviews: React.FC = () => {
 
       <div className="grid gap-6">
         <AccessReviewCharts />
-        
-        <AccessReviewCards 
-          accessReviews={accessReviews}
-          totalPermissionGaps={totalPermissionGaps} 
-          totalUsersWithGaps={totalUsersWithGaps}
-        />
 
         <Tabs defaultValue="reviews" className="w-full">
           <TabsList>
@@ -84,7 +71,7 @@ const AccessReviews: React.FC = () => {
             <Card>
               <CardHeader className="flex flex-row items-center gap-2">
                 <AlertCircle className="h-6 w-6 text-red-500" />
-                <CardTitle>Unauthorized Users</CardTitle>
+                <CardTitle>Unauthorized Users or Permissions - Users Deprovisioned</CardTitle>
               </CardHeader>
               <CardContent>
                 <Tabs value={unauthorizedTab} onValueChange={setUnauthorizedTab}>

@@ -11,7 +11,7 @@ import {
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { User, PermissionGap } from '@/types/iam';
-import { UserPlus, X, Check, AlertTriangle } from 'lucide-react';
+import { UserPlus, AlertTriangle } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
 interface UnauthorizedUsersTableProps {
@@ -42,6 +42,61 @@ const UnauthorizedUsersTable: React.FC<UnauthorizedUsersTableProps> = ({ users, 
     );
   }
   
+  // Creating mock users for the example
+  const mockUsers = [
+    {
+      user: {
+        id: 'mock1',
+        firstName: 'John',
+        lastName: 'Doe',
+        email: 'john.doe@example.com',
+        department: 'Engineering',
+        jobFunction: 'Platform Engineer'
+      },
+      gaps: [{
+        userId: 'mock1',
+        gapType: 'unauthorized_user', 
+        description: 'User has no valid job function assignment',
+        severity: 'Critical' as const
+      }]
+    },
+    {
+      user: {
+        id: 'mock2',
+        firstName: 'Jane',
+        lastName: 'Smith',
+        email: 'jane.smith@example.com',
+        department: 'Security',
+        jobFunction: 'Security Analyst'
+      },
+      gaps: [{
+        userId: 'mock2',
+        gapType: 'unauthorized_user',
+        description: 'User has excessive permissions for their job function',
+        severity: 'High' as const
+      }]
+    },
+    {
+      user: {
+        id: 'mock3',
+        firstName: 'Robert',
+        lastName: 'Johnson',
+        email: 'robert.johnson@example.com',
+        department: 'IT',
+        jobFunction: 'System Administrator'
+      },
+      gaps: [{
+        userId: 'mock3',
+        gapType: 'unauthorized_user',
+        description: 'User account has been dormant for over 90 days',
+        severity: 'Medium' as const
+      }]
+    }
+  ];
+  
+  // Combine real and mock users based on status
+  const displayUsers = status === 'pending' ? [...users, ...mockUsers] : mockUsers;
+  
   return (
     <Table>
       <TableHeader>
@@ -52,11 +107,11 @@ const UnauthorizedUsersTable: React.FC<UnauthorizedUsersTableProps> = ({ users, 
           <TableHead>Department</TableHead>
           <TableHead>Access Type</TableHead>
           <TableHead>Issue</TableHead>
-          <TableHead>Actions</TableHead>
+          {status === 'removed' && <TableHead>Actions</TableHead>}
         </TableRow>
       </TableHeader>
       <TableBody>
-        {users.map(({ user, gaps }) => (
+        {displayUsers.map(({ user, gaps }) => (
           <TableRow key={user.id}>
             <TableCell>Federal</TableCell>
             <TableCell className="font-medium">
@@ -80,19 +135,8 @@ const UnauthorizedUsersTable: React.FC<UnauthorizedUsersTableProps> = ({ users, 
                 ))}
               </div>
             </TableCell>
-            <TableCell>
-              {status === 'pending' ? (
-                <div className="flex items-center gap-2">
-                  <Button 
-                    size="sm" 
-                    variant="outline"
-                    onClick={() => console.log('Remove access')}
-                    className="bg-red-50 text-red-700 hover:bg-red-100 hover:text-red-800 border-red-200"
-                  >
-                    <X className="h-4 w-4 mr-1" /> Remove
-                  </Button>
-                </div>
-              ) : (
+            {status === 'removed' && (
+              <TableCell>
                 <Button
                   size="sm"
                   variant="outline"
@@ -101,8 +145,8 @@ const UnauthorizedUsersTable: React.FC<UnauthorizedUsersTableProps> = ({ users, 
                 >
                   <UserPlus className="h-4 w-4 mr-1" /> Re-Provision
                 </Button>
-              )}
-            </TableCell>
+              </TableCell>
+            )}
           </TableRow>
         ))}
       </TableBody>

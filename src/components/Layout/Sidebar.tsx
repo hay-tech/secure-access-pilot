@@ -50,8 +50,8 @@ export function Sidebar() {
         <SidebarItem icon={Shield} label="Access Reviews" href="/reviews" active={pathname === '/reviews'} />
         <SidebarItem icon={CheckSquare} label="Approvals" href="/approvals" active={pathname === '/approvals'} />
         <SidebarItem icon={FileText} label="Reports" href="/reports" active={pathname === '/reports'} />
-        <SidebarItem icon={Briefcase} label="Job Functions" href="/job-functions" active={pathname === '/job-functions'} />
         <SidebarItem icon={Users} label="Users" href="/users" active={pathname === '/users'} />
+        <SidebarItem icon={Briefcase} label="Job Functions" href="/job-functions" active={pathname === '/job-functions'} />
         <SidebarItem icon={Clock} label="Audit Logs" href="/audit-logs" active={pathname === '/audit-logs'} />
       </div>
       <div className="mt-auto">
