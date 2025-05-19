@@ -1,6 +1,6 @@
 
 import { useState } from 'react';
-import { User, Role, Permission, AccessRequest, AuditLog, AccessReview, AccessReviewLog } from '../../types/iam';
+import { User, Role, Permission, AccessRequest, AuditLog, AccessReview } from '../../types/iam';
 import { 
   users as initialUsers, 
   roles as initialRoles, 
@@ -18,7 +18,6 @@ export const useIAMStore = () => {
   const [accessRequests, setAccessRequests] = useState<AccessRequest[]>(initialAccessRequests);
   const [auditLogs, setAuditLogs] = useState<AuditLog[]>(initialAuditLogs);
   const [accessReviews, setAccessReviews] = useState<AccessReview[]>(initialAccessReviews);
-  const [accessReviewLogs, setAccessReviewLogs] = useState<AccessReviewLog[]>([]);
 
   return {
     users,
@@ -31,8 +30,6 @@ export const useIAMStore = () => {
     auditLogs,
     setAuditLogs,
     accessReviews,
-    setAccessReviews,
-    accessReviewLogs,
-    setAccessReviewLogs
+    setAccessReviews
   };
 };

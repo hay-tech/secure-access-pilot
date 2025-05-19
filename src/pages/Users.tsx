@@ -58,8 +58,6 @@ const Users: React.FC = () => {
     department: '',
     manager: '',
     roleIds: [] as string[],
-    jobFunction: '',
-    jobFunctions: [] as string[],
   });
   
   if (!currentUser) return null;
@@ -86,17 +84,6 @@ const Users: React.FC = () => {
       }
     });
   };
-
-  const handleJobFunctionChange = (jobFunction: string) => {
-    setFormData((prev) => {
-      const jobFunctions = [...prev.jobFunctions];
-      if (jobFunctions.includes(jobFunction)) {
-        return { ...prev, jobFunctions: jobFunctions.filter(jf => jf !== jobFunction) };
-      } else {
-        return { ...prev, jobFunctions: [...jobFunctions, jobFunction] };
-      }
-    });
-  };
   
   const resetForm = () => {
     setFormData({
@@ -106,8 +93,6 @@ const Users: React.FC = () => {
       department: '',
       manager: '',
       roleIds: [],
-      jobFunction: '',
-      jobFunctions: [],
     });
   };
   
@@ -145,8 +130,6 @@ const Users: React.FC = () => {
       department: user.department,
       manager: user.manager || '',
       roleIds: user.roleIds,
-      jobFunction: user.jobFunction || '',
-      jobFunctions: user.jobFunctions || [],
     });
     
     setSelectedUserId(userId);
@@ -158,29 +141,14 @@ const Users: React.FC = () => {
     setIsDeleteDialogOpen(true);
   };
   
-  const getUserJobFunctions = (userId: string) => {
-    const user = users.find(u => u.id === userId);
-    if (!user) return [];
-    
-    if (user.jobFunctions && user.jobFunctions.length > 0) {
-      return user.jobFunctions;
-    } else if (user.jobFunction) {
-      return [user.jobFunction];
-    }
-    return [];
+  const getUserRolesDisplay = (userId: string) => {
+    const userRoles = getUserRoles(userId);
+    return userRoles.map(role => (
+      <Badge key={role.id} variant="outline" className="mr-1 mb-1">
+        {role.name}
+      </Badge>
+    ));
   };
-
-  // List of available job functions
-  const availableJobFunctions = [
-    'Cloud Account Owner',
-    'Cloud IAM Administrator',
-    'Cloud Platform Administrator',
-    'Cloud Platform Contributor',
-    'Cloud Platform Security Administrator',
-    'Cloud Platform Site Reliability Engineer',
-    'Security Analyst',
-    'System Administrator'
-  ];
 
   return (
     <div className="space-y-6">
@@ -201,7 +169,7 @@ const Users: React.FC = () => {
               <DialogHeader>
                 <DialogTitle>Create New User</DialogTitle>
                 <DialogDescription>
-                  Add a new user to the system and assign their job functions.
+                  Add a new user to the system and assign their roles.
                 </DialogDescription>
               </DialogHeader>
               <div className="grid gap-4 py-4">
@@ -271,19 +239,19 @@ const Users: React.FC = () => {
                 </div>
                 
                 <div className="space-y-2">
-                  <Label>Job Functions</Label>
+                  <Label>Roles</Label>
                   <div className="border rounded-md p-3 space-y-2">
-                    {availableJobFunctions.map(jobFunction => (
-                      <div key={jobFunction} className="flex items-center space-x-2">
+                    {roles.map(role => (
+                      <div key={role.id} className="flex items-center space-x-2">
                         <input
                           type="checkbox"
-                          id={`job-function-${jobFunction}`}
-                          checked={formData.jobFunctions.includes(jobFunction)}
-                          onChange={() => handleJobFunctionChange(jobFunction)}
+                          id={`role-${role.id}`}
+                          checked={formData.roleIds.includes(role.id)}
+                          onChange={() => handleRoleChange(role.id)}
                           className="h-4 w-4 rounded border-gray-300 text-iam-primary focus:ring-iam-primary"
                         />
-                        <label htmlFor={`job-function-${jobFunction}`} className="text-sm">
-                          {jobFunction}
+                        <label htmlFor={`role-${role.id}`} className="text-sm">
+                          {role.name}
                         </label>
                       </div>
                     ))}
@@ -327,7 +295,7 @@ const Users: React.FC = () => {
                 <TableHead>Name</TableHead>
                 <TableHead>Email</TableHead>
                 <TableHead>Department</TableHead>
-                <TableHead>Job Function</TableHead>
+                <TableHead>Roles</TableHead>
                 <TableHead>Created</TableHead>
                 <TableHead>Last Login</TableHead>
                 {canManageUsers && <TableHead>Actions</TableHead>}
@@ -343,11 +311,7 @@ const Users: React.FC = () => {
                   <TableCell>{user.department}</TableCell>
                   <TableCell>
                     <div className="flex flex-wrap">
-                      {getUserJobFunctions(user.id).map(jobFunction => (
-                        <Badge key={jobFunction} variant="outline" className="mr-1 mb-1">
-                          {jobFunction}
-                        </Badge>
-                      ))}
+                      {getUserRolesDisplay(user.id)}
                     </div>
                   </TableCell>
                   <TableCell>
@@ -400,7 +364,7 @@ const Users: React.FC = () => {
           <DialogHeader>
             <DialogTitle>Edit User</DialogTitle>
             <DialogDescription>
-              Update user information and job function assignments.
+              Update user information and role assignments.
             </DialogDescription>
           </DialogHeader>
           <div className="grid gap-4 py-4">
@@ -470,19 +434,19 @@ const Users: React.FC = () => {
             </div>
             
             <div className="space-y-2">
-              <Label>Job Functions</Label>
+              <Label>Roles</Label>
               <div className="border rounded-md p-3 space-y-2">
-                {availableJobFunctions.map(jobFunction => (
-                  <div key={jobFunction} className="flex items-center space-x-2">
+                {roles.map(role => (
+                  <div key={role.id} className="flex items-center space-x-2">
                     <input
                       type="checkbox"
-                      id={`edit-job-function-${jobFunction}`}
-                      checked={formData.jobFunctions.includes(jobFunction)}
-                      onChange={() => handleJobFunctionChange(jobFunction)}
+                      id={`edit-role-${role.id}`}
+                      checked={formData.roleIds.includes(role.id)}
+                      onChange={() => handleRoleChange(role.id)}
                       className="h-4 w-4 rounded border-gray-300 text-iam-primary focus:ring-iam-primary"
                     />
-                    <label htmlFor={`edit-job-function-${jobFunction}`} className="text-sm">
-                      {jobFunction}
+                    <label htmlFor={`edit-role-${role.id}`} className="text-sm">
+                      {role.name}
                     </label>
                   </div>
                 ))}

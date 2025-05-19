@@ -58,14 +58,10 @@ export const useAccessRequestManagement = () => {
       expiresAt = expirationDate.toISOString();
     }
     
-    // Set initial status - Auto-approve for development environments
-    const isDevEnvironment = request.environmentType === 'dev';
-    const initialStatus = isDevEnvironment ? 'approved' : 'pending';
-    
     const newRequest: AccessRequest = {
       ...request,
       id: `req${accessRequests.length + 1}`,
-      status: initialStatus,
+      status: 'pending',
       createdAt: now,
       updatedAt: now,
       expiresAt,
@@ -75,28 +71,10 @@ export const useAccessRequestManagement = () => {
     
     setAccessRequests(prev => [...prev, newRequest]);
     
-    // For development environments, log as auto-approved
-    if (isDevEnvironment) {
-      await logActivity(
-        'approval', 
-        'system', 
-        `Access request auto-approved for ${request.resourceName} in development environment`
-      );
-    } else {
-      // Log regular activity for other environments
-      await logActivity(
-        'access_request', 
-        request.userId, 
-        `New access request created for ${request.resourceName}`
-      );
-    }
+    // Log activity
+    await logActivity('access_request', request.userId, `New access request created for ${request.resourceName}`);
     
-    toast.success(
-      isDevEnvironment 
-        ? `Access request automatically approved for development environment` 
-        : `Access request submitted successfully`
-    );
-    
+    toast.success(`Access request submitted successfully`);
     return newRequest;
   };
 

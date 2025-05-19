@@ -5,8 +5,6 @@ import AccessReviewLogTable from '@/components/access-reviews/AccessReviewLogTab
 import AccessReviewCards from '@/components/access-reviews/AccessReviewCards';
 import AccessReviewCharts from '@/components/access-reviews/AccessReviewCharts';
 import AccessReviewEnvironmentHandler from '@/components/access-reviews/AccessReviewEnvironmentHandler';
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Database } from "lucide-react";
 
 const AccessReviews: React.FC = () => {
   const { accessReviewLogs, accessReviews } = useAccessReviewManagement();
@@ -28,6 +26,7 @@ const AccessReviews: React.FC = () => {
         
         <AccessReviewCards 
           accessReviews={accessReviews}
+          // These props will be computed in AccessReviewEnvironmentHandler
           totalPermissionGaps={0} 
           totalUsersWithGaps={0}
         />
@@ -37,15 +36,7 @@ const AccessReviews: React.FC = () => {
           setCurrentTab={setCurrentTab}
         />
 
-        <Card>
-          <CardHeader className="flex flex-row items-center gap-2">
-            <Database className="h-6 w-6 text-primary" />
-            <CardTitle>Accountability Database Example</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <AccessReviewLogTable logs={accessReviewLogs || []} />
-          </CardContent>
-        </Card>
+        <AccessReviewLogTable logs={accessReviewLogs || []} />
       </div>
     </div>
   );

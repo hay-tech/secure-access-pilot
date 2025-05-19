@@ -32,12 +32,11 @@ const UserAccessReviewTable: React.FC<UserAccessReviewTableProps> = ({
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead>Environment</TableHead>
               <TableHead>Employee Name</TableHead>
               <TableHead>Job Function</TableHead>
-              <TableHead>Group(s)</TableHead>
-              <TableHead>Access Type</TableHead>
-              <TableHead>Justification</TableHead>
+              <TableHead>CSP</TableHead>
+              <TableHead>CSP Subtype</TableHead>
+              <TableHead>Permission Gaps</TableHead>
               <TableHead>Actions</TableHead>
             </TableRow>
           </TableHeader>
@@ -47,7 +46,6 @@ const UserAccessReviewTable: React.FC<UserAccessReviewTableProps> = ({
                 key={user.id}
                 user={user}
                 gaps={gaps}
-                environment={regulatoryEnvironment.name}
                 onApproveGap={onApproveGap}
                 onCompleteReview={onCompleteReview}
               />
