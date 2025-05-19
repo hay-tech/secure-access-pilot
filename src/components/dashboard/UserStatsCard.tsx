@@ -2,15 +2,17 @@
 import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Shield, Users, ListCheck, AlertTriangle } from 'lucide-react';
+import { Link } from 'react-router-dom';
 
 interface UserStatsCardProps {
   title: string;
   value: number | string;
   description: string;
   icon: 'roles' | 'permissions' | 'pendingRequests' | 'approvals';
+  linkTo?: string;
 }
 
-const UserStatsCard: React.FC<UserStatsCardProps> = ({ title, value, description, icon }) => {
+const UserStatsCard: React.FC<UserStatsCardProps> = ({ title, value, description, icon, linkTo }) => {
   const getIcon = () => {
     switch (icon) {
       case 'roles':
@@ -26,17 +28,30 @@ const UserStatsCard: React.FC<UserStatsCardProps> = ({ title, value, description
     }
   };
 
+  const CardWrapper = ({ children }: { children: React.ReactNode }) => {
+    if (linkTo) {
+      return (
+        <Link to={linkTo} className="block transition-all hover:scale-105">
+          {children}
+        </Link>
+      );
+    }
+    return <>{children}</>;
+  };
+
   return (
-    <Card>
-      <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-        <CardTitle className="text-sm font-medium">{title}</CardTitle>
-        {getIcon()}
-      </CardHeader>
-      <CardContent>
-        <div className="text-2xl font-bold">{value}</div>
-        <p className="text-xs text-muted-foreground mt-1">{description}</p>
-      </CardContent>
-    </Card>
+    <CardWrapper>
+      <Card className={linkTo ? "cursor-pointer hover:shadow-md" : ""}>
+        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+          <CardTitle className="text-sm font-medium">{title}</CardTitle>
+          {getIcon()}
+        </CardHeader>
+        <CardContent>
+          <div className="text-2xl font-bold">{value}</div>
+          <p className="text-xs text-muted-foreground mt-1">{description}</p>
+        </CardContent>
+      </Card>
+    </CardWrapper>
   );
 };
 

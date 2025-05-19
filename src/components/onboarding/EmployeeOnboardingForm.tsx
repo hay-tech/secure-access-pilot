@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { 
   Dialog, 
   DialogContent, 
@@ -19,16 +19,19 @@ import {
   SelectValue 
 } from '@/components/ui/select';
 import { Badge } from '@/components/ui/badge';
+import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { X } from 'lucide-react';
 import { useIAM } from '../../contexts/IAMContext';
 import { useAuth } from '../../contexts/AuthContext';
 import { employeesFromHR } from '../../data/mockEmployeeData';
 import { jobFunctionDefinitions, complianceEnvironments } from '../../data/mockData';
+import { User } from '@/types/iam';
 
 interface EmployeeOnboardingFormProps {
   isOpen: boolean;
   onClose: () => void;
   onSuccess: () => void;
+  preselectedEmployeeId?: string | null;
 }
 
 interface FormState {
@@ -36,6 +39,7 @@ interface FormState {
   jobFunctions: string[];
   environment: string;
   complianceFramework: string;
+  accessType: 'permanent' | 'temporary';
   justification: string;
 }
 
@@ -44,31 +48,64 @@ const initialFormState: FormState = {
   jobFunctions: [],
   environment: 'dev',
   complianceFramework: '',
+  accessType: 'permanent',
   justification: '',
 };
 
 const EmployeeOnboardingForm: React.FC<EmployeeOnboardingFormProps> = ({ 
   isOpen, 
   onClose, 
-  onSuccess 
+  onSuccess,
+  preselectedEmployeeId
 }) => {
   const [formState, setFormState] = useState<FormState>(initialFormState);
   const [isLoading, setIsLoading] = useState(false);
-  const { createAccessRequest } = useIAM();
+  const { createAccessRequest, users } = useIAM();
   const { currentUser } = useAuth();
   
   // Auto-select commercial-us compliance for development environment
   const commercialUs = complianceEnvironments.find(env => env.name === 'Commercial (US)')?.id || '';
 
+  // Combine HR employees and direct reports
+  const getAvailableEmployees = () => {
+    // Get direct reports from the system
+    const directReports = users.filter(user => currentUser && user.manager === currentUser.id);
+    
+    // If we have a preselected employee, filter for just that one
+    if (preselectedEmployeeId) {
+      const employee = users.find(user => user.id === preselectedEmployeeId);
+      return employee ? [employee] : [];
+    }
+    
+    // Get HR employees that aren't in the system yet
+    const hrEmployees = employeesFromHR.filter(hrEmp => 
+      !users.some(user => user.email.toLowerCase() === hrEmp.email.toLowerCase())
+    );
+    
+    return [...directReports, ...hrEmployees.map(hrToUser)];
+  };
+  
+  // Convert HR employee to User format
+  const hrToUser = (hrEmployee: any): User => ({
+    id: hrEmployee.id,
+    email: hrEmployee.email,
+    firstName: hrEmployee.firstName,
+    lastName: hrEmployee.lastName,
+    roleIds: [],
+    department: hrEmployee.department,
+    createdAt: new Date().toISOString()
+  });
+
   // Reset form on open/close
-  React.useEffect(() => {
+  useEffect(() => {
     if (isOpen) {
       setFormState({
         ...initialFormState,
-        complianceFramework: commercialUs
+        complianceFramework: commercialUs,
+        employee: preselectedEmployeeId || ''
       });
     }
-  }, [isOpen, commercialUs]);
+  }, [isOpen, commercialUs, preselectedEmployeeId]);
   
   const handleEmployeeChange = (value: string) => {
     setFormState(prev => ({
@@ -114,6 +151,13 @@ const EmployeeOnboardingForm: React.FC<EmployeeOnboardingFormProps> = ({
     }));
   };
   
+  const handleAccessTypeChange = (value: 'permanent' | 'temporary') => {
+    setFormState(prev => ({
+      ...prev,
+      accessType: value
+    }));
+  };
+  
   const handleJustificationChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     setFormState(prev => ({
       ...prev,
@@ -128,7 +172,8 @@ const EmployeeOnboardingForm: React.FC<EmployeeOnboardingFormProps> = ({
       setIsLoading(true);
       
       // Get the selected employee data
-      const employee = employeesFromHR.find(emp => emp.id === formState.employee);
+      const availableEmployees = getAvailableEmployees();
+      const employee = availableEmployees.find(emp => emp.id === formState.employee);
       if (!employee) throw new Error("Employee not found");
       
       // Get job function titles for description
@@ -157,7 +202,7 @@ const EmployeeOnboardingForm: React.FC<EmployeeOnboardingFormProps> = ({
         resourceName: `Employee Onboarding: ${jobFunctionTitles}`,
         requestType: 'role',
         justification: formState.justification,
-        accessType: 'permanent',
+        accessType: formState.accessType,
         environmentType: formState.environment,
         complianceFramework: formState.complianceFramework,
         projectName: `Onboarding: ${employee.firstName} ${employee.lastName}`,
@@ -185,7 +230,7 @@ const EmployeeOnboardingForm: React.FC<EmployeeOnboardingFormProps> = ({
         <DialogHeader>
           <DialogTitle>Employee Onboarding</DialogTitle>
           <DialogDescription>
-            Request access for new employee onboarding
+            Request access for employee onboarding
           </DialogDescription>
         </DialogHeader>
         
@@ -199,12 +244,13 @@ const EmployeeOnboardingForm: React.FC<EmployeeOnboardingFormProps> = ({
               <Select
                 value={formState.employee}
                 onValueChange={handleEmployeeChange}
+                disabled={!!preselectedEmployeeId}
               >
                 <SelectTrigger id="employee">
                   <SelectValue placeholder="Select employee" />
                 </SelectTrigger>
                 <SelectContent>
-                  {employeesFromHR.map(employee => (
+                  {getAvailableEmployees().map(employee => (
                     <SelectItem key={employee.id} value={employee.id}>
                       {employee.firstName} {employee.lastName} - {employee.department}
                     </SelectItem>
@@ -284,6 +330,29 @@ const EmployeeOnboardingForm: React.FC<EmployeeOnboardingFormProps> = ({
                   <SelectItem value="prod">Production</SelectItem>
                 </SelectContent>
               </Select>
+            </div>
+          </div>
+          
+          {/* Access Type */}
+          <div className="grid grid-cols-4 items-center gap-4">
+            <Label htmlFor="access-type" className="text-right">
+              Access Type
+            </Label>
+            <div className="col-span-3">
+              <RadioGroup
+                value={formState.accessType}
+                onValueChange={(value) => handleAccessTypeChange(value as 'permanent' | 'temporary')}
+                className="flex space-x-4"
+              >
+                <div className="flex items-center space-x-2">
+                  <RadioGroupItem value="permanent" id="permanent" />
+                  <Label htmlFor="permanent">Permanent</Label>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <RadioGroupItem value="temporary" id="temporary" />
+                  <Label htmlFor="temporary">Temporary</Label>
+                </div>
+              </RadioGroup>
             </div>
           </div>
           

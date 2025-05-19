@@ -141,6 +141,7 @@ const Dashboard: React.FC = () => {
           value={pendingRequests.length}
           description="System-wide pending access requests"
           icon="pendingRequests"
+          linkTo="/requests"
         />
 
         <UserStatsCard
@@ -148,6 +149,7 @@ const Dashboard: React.FC = () => {
           value={myPendingApprovals.length}
           description="Access requests waiting for your approval"
           icon="approvals"
+          linkTo="/approvals"
         />
       </div>
 

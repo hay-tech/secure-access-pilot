@@ -78,6 +78,7 @@ export interface PermissionGap {
   // New fields for job function comparison
   actualJobFunction?: string;
   approvedJobFunction?: string;
+  status?: 'pending' | 'removed' | 'reprovision';
 }
 
 export interface PermissionComparisonResult {

@@ -4,15 +4,18 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Button } from '@/components/ui/button';
 import { UserPlus } from 'lucide-react';
 import EmployeeOnboardingForm from '@/components/onboarding/EmployeeOnboardingForm';
+import DirectReportsList from '@/components/onboarding/DirectReportsList';
 import OnboardingRequestsTable from '@/components/onboarding/OnboardingRequestsTable';
 import { useAuth } from '../contexts/AuthContext';
 import { useIAM } from '../contexts/IAMContext';
 import { toast } from 'sonner';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 
 const EmployeeOnboarding: React.FC = () => {
   const [dialogOpen, setDialogOpen] = useState(false);
+  const [selectedEmployee, setSelectedEmployee] = useState<string | null>(null);
   const { currentUser } = useAuth();
-  const { accessRequests } = useIAM();
+  const { accessRequests, users } = useIAM();
   
   if (!currentUser) return null;
   
@@ -21,9 +24,18 @@ const EmployeeOnboarding: React.FC = () => {
     req => req.userId === currentUser.id && req.projectName?.includes('Onboarding:')
   );
   
+  // Get direct reports
+  const directReports = users.filter(user => user.manager === currentUser.id);
+  
   const handleRequestSuccess = () => {
     setDialogOpen(false);
+    setSelectedEmployee(null);
     toast.success("Onboarding request submitted successfully");
+  };
+  
+  const handleEmployeeSelect = (employeeId: string) => {
+    setSelectedEmployee(employeeId);
+    setDialogOpen(true);
   };
 
   return (
@@ -31,7 +43,7 @@ const EmployeeOnboarding: React.FC = () => {
       <div className="flex justify-between items-center">
         <div>
           <h1 className="text-3xl font-bold">Employee Onboarding</h1>
-          <p className="text-muted-foreground">Manage access for new employee onboarding</p>
+          <p className="text-muted-foreground">Manage access for employee onboarding</p>
         </div>
         
         <Button 
@@ -42,20 +54,45 @@ const EmployeeOnboarding: React.FC = () => {
         </Button>
       </div>
       
-      <Card>
-        <CardHeader>
-          <CardTitle>Employee Onboarding Requests</CardTitle>
-          <CardDescription>Access requests for employee onboarding</CardDescription>
-        </CardHeader>
-        <CardContent>
-          <OnboardingRequestsTable requests={onboardingRequests} />
-        </CardContent>
-      </Card>
+      <Tabs defaultValue="employees" className="w-full">
+        <TabsList>
+          <TabsTrigger value="employees">My Direct Reports</TabsTrigger>
+          <TabsTrigger value="requests">Onboarding Requests</TabsTrigger>
+        </TabsList>
+        
+        <TabsContent value="employees" className="space-y-4">
+          <Card>
+            <CardHeader>
+              <CardTitle>Your Direct Reports</CardTitle>
+              <CardDescription>Select an employee to manage their access</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <DirectReportsList 
+                employees={directReports}
+                onSelectEmployee={handleEmployeeSelect}
+              />
+            </CardContent>
+          </Card>
+        </TabsContent>
+        
+        <TabsContent value="requests" className="space-y-4">
+          <Card>
+            <CardHeader>
+              <CardTitle>Employee Onboarding Requests</CardTitle>
+              <CardDescription>Access requests for employee onboarding</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <OnboardingRequestsTable requests={onboardingRequests} />
+            </CardContent>
+          </Card>
+        </TabsContent>
+      </Tabs>
       
       <EmployeeOnboardingForm 
         isOpen={dialogOpen} 
         onClose={() => setDialogOpen(false)} 
-        onSuccess={handleRequestSuccess} 
+        onSuccess={handleRequestSuccess}
+        preselectedEmployeeId={selectedEmployee} 
       />
     </div>
   );
