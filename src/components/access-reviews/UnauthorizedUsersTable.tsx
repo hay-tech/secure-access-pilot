@@ -118,7 +118,7 @@ const UnauthorizedUsersTable: React.FC<UnauthorizedUsersTableProps> = ({ users, 
               {user.firstName} {user.lastName}
             </TableCell>
             <TableCell>
-              {user.jobFunction || (user.jobFunctions && user.jobFunctions.length > 0 ? user.jobFunctions.join(', ') : 'N/A')}
+              {user.jobFunction || 'N/A'}
             </TableCell>
             <TableCell>{user.department}</TableCell>
             <TableCell>
