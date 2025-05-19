@@ -17,6 +17,7 @@ import AuditLogs from './pages/AuditLogs';
 import Profile from './pages/Profile';
 import Login from './pages/Login';
 import NotFound from './pages/NotFound';
+import EmployeeOnboarding from './pages/EmployeeOnboarding';
 import { Toaster as SonnerToaster } from 'sonner';
 
 function App() {
@@ -39,6 +40,7 @@ function App() {
                 <Route path="job-functions" element={<JobFunctions />} />
                 <Route path="audit-logs" element={<AuditLogs />} />
                 <Route path="profile" element={<Profile />} />
+                <Route path="onboarding" element={<EmployeeOnboarding />} />
               </Route>
               
               <Route path="*" element={<NotFound />} />
