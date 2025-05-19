@@ -6,4 +6,5 @@ export * from './access-request-types';
 export * from './access-review-types';
 export * from './job-function-types';
 export * from './audit-types';
-export * from './regulatory-environment-types';
+// Removed duplicate export of RegulatoryEnvironment
+// export * from './regulatory-environment-types';

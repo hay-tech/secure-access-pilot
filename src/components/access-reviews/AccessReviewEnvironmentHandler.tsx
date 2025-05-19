@@ -38,17 +38,17 @@ const AccessReviewEnvironmentHandler: React.FC<AccessReviewEnvironmentHandlerPro
       riskLevel: 'Medium' as const
     },
     {
-      id: 'healthcare',
-      name: 'Healthcare',
-      description: 'Healthcare industry compliance requirements',
-      complianceFrameworks: ['HIPAA', 'HITRUST'],
-      riskLevel: 'Critical' as const
+      id: 'cccs',
+      name: 'CCCS',
+      description: 'Canadian Center For Cybersecurity compliance requirements',
+      complianceFrameworks: ['Protected-B', 'Protect-A'],
+      riskLevel: 'High' as const
     },
     {
-      id: 'financial',
-      name: 'Financial',
-      description: 'Financial industry compliance requirements',
-      complianceFrameworks: ['PCI-DSS', 'SOX'],
+      id: 'cjis',
+      name: 'CJIS',
+      description: 'US Government compliance requirements',
+      complianceFrameworks: ['CJIS', 'SOC2'],
       riskLevel: 'High' as const
     }
   ];
@@ -113,6 +113,23 @@ const AccessReviewEnvironmentHandler: React.FC<AccessReviewEnvironmentHandlerPro
   const totalPermissionGaps = Object.values(userGapsByEnvironment).reduce(
     (total, envGaps) => total + envGaps.reduce((sum, { gaps }) => sum + gaps.length, 0), 0
   );
+
+  // Create wrapper functions to match the expected function signatures
+  const handleApproveGap = async (userId: string, gapIndex: number, approved: boolean, justification?: string): Promise<void> => {
+    // Find the reviewId for this user
+    const review = accessReviews.find(r => r.subjectId === userId);
+    if (review) {
+      await reviewPermissionGap(review.id, gapIndex, approved, justification);
+    }
+  };
+
+  const handleCompleteReview = async (userId: string, decision: 'maintain' | 'revoke' | 'modify', comments?: string): Promise<void> => {
+    // Find the reviewId for this user
+    const review = accessReviews.find(r => r.subjectId === userId);
+    if (review) {
+      await completeAccessReview(review.id, decision, comments);
+    }
+  };
   
   return (
     <AccessReviewTabs
@@ -120,8 +137,8 @@ const AccessReviewEnvironmentHandler: React.FC<AccessReviewEnvironmentHandlerPro
       setCurrentTab={setCurrentTab}
       regulatoryEnvironments={regulatoryEnvironments}
       userGapsByEnvironment={userGapsByEnvironment}
-      onApproveGap={reviewPermissionGap}
-      onCompleteReview={completeAccessReview}
+      onApproveGap={handleApproveGap}
+      onCompleteReview={handleCompleteReview}
       totalUsersWithGaps={totalUsersWithGaps}
       totalPermissionGaps={totalPermissionGaps}
     />
