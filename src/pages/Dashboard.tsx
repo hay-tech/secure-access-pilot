@@ -5,7 +5,6 @@ import { useIAM } from '../contexts/IAMContext';
 
 // Import dashboard components
 import UserStatsCard from '../components/dashboard/UserStatsCard';
-import AccessComplianceCard from '../components/dashboard/AccessComplianceCard';
 import RoleDistributionTable from '../components/dashboard/RoleDistributionTable';
 import PendingAccessReviewsTable from '../components/dashboard/PendingAccessReviewsTable';
 import AccessReviewProgress from '../components/dashboard/AccessReviewProgress';
@@ -90,12 +89,6 @@ const Dashboard: React.FC = () => {
   const pendingReviews = accessReviews.filter(r => r.status === 'pending' || r.status === 'overdue');
   const overdueReviews = pendingReviews.filter(r => r.daysOverdue && r.daysOverdue > 0);
   
-  // Mock data for access matching insights
-  const accessMatchData = [
-    { name: 'Matched Access', value: 85 },
-    { name: 'Unmatched Access', value: 15 }
-  ];
-
   // Mock data for pending reviews table
   const pendingReviewsData = [
     { id: 'rev1', resource: 'Azure-Federal-Prod', role: 'CPE Platform Administrator', daysOverdue: 5 },
@@ -111,9 +104,6 @@ const Dashboard: React.FC = () => {
     { label: 'Compliance Reviews', value: 45 },
     { label: 'Overall Completion', value: 60 },
   ];
-
-  const COLORS = ['#10b981', '#f59e0b', '#ef4444']; // green, amber, red
-  const ACCESS_COLORS = ['#3b82f6', '#4ade80']; // blue, green
 
   return (
     <div className="space-y-6">
@@ -163,14 +153,6 @@ const Dashboard: React.FC = () => {
 
       {canViewSystemStats && (
         <>
-          <div className="grid grid-cols-1 lg:grid-cols-1 gap-6 mb-6">
-            <div className="h-full">
-              <AspectRatio ratio={16/9} className="bg-card border rounded-lg">
-                <AccessComplianceCard data={accessMatchData} colors={ACCESS_COLORS} />
-              </AspectRatio>
-            </div>
-          </div>
-
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             <RoleDistributionTable data={jobFunctionDistribution} title="Job Function to User Mapping" description="Number of users assigned to each job function" />
             <PendingAccessReviewsTable data={pendingReviewsData} />

@@ -7,11 +7,11 @@ import { Toaster } from './components/ui/toaster';
 import Layout from './components/Layout/ProtectedLayout';
 import Index from './pages/Index';
 import Dashboard from './pages/Dashboard';
-import Users from './pages/Users';
 import AccessRequests from './pages/AccessRequests';
 import AccessReviews from './pages/AccessReviews';
 import Approvals from './pages/Approvals';
 import Reports from './pages/Reports';
+import Users from './pages/Users';
 import JobFunctions from './pages/JobFunctions';
 import AuditLogs from './pages/AuditLogs';
 import Profile from './pages/Profile';
@@ -32,11 +32,11 @@ function App() {
               <Route path="/" element={<Layout />}>
                 <Route index element={<Index />} />
                 <Route path="dashboard" element={<Dashboard />} />
-                <Route path="users" element={<Users />} />
                 <Route path="requests" element={<AccessRequests />} />
                 <Route path="reviews" element={<AccessReviews />} />
                 <Route path="approvals" element={<Approvals />} />
                 <Route path="reports" element={<Reports />} />
+                <Route path="users" element={<Users />} />
                 <Route path="job-functions" element={<JobFunctions />} />
                 <Route path="audit-logs" element={<AuditLogs />} />
                 <Route path="profile" element={<Profile />} />

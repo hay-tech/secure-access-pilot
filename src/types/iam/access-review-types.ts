@@ -70,7 +70,7 @@ export interface PermissionGap {
   userId: string;
   permissionId?: string;
   roleId?: string;
-  gapType: 'excess' | 'missing';
+  gapType: 'excess' | 'missing' | 'unauthorized_user';
   description: string;
   severity: 'Low' | 'Medium' | 'High' | 'Critical';
   approved?: boolean;
