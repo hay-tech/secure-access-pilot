@@ -46,12 +46,12 @@ export function Sidebar() {
       <div className="flex flex-col gap-1">
         <h2 className="px-4 text-lg font-semibold">Navigation</h2>
         <SidebarItem icon={LayoutDashboard} label="Dashboard" href="/dashboard" active={pathname === '/dashboard'} />
-        <SidebarItem icon={Users} label="Users" href="/users" active={pathname === '/users'} />
         <SidebarItem icon={ClipboardList} label="Access Requests" href="/requests" active={pathname === '/requests'} />
         <SidebarItem icon={Shield} label="Access Reviews" href="/reviews" active={pathname === '/reviews'} />
         <SidebarItem icon={CheckSquare} label="Approvals" href="/approvals" active={pathname === '/approvals'} />
         <SidebarItem icon={FileText} label="Reports" href="/reports" active={pathname === '/reports'} />
         <SidebarItem icon={Briefcase} label="Job Functions" href="/job-functions" active={pathname === '/job-functions'} />
+        <SidebarItem icon={Users} label="Users" href="/users" active={pathname === '/users'} />
         <SidebarItem icon={Clock} label="Audit Logs" href="/audit-logs" active={pathname === '/audit-logs'} />
       </div>
       <div className="mt-auto">
