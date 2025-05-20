@@ -82,3 +82,56 @@ export const employeesFromHR = [
     status: 'Pending Onboarding'
   }
 ];
+
+// Mock direct reports for the current manager
+export const mockDirectReports = [
+  {
+    id: 'dr1',
+    firstName: 'Alex',
+    lastName: 'Rivera',
+    email: 'alex.rivera@company.com',
+    department: 'Engineering',
+    jobFunction: 'Cloud Platform Administrator',
+    employeeId: 'E22001',
+    startDate: '2025-04-01'
+  },
+  {
+    id: 'dr2',
+    firstName: 'Taylor',
+    lastName: 'Kim',
+    email: 'taylor.kim@company.com',
+    department: 'Engineering',
+    jobFunction: '',
+    employeeId: 'E22002',
+    startDate: '2025-04-05'
+  },
+  {
+    id: 'dr3',
+    firstName: 'Jordan',
+    lastName: 'Patel',
+    email: 'jordan.patel@company.com',
+    department: 'Security',
+    employeeId: 'E22003',
+    startDate: '2025-04-10'
+  },
+  {
+    id: 'dr4',
+    firstName: 'Morgan',
+    lastName: 'Lee',
+    email: 'morgan.lee@company.com',
+    department: 'DevOps',
+    jobFunction: 'Cloud Platform Site Reliability Engineer',
+    employeeId: 'E22004',
+    startDate: '2025-04-15'
+  },
+  {
+    id: 'dr5',
+    firstName: 'Casey',
+    lastName: 'Zhang',
+    email: 'casey.zhang@company.com',
+    department: 'Engineering',
+    jobFunctions: ['Cloud Platform Reader', 'Cloud Project Contributor'],
+    employeeId: 'E22005',
+    startDate: '2025-04-20'
+  }
+];
