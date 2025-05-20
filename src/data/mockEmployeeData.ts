@@ -93,7 +93,10 @@ export const mockDirectReports = [
     department: 'Engineering',
     jobFunction: 'Cloud Platform Administrator',
     employeeId: 'E22001',
-    startDate: '2025-04-01'
+    startDate: '2025-04-01',
+    roleIds: [],
+    createdAt: '2025-03-15',
+    lastLogin: '2025-05-19'
   },
   {
     id: 'dr2',
@@ -103,7 +106,10 @@ export const mockDirectReports = [
     department: 'Engineering',
     jobFunction: '',
     employeeId: 'E22002',
-    startDate: '2025-04-05'
+    startDate: '2025-04-05',
+    roleIds: [],
+    createdAt: '2025-03-20',
+    lastLogin: '2025-05-18'
   },
   {
     id: 'dr3',
@@ -112,7 +118,10 @@ export const mockDirectReports = [
     email: 'jordan.patel@company.com',
     department: 'Security',
     employeeId: 'E22003',
-    startDate: '2025-04-10'
+    startDate: '2025-04-10',
+    roleIds: [],
+    createdAt: '2025-03-25',
+    lastLogin: '2025-05-17'
   },
   {
     id: 'dr4',
@@ -122,7 +131,10 @@ export const mockDirectReports = [
     department: 'DevOps',
     jobFunction: 'Cloud Platform Site Reliability Engineer',
     employeeId: 'E22004',
-    startDate: '2025-04-15'
+    startDate: '2025-04-15',
+    roleIds: [],
+    createdAt: '2025-04-01',
+    lastLogin: '2025-05-16'
   },
   {
     id: 'dr5',
@@ -132,6 +144,9 @@ export const mockDirectReports = [
     department: 'Engineering',
     jobFunctions: ['Cloud Platform Reader', 'Cloud Project Contributor'],
     employeeId: 'E22005',
-    startDate: '2025-04-20'
+    startDate: '2025-04-20',
+    roleIds: [],
+    createdAt: '2025-04-05',
+    lastLogin: '2025-05-15'
   }
 ];

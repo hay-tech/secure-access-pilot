@@ -41,6 +41,18 @@ const DirectReportsList: React.FC<DirectReportsListProps> = ({
     }
   };
 
+  const handleSelectAll = (checked: boolean) => {
+    if (checked) {
+      setSelectedEmployees(employees.map(emp => emp.id));
+    } else {
+      setSelectedEmployees([]);
+    }
+  };
+
+  // Determine if all, some, or none are selected
+  const allSelected = employees.length > 0 && selectedEmployees.length === employees.length;
+  const someSelected = selectedEmployees.length > 0 && selectedEmployees.length < employees.length;
+
   if (employees.length === 0) {
     return (
       <div className="flex flex-col items-center justify-center py-8 text-center">
@@ -73,16 +85,11 @@ const DirectReportsList: React.FC<DirectReportsListProps> = ({
             {onSelectMultipleEmployees && (
               <TableHead className="w-12">
                 <Checkbox 
-                  checked={employees.length > 0 && selectedEmployees.length === employees.length}
-                  indeterminate={selectedEmployees.length > 0 && selectedEmployees.length < employees.length}
-                  onCheckedChange={(checked) => {
-                    if (checked) {
-                      setSelectedEmployees(employees.map(emp => emp.id));
-                    } else {
-                      setSelectedEmployees([]);
-                    }
-                  }}
+                  checked={allSelected}
+                  // Remove indeterminate prop and handle visually if needed
+                  onCheckedChange={(checked) => handleSelectAll(!!checked)}
                 />
+                {someSelected && <span className="text-xs ml-1">▪</span>}
               </TableHead>
             )}
             <TableHead>Employee Name</TableHead>

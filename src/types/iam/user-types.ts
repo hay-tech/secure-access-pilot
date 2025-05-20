@@ -15,4 +15,6 @@ export interface User {
   csp?: string;
   cspSubtype?: string;
   securityLevel?: string;
+  employeeId?: string;
+  startDate?: string;
 }
