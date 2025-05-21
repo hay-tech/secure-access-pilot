@@ -94,10 +94,10 @@ const Dashboard: React.FC = () => {
   const totalReviews = accessReviews.length;
   const remainingReviews = totalReviews - completedReviews;
 
-  const reviewProgressData = [
-    { name: 'Completed', value: completedReviews },
-    { name: 'Remaining', value: remainingReviews },
-  ];
+//  const reviewProgressData = [
+//    { name: 'Completed', value: completedReviews },
+//    { name: 'Remaining', value: remainingReviews },
+//  ];
 
   // Set unauthorized users count to 2 as requested
   const unauthorizedUsersCount = 2;
@@ -164,6 +164,7 @@ const Dashboard: React.FC = () => {
         <>
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             <RoleDistributionTable data={jobFunctionDistribution} title="Job Function to User Mapping" description="Number of users assigned to each job function" />
+//            <AccessReviewPieChart data={reviewProgressData} /> 
             <AccessReviewPieChart data={reviewProgressData} /> 
           </div>
         </>
