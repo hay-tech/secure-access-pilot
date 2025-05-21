@@ -146,13 +146,7 @@ const Dashboard: React.FC = () => {
         <>
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             <RoleDistributionTable data={jobFunctionDistribution} title="Job Function to User Mapping" description="Number of users assigned to each job function" />
-  /*           <AccessReviewPieChart data={reviewProgressData} /> */
-            <AccessReviewPieChart />
-                  {/* Add spacing below the chart display */}
-              <div style={{ marginTop: '20px' }}>
-                <p>Completed Reviews: {completedReviews}</p>
-                <p>Remaining Reviews: {remainingReviews}</p>
-              </div>
+            <AccessReviewPieChart data={reviewProgressData} /> 
           </div>
         </>
       )}
