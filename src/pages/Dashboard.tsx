@@ -95,8 +95,8 @@ const Dashboard: React.FC = () => {
   const remainingReviews = totalReviews - completedReviews;
 
   const reviewProgressData = [
-    { name: 'C', value: completedReviews },
-    { name: 'R', value: remainingReviews },
+    { name: 'Completed', value: completedReviews },
+    { name: 'Remaining', value: remainingReviews },
   ];
 
   // Set unauthorized users count to 2 as requested
