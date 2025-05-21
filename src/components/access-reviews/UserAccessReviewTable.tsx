@@ -53,9 +53,9 @@ const UserAccessReviewTable: React.FC<UserAccessReviewTableProps> = ({
   
   // Function to get manager name by ID
   const getManagerName = (managerId?: string) => {
-    if (!managerId) return 'No Manager';
+    if (!managerId) return 'Scott Dale'; // Changed from 'No Manager' to 'Scott Dale'
     const manager = users.find(m => m.id === managerId);
-    return manager ? `${manager.firstName} ${manager.lastName}` : 'Unknown Manager';
+    return manager ? `${manager.firstName} ${manager.lastName}` : 'Scott Dale'; // Default to Scott Dale
   };
   
   return (

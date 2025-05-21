@@ -6,8 +6,7 @@ import { useIAM } from '../contexts/IAMContext';
 // Import dashboard components
 import UserStatsCard from '../components/dashboard/UserStatsCard';
 import RoleDistributionTable from '../components/dashboard/RoleDistributionTable';
-import PendingAccessReviewsTable from '../components/dashboard/PendingAccessReviewsTable';
-import AccessReviewProgress from '../components/dashboard/AccessReviewProgress';
+import AccessReviewPieChart from '../components/dashboard/AccessReviewPieChart';
 import DashboardSkeleton from '../components/dashboard/DashboardSkeleton';
 
 // Import UI components
@@ -51,6 +50,7 @@ const Dashboard: React.FC = () => {
   const userJobFunctions = currentUser.jobFunction ? [currentUser.jobFunction] : 
                           currentUser.jobFunctions ? currentUser.jobFunctions : [];
   
+  // Get all pending requests from the system to match the /requests page
   const pendingRequests = accessRequests.filter(r => r.status === 'pending');
   const myPendingApprovals = pendingRequests.filter(r => 
     (r.managerApproval?.approverId === currentUser.id && r.managerApproval?.status === 'pending') ||
@@ -83,39 +83,14 @@ const Dashboard: React.FC = () => {
     users,
   }));
 
-  // Get actual pending reviews for the table - matching the access review data
-  const pendingReviewsData = accessReviews
-    .filter(r => r.status === 'pending' || r.status === 'overdue')
-    .map(review => {
-      // Get the resource name from the review or use a default
-      let resource = 'Unknown Resource';
-      let role = 'Unknown Role';
-      
-      if (review.regulatoryEnvironment) {
-        resource = review.regulatoryEnvironment;
-      }
-      
-      if (review.roleId) {
-        const foundRole = roles.find(r => r.id === review.roleId);
-        if (foundRole) {
-          role = foundRole.name;
-        }
-      }
-      
-      return {
-        id: review.id,
-        resource,
-        role,
-        daysOverdue: review.daysOverdue || 0
-      };
-    })
-    .slice(0, 5); // Limit to 5 reviews for the dashboard
+  // Access review progress data for pie chart
+  const completedReviews = accessReviews.filter(review => review.status === 'completed').length;
+  const totalReviews = accessReviews.length;
+  const remainingReviews = totalReviews - completedReviews;
 
-  // Progress data for access review
-  const progressItems = [
-    { label: 'Manager Reviews', value: 75 },
-    { label: 'Compliance Reviews', value: 45 },
-    { label: 'Overall Completion', value: 60 },
+  const reviewProgressData = [
+    { name: 'Completed', value: completedReviews },
+    { name: 'Remaining', value: remainingReviews },
   ];
 
   return (
@@ -171,9 +146,8 @@ const Dashboard: React.FC = () => {
         <>
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             <RoleDistributionTable data={jobFunctionDistribution} title="Job Function to User Mapping" description="Number of users assigned to each job function" />
-            <PendingAccessReviewsTable data={pendingReviewsData} />
+            <AccessReviewPieChart data={reviewProgressData} />
           </div>
-          <AccessReviewProgress progressItems={progressItems} />
         </>
       )}
     </div>

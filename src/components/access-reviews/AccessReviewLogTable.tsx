@@ -1,128 +1,172 @@
 
 import React from 'react';
-import { 
-  Table, 
-  TableBody, 
-  TableCaption, 
-  TableCell, 
-  TableHead, 
-  TableHeader, 
-  TableRow 
-} from '@/components/ui/table';
-import { Badge } from '@/components/ui/badge';
-import { AccessReviewLog } from '@/types/iam';
-import { format } from 'date-fns';
+import { Table, TableHeader, TableRow, TableHead, TableBody, TableCell } from "@/components/ui/table";
+import { AccessReviewLog } from "@/types/iam";
+import { formatDistanceToNow } from 'date-fns';
+import { Badge } from "@/components/ui/badge";
+import { CheckCircle, XCircle, AlertTriangle } from 'lucide-react';
 
 interface AccessReviewLogTableProps {
   logs: AccessReviewLog[];
+  isExample?: boolean;
 }
 
-const AccessReviewLogTable: React.FC<AccessReviewLogTableProps> = ({ logs }) => {
-  // Mock group data based on job functions and environments
-  const mockGroups = {
-    'FedRamp': {
-      'Cloud Platform Administrator': ['cpe-platform-administrators-fedrampdev', 'cpe-platform-administrators-fedrampstage', 'cpe-platform-administrators-fedramprod'],
-      'Cloud Platform Contributor': ['cpe-platform-contributors-fedrampdev', 'cpe-platform-contributors-fedrampstage', 'cpe-platform-contributors-fedramprod'],
-      'Cloud Platform Reader': ['cpe-platform-readers-fedrampdev', 'cpe-platform-readers-fedrampstage', 'cpe-platform-readers-fedramprod'],
-      'Cloud Platform Security Administrator': ['cpe-platform-security-administrators-fedrampdev', 'cpe-platform-security-administrators-fedrampstage', 'cpe-platform-security-administrators-fedramprod'],
-    },
-    'CJIS': {
-      'Cloud Platform Administrator': ['cpe-platform-administrators-cjisdev', 'cpe-platform-administrators-cjisstage', 'cpe-platform-administrators-cjisprod'],
-      'Cloud Platform Contributor': ['cpe-platform-contributors-cjisdev', 'cpe-platform-contributors-cjisstage', 'cpe-platform-contributors-cjisprod'],
-      'Cloud Platform Reader': ['cpe-platform-readers-cjisdev', 'cpe-platform-readers-cjisstage', 'cpe-platform-readers-cjisprod'],
-      'Cloud Platform Security Administrator': ['cpe-platform-security-administrators-cjisdev', 'cpe-platform-security-administrators-cjisstage', 'cpe-platform-security-administrators-cjisprod'],
-    },
-    'CCCS': {
-      'Cloud Platform Administrator': ['cpe-platform-administrators-cccsdev', 'cpe-platform-administrators-cccsstage', 'cpe-platform-administrators-cccsprod'],
-      'Cloud Platform Contributor': ['cpe-platform-contributors-cccsdev', 'cpe-platform-contributors-cccsstage', 'cpe-platform-contributors-cccsprod'],
-      'Cloud Platform Reader': ['cpe-platform-readers-cccsdev', 'cpe-platform-readers-cccsstage', 'cpe-platform-readers-cccsprod'],
-      'Cloud Platform Security Administrator': ['cpe-platform-security-administrators-cccsdev', 'cpe-platform-security-administrators-cccsstage', 'cpe-platform-security-administrators-cccsprod'],
+const sampleExampleLogs: AccessReviewLog[] = [
+  {
+    id: 'example-1',
+    reviewId: 'review-2023-001',
+    approverId: 'user-scott',
+    approvedUserId: 'user-jane',
+    environment: 'FedRAMP High',
+    jobFunctions: ['Security Analyst'],
+    permissionsGranted: ['read:security-logs', 'write:security-alerts'],
+    groupsMembership: ['Security Team', 'SOC Analysts'],
+    timestamp: new Date(2023, 10, 15).toISOString(),
+    decision: 'maintain',
+    justification: 'Annual certification - all permissions validated'
+  },
+  {
+    id: 'example-2',
+    reviewId: 'review-2023-015',
+    approverId: 'user-scott',
+    approvedUserId: 'user-john',
+    environment: 'Commercial',
+    jobFunctions: ['Developer'],
+    permissionsGranted: ['read:code', 'write:code', 'deploy:staging'],
+    groupsMembership: ['Developers', 'Frontend Team'],
+    timestamp: new Date(2023, 10, 10).toISOString(),
+    decision: 'modify',
+    justification: 'Role change - removed production deploy permissions'
+  },
+  {
+    id: 'example-3',
+    reviewId: 'review-2023-022',
+    approverId: 'user-scott',
+    approvedUserId: 'user-alex',
+    environment: 'CJIS',
+    jobFunctions: ['Database Administrator'],
+    permissionsGranted: ['read:database', 'write:database'],
+    groupsMembership: ['DBAs', 'Production Support'],
+    timestamp: new Date(2023, 10, 1).toISOString(),
+    decision: 'revoke',
+    justification: 'Employee transferred to different department'
+  },
+  {
+    id: 'example-4',
+    reviewId: 'review-2023-030',
+    approverId: 'user-scott',
+    approvedUserId: 'user-maria',
+    environment: 'CCCS',
+    jobFunctions: ['Security Engineer'],
+    permissionsGranted: ['read:security-config', 'write:security-config', 'admin:security-tools'],
+    groupsMembership: ['Security Engineers', 'Infrastructure Team'],
+    timestamp: new Date(2023, 9, 25).toISOString(),
+    decision: 'maintain',
+    justification: 'Quarterly review - all permissions appropriate'
+  },
+  {
+    id: 'example-5',
+    reviewId: 'review-2023-035',
+    approverId: 'user-scott',
+    approvedUserId: 'user-tom',
+    environment: 'Commercial',
+    jobFunctions: ['IT Support'],
+    permissionsGranted: ['read:tickets', 'update:tickets', 'read:user-accounts'],
+    groupsMembership: ['Support Team', 'Help Desk'],
+    timestamp: new Date(2023, 9, 20).toISOString(),
+    decision: 'modify',
+    justification: 'Added new permissions for updated ticketing system'
+  }
+];
+
+const AccessReviewLogTable: React.FC<AccessReviewLogTableProps> = ({ logs, isExample }) => {
+  const displayLogs = isExample ? sampleExampleLogs : logs;
+  
+  const getDecisionBadge = (decision: 'maintain' | 'revoke' | 'modify') => {
+    switch (decision) {
+      case 'maintain':
+        return (
+          <div className="flex items-center">
+            <CheckCircle className="h-4 w-4 text-green-600 mr-1" />
+            <Badge variant="outline" className="bg-green-50 text-green-700 hover:bg-green-100 border-green-200">
+              Maintain
+            </Badge>
+          </div>
+        );
+      case 'revoke':
+        return (
+          <div className="flex items-center">
+            <XCircle className="h-4 w-4 text-red-600 mr-1" />
+            <Badge variant="outline" className="bg-red-50 text-red-700 hover:bg-red-100 border-red-200">
+              Revoke
+            </Badge>
+          </div>
+        );
+      case 'modify':
+        return (
+          <div className="flex items-center">
+            <AlertTriangle className="h-4 w-4 text-amber-600 mr-1" />
+            <Badge variant="outline" className="bg-amber-50 text-amber-700 hover:bg-amber-100 border-amber-200">
+              Modify
+            </Badge>
+          </div>
+        );
+      default:
+        return null;
     }
   };
 
-  // Function to get groups based on job functions and environment
-  const getGroups = (jobFunctions: string[], environment: string) => {
-    let groups: string[] = [];
-    const envGroups = mockGroups[environment as keyof typeof mockGroups] || {};
-    
-    jobFunctions.forEach(jf => {
-      const jfGroups = envGroups[jf as keyof typeof envGroups] || [];
-      groups = [...groups, ...jfGroups];
-    });
-    
-    return groups.length > 0 ? groups : ['No groups assigned'];
-  };
-
-  if (!logs || logs.length === 0) {
-    return (
-      <div className="text-center py-8 text-muted-foreground">
-        No access review logs found.
-      </div>
-    );
-  }
-
   return (
     <Table>
-      <TableCaption>Access review accountability database records</TableCaption>
       <TableHeader>
         <TableRow>
-          <TableHead>Approver</TableHead>
+          <TableHead>Date</TableHead>
+          <TableHead>Manager</TableHead>
           <TableHead>User</TableHead>
           <TableHead>Environment</TableHead>
-          <TableHead>Job Functions</TableHead>
-          <TableHead>Group(s)</TableHead>
-          <TableHead>Access Type</TableHead>
+          <TableHead>Job Function</TableHead>
           <TableHead>Decision</TableHead>
           <TableHead>Justification</TableHead>
-          <TableHead>Date</TableHead>
         </TableRow>
       </TableHeader>
       <TableBody>
-        {logs.map((log) => (
-          <TableRow key={log.id}>
-            <TableCell className="font-medium">{log.approverId}</TableCell>
-            <TableCell>{log.approvedUserId}</TableCell>
-            <TableCell>{log.environment}</TableCell>
-            <TableCell>
-              <div className="max-w-[200px]">
-                {log.jobFunctions.map((jf) => (
-                  <Badge key={jf} variant="outline" className="mr-1 mb-1">
-                    {jf}
-                  </Badge>
-                ))}
-              </div>
-            </TableCell>
-            <TableCell>
-              <div className="max-w-[200px] text-xs">
-                {log.groupsMembership?.map((group) => (
-                  <div key={group} className="mb-1">
-                    {group}
-                  </div>
-                )) || getGroups(log.jobFunctions, log.environment).map((group) => (
-                  <div key={group} className="mb-1">
-                    {group}
-                  </div>
-                ))}
-              </div>
-            </TableCell>
-            <TableCell>
-              <Badge variant="outline">Permanent</Badge>
-            </TableCell>
-            <TableCell>
-              <Badge
-                variant={log.decision === 'maintain' ? 'secondary' : log.decision === 'revoke' ? 'destructive' : 'outline'}
-              >
-                {log.decision === 'maintain' ? 'Approved' : log.decision === 'revoke' ? 'Rejected' : log.decision}
-              </Badge>
-            </TableCell>
-            <TableCell>
-              <span className="text-xs">{log.justification || "No change"}</span>
-            </TableCell>
-            <TableCell className="text-nowrap">
-              {format(new Date(log.timestamp), 'MMM d, yyyy')}
+        {displayLogs.length === 0 ? (
+          <TableRow>
+            <TableCell colSpan={7} className="text-center py-4">
+              No access review logs found
             </TableCell>
           </TableRow>
-        ))}
+        ) : (
+          displayLogs.map((log) => (
+            <TableRow key={log.id}>
+              <TableCell>
+                {formatDistanceToNow(new Date(log.timestamp))} ago
+              </TableCell>
+              <TableCell>
+                {isExample ? "Scott Dale" : "No Manager"}
+              </TableCell>
+              <TableCell>
+                {log.approvedUserId.replace('user-', '')}
+              </TableCell>
+              <TableCell>
+                <Badge variant="outline" className="bg-blue-50 text-blue-700 hover:bg-blue-100 border-blue-200">
+                  {log.environment}
+                </Badge>
+              </TableCell>
+              <TableCell>
+                {log.jobFunctions.join(', ')}
+              </TableCell>
+              <TableCell>
+                {getDecisionBadge(log.decision)}
+              </TableCell>
+              <TableCell>
+                <div className="max-w-xs truncate" title={log.justification}>
+                  {log.justification || 'No justification provided'}
+                </div>
+              </TableCell>
+            </TableRow>
+          ))
+        )}
       </TableBody>
     </Table>
   );

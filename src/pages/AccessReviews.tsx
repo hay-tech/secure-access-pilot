@@ -125,7 +125,7 @@ const AccessReviews: React.FC = () => {
                 <CardTitle>Accountability Database Example</CardTitle>
               </CardHeader>
               <CardContent>
-                <AccessReviewLogTable logs={accessReviewLogs || []} />
+                <AccessReviewLogTable logs={accessReviewLogs || []} isExample={true} />
               </CardContent>
             </Card>
           </TabsContent>
