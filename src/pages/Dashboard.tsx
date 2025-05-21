@@ -133,7 +133,7 @@ const Dashboard: React.FC = () => {
         />
         
         {/* Hide UAR card for Developers */}
-        {! (isManager || isComplianceAnalyst) && (
+        {(isManager || isComplianceAnalyst) && (
           <UserStatsCard
             title={uarCardTitle}
             value={unauthorizedUsersCount}
