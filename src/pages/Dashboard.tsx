@@ -50,16 +50,22 @@ const Dashboard: React.FC = () => {
   const userJobFunctions = currentUser.jobFunction ? [currentUser.jobFunction] : 
                           currentUser.jobFunctions ? currentUser.jobFunctions : [];
   
-  // Set pending requests to 0 as requested
-  const pendingRequests = 0;
+  // Get the correct count of pending requests from the mock data
+  const pendingRequests = accessRequests.filter(r => r.status === 'pending').length;
   const myPendingApprovals = accessRequests.filter(r => 
     (r.managerApproval?.approverId === currentUser.id && r.managerApproval?.status === 'pending') ||
     (r.securityApproval?.approverId === currentUser.id && r.securityApproval?.status === 'pending')
   );
   
-  // Check if user is manager
+  // Check user roles to determine card visibility and text
   const isManager = currentUser.jobFunction?.includes('Manager') || 
                     (currentUser.jobFunctions && currentUser.jobFunctions.some(jf => jf.includes('Manager')));
+  
+  const isComplianceAnalyst = currentUser.jobFunction?.includes('Compliance') || 
+                            (currentUser.jobFunctions && currentUser.jobFunctions.some(jf => jf.includes('Compliance')));
+  
+  const isDeveloper = currentUser.jobFunction?.includes('Developer') || 
+                      (currentUser.jobFunctions && currentUser.jobFunctions.some(jf => jf.includes('Developer')));
   
   // Only show system stats if user is not a manager and has 'reports' read permission
   const canViewSystemStats = hasPermission(currentUser.id, 'reports', 'read') && !isManager;
@@ -96,6 +102,11 @@ const Dashboard: React.FC = () => {
   // Set unauthorized users count to 2 as requested
   const unauthorizedUsersCount = 2;
 
+  // Set correct card title based on user role
+  const uarCardTitle = (isManager || isComplianceAnalyst) ? 
+    "UAR Auto-Remediation Summary" : 
+    "Automated UAR Validation Findings";
+
   return (
     <div className="space-y-6">
       <div className="flex justify-between items-center">
@@ -120,13 +131,16 @@ const Dashboard: React.FC = () => {
           icon="roles"
         />
         
-        <UserStatsCard
-          title="Automated UAR Validation Findings"
-          value={unauthorizedUsersCount}
-          description="Unauthorized user access findings"
-          icon="permissions"
-          linkTo="/reviews?tab=unauthorized"
-        />
+        {/* Hide UAR card for Developers */}
+        {!isDeveloper && (
+          <UserStatsCard
+            title={uarCardTitle}
+            value={unauthorizedUsersCount}
+            description="Unauthorized user access findings"
+            icon="permissions"
+            linkTo="/reviews?tab=unauthorized"
+          />
+        )}
         
         <UserStatsCard
           title="Pending Requests"
