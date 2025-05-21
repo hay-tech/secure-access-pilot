@@ -39,7 +39,7 @@ const AccessReviews: React.FC = () => {
   // Handle bulk selection
   const handleSelectAll = (checked: boolean) => {
     if (checked) {
-      setSelectedUsers(unauthorizedUsers.map(user => user.userId));
+      setSelectedUsers(unauthorizedUsers.map(user => user.user.id));
     } else {
       setSelectedUsers([]);
     }

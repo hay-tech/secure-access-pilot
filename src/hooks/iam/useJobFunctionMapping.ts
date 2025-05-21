@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { JobFunction, JobFunctionPermissionMapping, JobFunctionDefinition, PermissionGap } from '../../types/iam';
 import { useIAMStore } from './useIAMStore';
@@ -255,6 +254,22 @@ export const useJobFunctionMapping = () => {
     return jobFunctionDefinitions.find(jf => jf.title === jobFunction);
   };
 
+  const getJobFunctionPermissions = (jobFunction: string) => {
+    const definition = getJobFunctionDefinition(jobFunction);
+    if (!definition) return null;
+    
+    const mapping = jobFunctionMappings.find(m => m.jobFunction === jobFunction as JobFunction);
+    
+    return {
+      id: definition.id,
+      title: definition.title,
+      description: definition.description,
+      actions: definition.actions,
+      permissions: mapping ? mapping.permissions : [],
+      resources: mapping ? mapping.resources : []
+    };
+  };
+
   const detectPermissionGaps = (userId: string): PermissionGap[] => {
     const user = users.find(u => u.id === userId);
     if (!user || !user.jobFunction) return [];
@@ -318,6 +333,7 @@ export const useJobFunctionMapping = () => {
     getResourcesForJobFunction,
     getEnvironmentsForJobFunction,
     getJobFunctionDefinition,
+    getJobFunctionPermissions,
     detectPermissionGaps
   };
 };

@@ -9,10 +9,8 @@ import { Download } from 'lucide-react';
 import { toast } from 'sonner';
 
 const AuditLogs: React.FC = () => {
-  const { auditLogs } = useIAM();
+  const { auditLogs, users } = useIAM();
   const [filteredLogs, setFilteredLogs] = useState(auditLogs);
-  const [selectedTime, setSelectedTime] = useState<string>('all');
-  const [selectedType, setSelectedType] = useState<string>('all');
   
   const handleDownload = () => {
     // Create CSV content
@@ -49,6 +47,10 @@ const AuditLogs: React.FC = () => {
     toast.success("Audit logs downloaded successfully");
   };
 
+  const handleFilterChange = (filteredLogs: typeof auditLogs) => {
+    setFilteredLogs(filteredLogs);
+  };
+
   return (
     <div className="space-y-6">
       <div className="flex justify-between items-center">
@@ -70,12 +72,9 @@ const AuditLogs: React.FC = () => {
       </div>
       
       <AuditLogFilters
-        selectedTime={selectedTime}
-        setSelectedTime={setSelectedTime}
-        selectedType={selectedType}
-        setSelectedType={setSelectedType}
-        setFilteredLogs={setFilteredLogs}
-        allLogs={auditLogs}
+        logs={auditLogs}
+        users={users}
+        onFilterChange={handleFilterChange}
       />
       
       <Card>
@@ -83,7 +82,7 @@ const AuditLogs: React.FC = () => {
           <CardTitle>Activity Logs</CardTitle>
         </CardHeader>
         <CardContent>
-          <AuditLogsTable logs={filteredLogs} />
+          <AuditLogsTable logs={filteredLogs} users={users} />
         </CardContent>
       </Card>
     </div>
