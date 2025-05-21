@@ -545,7 +545,7 @@ export const AccessRequestForm: React.FC<AccessRequestFormProps> = ({ onSuccess,
           <div className="space-y-6">
             {/* Risk Score Indicator */}
             <div className={cn(
-              "p-4 rounded-md",
+              "p-2 rounded-md",
               riskScore.level === 'High' ? "bg-red-50 border border-red-200" :
               riskScore.level === 'Medium' ? "bg-yellow-50 border border-yellow-200" :
               "bg-green-50 border border-green-200"
