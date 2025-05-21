@@ -57,7 +57,11 @@ const Dashboard: React.FC = () => {
     (r.securityApproval?.approverId === currentUser.id && r.securityApproval?.status === 'pending')
   );
   
-  const canViewSystemStats = hasPermission(currentUser.id, 'reports', 'read');
+  // Check if user is manager
+  const isManager = currentUser.jobFunction?.includes('Manager') || 
+                    (currentUser.jobFunctions && currentUser.jobFunctions.some(jf => jf.includes('Manager')));
+  
+  const canViewSystemStats = hasPermission(currentUser.id, 'reports', 'read') && !isManager;
   
   // Data for job function distribution - get directly from users
   const jobFunctionCounts: Record<string, number> = {};

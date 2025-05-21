@@ -89,7 +89,7 @@ const UserAccessReviewRow: React.FC<UserAccessReviewRowProps> = ({
             className="bg-green-50 text-green-700 hover:bg-green-100 hover:text-green-800 border-green-200"
             onClick={handleRecertify}
           >
-            <Check className="h-4 w-4 mr-1" /> Recertify
+            <Check className="h-4 w-4 mr-1" /> Certify
           </Button>
           <Button
             size="sm"
@@ -97,7 +97,7 @@ const UserAccessReviewRow: React.FC<UserAccessReviewRowProps> = ({
             className="bg-red-50 text-red-700 hover:bg-red-100 hover:text-red-800 border-red-200"
             onClick={handleRevokeAccess}
           >
-            <X className="h-4 w-4 mr-1" /> Revoke All Access
+            <X className="h-4 w-4 mr-1" /> Revoke Access
           </Button>
         </div>
       </TableCell>
