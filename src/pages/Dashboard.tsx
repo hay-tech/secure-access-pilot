@@ -106,7 +106,7 @@ const Dashboard: React.FC = () => {
   // Set correct card title based on user role
   const uarCardTitle = (isManager || isComplianceAnalyst) ? 
     "UAR Auto-Remediation Summary" : 
-    "Automated UAR Validation Findings";
+    "UAR Auto-Remediation Summary";
 
   return (
     <div className="space-y-6">
@@ -133,11 +133,11 @@ const Dashboard: React.FC = () => {
         />
         
         {/* Hide UAR card for Developers */}
-        {!isDeveloper && (
+        {! (isManager || isComplianceAnalyst) && (
           <UserStatsCard
             title={uarCardTitle}
             value={unauthorizedUsersCount}
-            description="Unauthorized user access findings"
+            description="UAR Auto-Remediation Summary"
             icon="permissions"
             linkTo="/reviews?tab=unauthorized"
           />
