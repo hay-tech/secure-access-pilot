@@ -57,10 +57,10 @@ export function Sidebar() {
         <h2 className="px-4 text-lg font-semibold">Navigation</h2>
         <SidebarItem icon={LayoutDashboard} label="Dashboard" href="/dashboard" active={pathname === '/dashboard'} />
         <SidebarItem icon={ClipboardList} label="Access Requests" href="/requests" active={pathname === '/requests'} />
+        <SidebarItem icon={CheckSquare} label="Approvals" href="/approvals" active={pathname === '/approvals'} />
         {shouldShowAccessReviews && (
           <SidebarItem icon={Shield} label="Access Reviews" href="/reviews" active={pathname === '/reviews'} />
         )}
-        <SidebarItem icon={CheckSquare} label="Approvals" href="/approvals" active={pathname === '/approvals'} />
         {shouldShowReports && (
           <SidebarItem icon={FileText} label="Reports" href="/reports" active={pathname === '/reports'} />
         )}
