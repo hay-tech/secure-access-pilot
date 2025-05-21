@@ -1,12 +1,14 @@
 
 import React, { useState, useEffect } from 'react';
-import { Table, TableHeader, TableRow, TableHead, TableBody } from "@/components/ui/table";
+import { Table, TableHeader, TableRow, TableHead, TableBody, TableCell } from "@/components/ui/table";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
-import { User, PermissionGap, RegulatoryEnvironment } from "@/types/iam";
-import { Shield, Filter } from "lucide-react";
+import { User, PermissionGap } from "@/types/iam";
+import { RegulatoryEnvironment } from "@/types/iam/access-review-types";
+import { Shield, Filter, Check, X } from "lucide-react";
 import UserAccessReviewRow from './UserAccessReviewRow';
 import UserAccessReviewEmptyState from './UserAccessReviewEmptyState';
 import { Input } from "@/components/ui/input";
+import { Badge } from "@/components/ui/badge";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
 

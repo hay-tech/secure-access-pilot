@@ -86,13 +86,13 @@ const PermissionGapItem: React.FC<PermissionGapItemProps> = ({
     <div className="mb-4 bg-background rounded-md p-4 shadow-sm border">
       <div className="flex items-center justify-between mb-2">
         <div className="flex items-center space-x-2">
-          {gap.gapType === 'excess' ? (
+          {gap.gapType === 'excessive_permission' ? (
             <ShieldX className="h-5 w-5 text-destructive" />
           ) : (
             <ShieldCheck className="h-5 w-5 text-warning" />
           )}
-          <span className={`text-sm font-medium ${gap.gapType === 'excess' ? 'text-destructive' : 'text-warning'}`}>
-            {gap.gapType === 'excess' ? 'Excess Permission' : 'Missing Permission'}
+          <span className={`text-sm font-medium ${gap.gapType === 'excessive_permission' ? 'text-destructive' : 'text-warning'}`}>
+            {gap.gapType === 'excessive_permission' ? 'Excess Permission' : 'Missing Permission'}
           </span>
           <Badge className={getSeverityColor(gap.severity)}>
             {gap.severity}

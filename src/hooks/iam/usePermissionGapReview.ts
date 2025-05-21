@@ -54,10 +54,10 @@ export const usePermissionGapReview = () => {
     
     if (!user) return;
     
-    if (gap.gapType === 'missing' && gap.roleId) {
+    if (gap.gapType === 'missing_permission' && gap.roleId) {
       // Add the missing role
       await updateUser(user.id, { roleIds: [...user.roleIds, gap.roleId] });
-    } else if (gap.gapType === 'excess' && gap.roleId) {
+    } else if (gap.gapType === 'excessive_permission' && gap.roleId) {
       // Remove excess permission by removing the role
       await updateUser(user.id, { roleIds: user.roleIds.filter(id => id !== gap.roleId) });
     }
@@ -85,8 +85,8 @@ export const usePermissionGapReview = () => {
       approvedUserId: gap.userId,
       environment: review.regulatoryEnvironment || 'Federal',
       jobFunctions,
-      permissionsGranted: approved ? (gap.gapType === 'missing' ? ['Added: ' + gap.description] : []) : 
-                                     (gap.gapType === 'excess' ? ['Removed: ' + gap.description] : []),
+      permissionsGranted: approved ? (gap.gapType === 'missing_permission' ? ['Added: ' + gap.description] : []) : 
+                                     (gap.gapType === 'excessive_permission' ? ['Removed: ' + gap.description] : []),
       groupsMembership: [],
       timestamp: new Date().toISOString(),
       decision: approved ? 'maintain' : 'revoke',

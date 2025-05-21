@@ -59,11 +59,12 @@ const BulkAccessReview: React.FC<BulkAccessReviewProps> = ({ onClose }) => {
   // Create user review data from pending reviews
   const usersReviewData: UserReviewData[] = pendingReviews.map((review) => {
     const userId = review.subjectId;
+    const environment = review.regulatoryEnvironment || 'CPE';
     return {
       id: userId,
       name: `User ${review.subjectId.slice(-4)}`, // Mock name based on ID
       email: `user${review.subjectId.slice(-4)}@example.com`, // Mock email
-      department: review.regulatoryEnvironment || 'CPE',
+      department: environment,
       currentRole: review.roleId || 'Cloud Platform Reader',
       action: userActions[userId] || 'certify-as-is', // Use stored action or default
       newRole: userRoles[userId] || undefined

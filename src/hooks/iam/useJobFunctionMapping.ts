@@ -296,11 +296,12 @@ export const useJobFunctionMapping = () => {
     expectedPermissionObjects.forEach(permission => {
       if (!userPermissionIds.has(permission.id)) {
         permissionGaps.push({
+          id: `gap-${userId}-${permission.id}`,
           userId,
           permissionId: permission.id,
-          gapType: 'missing',
+          gapType: 'missing_permission',
           description: `Missing permission: ${permission.name} (${permission.resource}:${permission.action})`,
-          severity: 'Medium'
+          severity: 'medium'
         });
       }
     });
@@ -311,12 +312,13 @@ export const useJobFunctionMapping = () => {
         const permString = `${permission.resource}:${permission.action}`;
         if (!expectedPermissions.includes(permString)) {
           permissionGaps.push({
+            id: `gap-${userId}-${permission.id}-excess`,
             userId,
             permissionId: permission.id,
             roleId: role.id,
-            gapType: 'excess',
+            gapType: 'excessive_permission',
             description: `Excess permission from role ${role.name}: ${permission.name} (${permString})`,
-            severity: 'High'
+            severity: 'high'
           });
         }
       });

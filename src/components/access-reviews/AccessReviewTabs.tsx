@@ -2,7 +2,8 @@
 import React from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
-import { User, PermissionGap, RegulatoryEnvironment } from '@/types/iam';
+import { User, PermissionGap } from '@/types/iam';
+import { RegulatoryEnvironment } from '@/types/iam/access-review-types';
 import UserAccessReviewTable from './UserAccessReviewTable';
 
 interface AccessReviewTabsProps {
@@ -51,7 +52,7 @@ const AccessReviewTabs: React.FC<AccessReviewTabsProps> = ({
               name: env.name,
               description: env.description,
               complianceFrameworks: env.complianceFrameworks,
-              riskLevel: env.riskLevel as "Low" | "Medium" | "High" | "Critical"
+              riskLevel: env.riskLevel
             }}
             userGaps={userGapsByEnvironment[env.name.toLowerCase()] || []}
             onApproveGap={onApproveGap}

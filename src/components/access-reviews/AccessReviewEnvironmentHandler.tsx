@@ -6,6 +6,7 @@ import { useAccessReviewManagement } from '@/hooks/iam/useAccessReviewManagement
 import { useAccessReviewCompletion } from '@/hooks/iam/useAccessReviewCompletion';
 import AccessReviewTabs from './AccessReviewTabs';
 import { jobFunctionDefinitions } from '@/data/mockJobFunctions';
+import { RegulatoryEnvironment } from '@/types/iam/access-review-types';
 
 interface AccessReviewEnvironmentHandlerProps {
   currentTab: string;
@@ -22,34 +23,34 @@ const AccessReviewEnvironmentHandler: React.FC<AccessReviewEnvironmentHandlerPro
   const { completeAccessReview } = useAccessReviewCompletion();
   
   // Define regulatory environments
-  const regulatoryEnvironments = [
+  const regulatoryEnvironments: RegulatoryEnvironment[] = [
     {
       id: 'fedramp',
       name: 'FedRamp',
       description: 'Federal government compliance requirements',
       complianceFrameworks: ['FedRAMP', 'FISMA'],
-      riskLevel: 'High' as const
+      riskLevel: 'High'
     },
     {
       id: 'commercial',
       name: 'Commercial',
       description: 'Commercial sector compliance requirements',
       complianceFrameworks: ['SOC2', 'ISO27001'],
-      riskLevel: 'Medium' as const
+      riskLevel: 'Medium'
     },
     {
       id: 'cccs',
       name: 'CCCS',
       description: 'Canadian Center For Cybersecurity compliance requirements',
       complianceFrameworks: ['Protected-B', 'Protect-A'],
-      riskLevel: 'High' as const
+      riskLevel: 'High'
     },
     {
       id: 'cjis',
       name: 'CJIS',
       description: 'US Government compliance requirements',
       complianceFrameworks: ['CJIS', 'SOC2'],
-      riskLevel: 'High' as const
+      riskLevel: 'High'
     }
   ];
 
@@ -80,13 +81,13 @@ const AccessReviewEnvironmentHandler: React.FC<AccessReviewEnvironmentHandlerPro
           
           // For missing permissions, find the approved job function
           let approvedJobFunction;
-          if (gap.gapType === 'missing' && gap.roleId) {
+          if (gap.gapType === 'missing_permission' && gap.roleId) {
             // In a real application, you would look up the job function associated with the role
             // Here we'll simulate it by using a different job function
             approvedJobFunction = gap.description.includes('Administrator') ? 
               'Cloud Platform Administrator' : 
               'Cloud Platform Contributor';
-          } else if (gap.gapType === 'excess') {
+          } else if (gap.gapType === 'excessive_permission') {
             // For excess permissions, the approved is less than actual
             approvedJobFunction = gap.description.includes('Administrator') ? 
               'Cloud Platform Contributor' : 
