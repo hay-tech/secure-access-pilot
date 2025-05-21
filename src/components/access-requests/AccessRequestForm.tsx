@@ -678,7 +678,7 @@ export const AccessRequestForm: React.FC<AccessRequestFormProps> = ({ onSuccess,
                   </FormControl>
                   <div className="flex justify-between text-xs text-gray-500">
                     <span>Example: "I require write access to cccs-prod to update security services images with latest patches for Q2."</span>
-                    <span>{field.value.length}/500 characters</span>
+                    <span>{field.value.length}/300 characters</span>
                   </div>
                   <FormMessage />
                 </FormItem>
