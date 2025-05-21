@@ -23,10 +23,10 @@ const AccessReviewProgress: React.FC<AccessReviewProgressProps> = ({ progressIte
         <div className="space-y-4">
           {progressItems.map((item, index) => (
             <div key={index} className="space-y-2">
-//              <div className="flex items-center justify-between">
-//                <span className="text-sm font-medium">{item.label}</span>
-//                <span className="text-sm text-muted-foreground">{item.value}%</span>
-//              </div>
+              <div className="flex items-center justify-between">
+                <span className="text-sm font-medium">{item.label}</span>
+                <span className="text-sm text-muted-foreground">{item.value}%</span>
+              </div>
               <Progress value={item.value} className="h-2" />
             </div>
           ))}
