@@ -545,7 +545,7 @@ export const AccessRequestForm: React.FC<AccessRequestFormProps> = ({ onSuccess,
           <div className="space-y-6">
             {/* Risk Score Indicator */}
             <div className={cn(
-              "p-2 rounded-md",
+              "p-4 rounded-md",
               riskScore.level === 'High' ? "bg-red-50 border border-red-200" :
               riskScore.level === 'Medium' ? "bg-yellow-50 border border-yellow-200" :
               "bg-green-50 border border-green-200"
@@ -678,7 +678,7 @@ export const AccessRequestForm: React.FC<AccessRequestFormProps> = ({ onSuccess,
                   </FormControl>
                   <div className="flex justify-between text-xs text-gray-500">
                     <span>Example: "I require write access to cccs-prod to update security services images with latest patches for Q2."</span>
-                    <span>{field.value.length}/300 characters</span>
+                    <span>{field.value.length}/500 characters</span>
                   </div>
                   <FormMessage />
                 </FormItem>
