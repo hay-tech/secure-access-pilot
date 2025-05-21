@@ -44,6 +44,7 @@ export const useAccessRequestForm = (onSuccess: () => void, onCancel: () => void
   const watchedSecurityClass = form.watch('securityClassification');
   const watchedCloudProvider = form.watch('cloudProvider');
   const watchedCloudWorkload = form.watch('cloudWorkload');
+  const watchedClusters = form.watch('clusters');
 
   // Use our custom state hook
   const {
@@ -125,6 +126,13 @@ export const useAccessRequestForm = (onSuccess: () => void, onCancel: () => void
       expiresAt = expirationDate.toISOString();
     }
     
+    // Get selected job function title
+    const selectedJobFunctionObj = jobFunctionDefinitions.find(jf => jf.id === data.jobFunction);
+    const jobFunctionTitle = selectedJobFunctionObj?.title || "Standard Role";
+    
+    // Get selected cluster name
+    const clusterName = data.cloudWorkload || (data.clusters && data.clusters.length > 0 ? data.clusters[0] : "Default Cluster");
+    
     // Collect resource names for the selected resources
     const selectedResources = targetResources.filter(resource => 
       data.resources.includes(resource.id)
@@ -144,7 +152,7 @@ export const useAccessRequestForm = (onSuccess: () => void, onCancel: () => void
       await createAccessRequest({
         userId: currentUser.id,
         resourceId: data.resources.join(','),
-        resourceName: resourceNames,
+        resourceName: clusterName, // Use cluster name as resource name
         requestType: 'role',
         justification: data.justification,
         accessType: data.accessType,
@@ -170,6 +178,8 @@ export const useAccessRequestForm = (onSuccess: () => void, onCancel: () => void
         environmentType: data.environmentFilter,
         // Add any selected clusters to the request
         cloudWorkload: data.cloudWorkload,
+        // Set job function for the request
+        jobFunction: jobFunctionTitle,
       });
       
       // Reset form and close dialog

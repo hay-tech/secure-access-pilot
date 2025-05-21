@@ -3,7 +3,7 @@ import { Navigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 
 const Index = () => {
-  const { isAuthenticated, loading } = useAuth();
+  const { isAuthenticated, loading, currentUser } = useAuth();
 
   if (loading) {
     return (
@@ -13,8 +13,17 @@ const Index = () => {
     );
   }
 
-  // Redirect to dashboard if authenticated, otherwise to login
-  return <Navigate to={isAuthenticated ? '/dashboard' : '/login'} replace />;
+  if (isAuthenticated) {
+    // Check if user is a developer
+    const isDeveloper = currentUser?.jobFunction?.includes('Developer') || 
+                      (currentUser?.jobFunctions && currentUser?.jobFunctions.some(jf => jf.includes('Developer')));
+    
+    // If developer, redirect to access requests page, otherwise to dashboard
+    return <Navigate to={isDeveloper ? '/requests' : '/dashboard'} replace />;
+  }
+  
+  // Redirect to login if not authenticated
+  return <Navigate to="/login" replace />;
 };
 
 export default Index;

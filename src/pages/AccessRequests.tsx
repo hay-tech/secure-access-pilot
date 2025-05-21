@@ -45,7 +45,7 @@ const AccessRequests: React.FC = () => {
         
         <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
           <DialogTrigger asChild>
-            <Button className="bg-iam-primary hover:bg-iam-primary-light">
+            <Button className="bg-[#0EA5E9] hover:bg-[#0EA5E9]/80">
               <Plus className="mr-2 h-4 w-4" /> New Request
             </Button>
           </DialogTrigger>
@@ -65,12 +65,12 @@ const AccessRequests: React.FC = () => {
         </Dialog>
       </div>
       
-      <Tabs defaultValue="my-requests">
-        <TabsList>
-          <TabsTrigger value="my-requests">My Requests</TabsTrigger>
-          <TabsTrigger value="approved">Approved</TabsTrigger>
-          <TabsTrigger value="pending">Pending</TabsTrigger>
-          <TabsTrigger value="rejected">Rejected</TabsTrigger>
+      <Tabs defaultValue="my-requests" className="bg-[#F6F6F7]">
+        <TabsList className="bg-[#1A1F2C]/10">
+          <TabsTrigger value="my-requests" className="data-[state=active]:bg-[#0EA5E9] data-[state=active]:text-white">My Requests</TabsTrigger>
+          <TabsTrigger value="approved" className="data-[state=active]:bg-[#0EA5E9] data-[state=active]:text-white">Approved</TabsTrigger>
+          <TabsTrigger value="pending" className="data-[state=active]:bg-[#0EA5E9] data-[state=active]:text-white">Pending</TabsTrigger>
+          <TabsTrigger value="rejected" className="data-[state=active]:bg-[#0EA5E9] data-[state=active]:text-white">Rejected</TabsTrigger>
         </TabsList>
         
         <TabsContent value="my-requests">

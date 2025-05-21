@@ -51,7 +51,7 @@ export const AccessRequestsTable: React.FC<AccessRequestsTableProps> = ({ reques
       <TableHeader>
         <TableRow>
           <TableHead>Resource</TableHead>
-          <TableHead>Role</TableHead>
+          <TableHead>Job Function</TableHead>
           <TableHead>Access Type</TableHead>
           <TableHead>Expiration</TableHead>
           <TableHead>Status</TableHead>
