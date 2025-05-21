@@ -1,6 +1,6 @@
 
 export const complianceEnvironments = [
-  { id: 'federal', name: 'Federal' },
+  { id: 'FedRamp', name: 'FedRamp' },
   { id: 'cjis', name: 'CJIS' },
   { id: 'cccs', name: 'CCCS' },
   { id: 'commercial-us', name: 'Commercial (US)' },
