@@ -52,6 +52,22 @@ export interface PermissionGap {
   approvedJobFunction?: string;
 }
 
+// Updated the ApprovalStep interface to match how it's being used in the codebase
+export interface ApprovalStep {
+  id: string;
+  approverId?: string; // Added to support current code patterns
+  approverName?: string; // Added to support current code patterns
+  approverTitle?: string; // Added to support current code patterns
+  approverType: 'manager' | 'security' | 'compliance' | 'admin' | 'resource-owner';
+  status: 'pending' | 'approved' | 'rejected';
+  timestamp?: string;
+  comments?: string;
+  reason?: string; // Added to support current code patterns
+  name?: string; // Added to support current code patterns
+  title?: string; // Added to support current code patterns
+  type?: string; // Added to support current code patterns
+}
+
 // Adding RegulatoryEnvironment type that was missing
 export interface RegulatoryEnvironment {
   id: string;
@@ -73,14 +89,4 @@ export interface AccessViolation {
   detectedAt: string;
   status: string;
   reviewId?: string;
-}
-
-// Adding ApprovalStep type that was missing
-export interface ApprovalStep {
-  id: string;
-  approverType: 'manager' | 'security' | 'compliance' | 'admin';
-  approverName: string;
-  status: 'pending' | 'approved' | 'rejected';
-  timestamp?: string;
-  comments?: string;
 }

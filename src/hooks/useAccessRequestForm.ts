@@ -126,7 +126,7 @@ export const useAccessRequestForm = (onSuccess: () => void, onCancel: () => void
       setSelectedJobFunction(watchedJobFunction);
       
       // Auto-select recommended resources
-      const jobFunction = jobFunctionDefinitions.find(jf => jf.id === watchedJobFunction);
+      const jobFunction = jobFunctionDefinitions.find(jf => jf.id === selectedJobFunction);
       if (jobFunction) {
         form.setValue('resources', jobFunction.recommendedResources);
       }
@@ -218,12 +218,17 @@ export const useAccessRequestForm = (onSuccess: () => void, onCancel: () => void
         resourceHierarchy: primaryResource?.resourceHierarchy as "Organization" | "Tenant" | "Environment/Region" | "Project/RG" | "Resources/Services" || "Resources/Services",
         projectName: data.projectName,
         approvalChain: generatedApprovalChain.map(approver => ({
+          id: `approver-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`, // Generate a unique ID
           approverId: approver?.id || "",
           approverName: approver?.name || "",
           approverTitle: approver?.title || "",
           approverType: (approver?.type || "manager") as 'manager' | 'resource-owner' | 'security' | 'compliance',
           status: 'pending',
-          reason: approver?.reason
+          reason: approver?.reason,
+          // Include other properties that might be used elsewhere
+          name: approver?.name,
+          title: approver?.title,
+          type: approver?.type
         })),
         // Update the field names to match the AccessRequest type
         cloudEnvironment: data.cloudProvider,

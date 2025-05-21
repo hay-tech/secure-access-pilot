@@ -196,13 +196,18 @@ export const IAMProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     if (request.approvalChain) {
       // Convert the incoming approval chain to the correct ApprovalStep type
       approvalChain = request.approvalChain.map(approver => ({
+        id: `approver-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`, // Generate a unique ID
         approverId: approver.approverId || (approver.id as string) || "",
         approverName: approver.approverName || (approver.name as string) || "",
         approverTitle: approver.approverTitle || (approver.title as string) || "",
         approverType: (approver.approverType || approver.type || "manager") as 'manager' | 'resource-owner' | 'security' | 'compliance',
         status: 'pending',
         comments: approver.comments,
-        reason: approver.reason
+        reason: approver.reason,
+        // Include other properties from the original object
+        name: approver.name as string,
+        title: approver.title as string,
+        type: approver.type as string
       }));
     }
     
