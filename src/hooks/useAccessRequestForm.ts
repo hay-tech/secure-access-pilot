@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -226,10 +225,11 @@ export const useAccessRequestForm = (onSuccess: () => void, onCancel: () => void
           status: 'pending',
           reason: approver?.reason
         })),
-        // Add additional fields for clusters if selected
+        // Update the field names to match the AccessRequest type
         cloudEnvironment: data.cloudProvider,
-        cspSubtype: data.cloudWorkload,
         environmentType: data.environmentFilter,
+        // Add any selected clusters to the request
+        cloudWorkload: data.cloudWorkload,
       });
       
       // Reset form and close dialog

@@ -41,6 +41,8 @@ export interface AccessRequest {
   projectName?: string;
   // Add jobFunction to match usage in mockAccessRequests.ts
   jobFunction?: string;
+  // Add cloudWorkload for the CSP subtype field
+  cloudWorkload?: string;
 }
 
 export interface TargetResource {
