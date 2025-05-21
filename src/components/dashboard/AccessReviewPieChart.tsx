@@ -15,7 +15,6 @@ const COLORS = ['#4ade80', '#f87171'];
 const AccessReviewPieChart: React.FC<AccessReviewPieChartProps> = ({ data }) => {
   const totalReviews = data.reduce((sum, item) => sum + item.value, 0);
   const completedReviews = data.find(item => item.name === 'Completed')?.value || 0;
-  const remainingReviews = data.find(item => item.name === 'Remaining')?.value || 0;
   const completionPercentage = totalReviews > 0 ? Math.round((completedReviews / totalReviews) * 100) : 0;
 
   return (

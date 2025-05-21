@@ -50,9 +50,9 @@ const Dashboard: React.FC = () => {
   const userJobFunctions = currentUser.jobFunction ? [currentUser.jobFunction] : 
                           currentUser.jobFunctions ? currentUser.jobFunctions : [];
   
-  // Get all pending requests from the system to match the /requests page
-  const pendingRequests = accessRequests.filter(r => r.status === 'pending');
-  const myPendingApprovals = pendingRequests.filter(r => 
+  // Set pending requests to 0 as requested
+  const pendingRequests = 0;
+  const myPendingApprovals = accessRequests.filter(r => 
     (r.managerApproval?.approverId === currentUser.id && r.managerApproval?.status === 'pending') ||
     (r.securityApproval?.approverId === currentUser.id && r.securityApproval?.status === 'pending')
   );
@@ -93,9 +93,8 @@ const Dashboard: React.FC = () => {
     { name: 'Remaining', value: remainingReviews },
   ];
 
-  // Count unauthorized users for UAR validation findings
-  const fedrampGaps = accessReviews.filter(review => review.violationType === 'unauthorized_user');
-  const unauthorizedUsersCount = fedrampGaps.length;
+  // Set unauthorized users count to 2 as requested
+  const unauthorizedUsersCount = 2;
 
   return (
     <div className="space-y-6">
@@ -131,7 +130,7 @@ const Dashboard: React.FC = () => {
         
         <UserStatsCard
           title="Pending Requests"
-          value={pendingRequests.length}
+          value={pendingRequests}
           description="System-wide pending access requests"
           icon="pendingRequests"
           linkTo="/requests"
