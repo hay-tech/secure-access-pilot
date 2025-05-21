@@ -134,6 +134,37 @@ export const AccessRequestForm: React.FC<AccessRequestFormProps> = ({ onSuccess,
   const [availableClusters, setAvailableClusters] = useState<Cluster[]>([]);
   const [selectedClusters, setSelectedClusters] = useState<string[]>([]);
   
+  // Get available cloud providers based on environment and security classification
+  const getAvailableCloudProviders = () => {
+    if (!environmentFilter || !securityClassification) return [];
+    
+    const availableProviders = clusterData
+      .filter(cluster => 
+        cluster.environmentTier === environmentFilter && 
+        cluster.securityClassification === securityClassification
+      )
+      .map(cluster => cluster.cloud)
+      .filter((value, index, self) => self.indexOf(value) === index);
+    
+    return cloudProviders.filter(provider => availableProviders.includes(provider.id));
+  };
+  
+  // Get available cloud provider workloads based on environment, security classification, and provider
+  const getAvailableCloudWorkloads = () => {
+    if (!environmentFilter || !securityClassification || !cloudProvider) return [];
+    
+    const availableWorkloads = clusterData
+      .filter(cluster => 
+        cluster.environmentTier === environmentFilter && 
+        cluster.securityClassification === securityClassification &&
+        cluster.cloud === cloudProvider
+      )
+      .map(cluster => cluster.cspSubtype)
+      .filter((value, index, self) => self.indexOf(value) === index);
+    
+    return cloudWorkloads.filter(workload => availableWorkloads.includes(workload.id));
+  };
+  
   // Update available clusters when filters change
   useEffect(() => {
     if (environmentFilter && securityClassification && cloudProvider && cloudWorkload) {
@@ -148,6 +179,30 @@ export const AccessRequestForm: React.FC<AccessRequestFormProps> = ({ onSuccess,
       setAvailableClusters([]);
     }
   }, [environmentFilter, securityClassification, cloudProvider, cloudWorkload]);
+  
+  // Reset dependent fields when higher-level selections change
+  useEffect(() => {
+    if (environmentFilter && securityClassification) {
+      // Check if current cloudProvider is still valid
+      const availableProviders = getAvailableCloudProviders().map(p => p.id);
+      if (cloudProvider && !availableProviders.includes(cloudProvider)) {
+        setCloudProvider('');
+        setCloudWorkload('');
+        setSelectedClusters([]);
+      }
+    }
+  }, [environmentFilter, securityClassification]);
+  
+  useEffect(() => {
+    if (environmentFilter && securityClassification && cloudProvider) {
+      // Check if current cloudWorkload is still valid
+      const availableWorkloads = getAvailableCloudWorkloads().map(w => w.id);
+      if (cloudWorkload && !availableWorkloads.includes(cloudWorkload)) {
+        setCloudWorkload('');
+        setSelectedClusters([]);
+      }
+    }
+  }, [cloudProvider]);
   
   // Handle cluster selection
   const handleClusterChange = (clusterName: string, checked: boolean) => {
@@ -166,9 +221,10 @@ export const AccessRequestForm: React.FC<AccessRequestFormProps> = ({ onSuccess,
           <div className="mt-2 p-2 border border-orange-200 bg-orange-50 rounded-md">
             <h4 className="font-medium text-orange-800">Personnel Prerequisites</h4>
             <ul className="list-disc pl-5 text-sm text-orange-700">
-              <li>US Citizen</li>
+              <li>US Citizen on US Soil</li>
               <li>Background Check</li>
               <li>Federal Training</li>
+              <li>YubiKey Verification</li>
             </ul>
           </div>
         );
@@ -177,7 +233,7 @@ export const AccessRequestForm: React.FC<AccessRequestFormProps> = ({ onSuccess,
           <div className="mt-2 p-2 border border-blue-200 bg-blue-50 rounded-md">
             <h4 className="font-medium text-blue-800">Personnel Prerequisites</h4>
             <ul className="list-disc pl-5 text-sm text-blue-700">
-              <li>Five Eyes Citizen</li>
+              <li>Five Eyes Citizen on Five Eyes Soil</li>
               <li>Background Check</li>
               <li>Federal Training</li>
             </ul>
@@ -188,6 +244,7 @@ export const AccessRequestForm: React.FC<AccessRequestFormProps> = ({ onSuccess,
           <div className="mt-2 p-2 border border-purple-200 bg-purple-50 rounded-md">
             <h4 className="font-medium text-purple-800">Personnel Prerequisites</h4>
             <div className="text-sm text-purple-700">
+              <p>Must be on US Soil</p>
               <p>CJIS Screening Process</p>
               <a 
                 href="https://batchat.motorolasolutions.com/home/ls/community/cjis-personnel" 
@@ -198,6 +255,15 @@ export const AccessRequestForm: React.FC<AccessRequestFormProps> = ({ onSuccess,
                 View CJIS Screening Details
               </a>
             </div>
+          </div>
+        );
+      case 'nist-800-53-moderate':
+        return (
+          <div className="mt-2 p-2 border border-green-200 bg-green-50 rounded-md">
+            <h4 className="font-medium text-green-800">Personnel Prerequisites</h4>
+            <p className="text-sm text-green-700">
+              MSI employee or contractor approved through MSI Corporate
+            </p>
           </div>
         );
       default:
@@ -305,10 +371,11 @@ export const AccessRequestForm: React.FC<AccessRequestFormProps> = ({ onSuccess,
                     onValueChange={(value) => {
                       setEnvironmentFilter(value);
                       form.setValue('environmentFilter', value);
-                      // Reset security classification if not dev environment
-                      if (value !== 'dev') {
-                        setSecurityClassification('');
-                      }
+                      // Reset dependent fields
+                      setSecurityClassification('');
+                      setCloudProvider('');
+                      setCloudWorkload('');
+                      setSelectedClusters([]);
                     }}
                   >
                     <SelectTrigger id="environment-filter">
@@ -327,7 +394,13 @@ export const AccessRequestForm: React.FC<AccessRequestFormProps> = ({ onSuccess,
                   <Label htmlFor="security-classification">Security Classification</Label>
                   <Select
                     value={securityClassification}
-                    onValueChange={setSecurityClassification}
+                    onValueChange={(value) => {
+                      setSecurityClassification(value);
+                      // Reset dependent fields
+                      setCloudProvider('');
+                      setCloudWorkload('');
+                      setSelectedClusters([]);
+                    }}
                   >
                     <SelectTrigger id="security-classification">
                       <SelectValue placeholder="Select a security classification" />
@@ -351,13 +424,18 @@ export const AccessRequestForm: React.FC<AccessRequestFormProps> = ({ onSuccess,
                   <Label htmlFor="cloud-provider">Cloud Provider</Label>
                   <Select
                     value={cloudProvider}
-                    onValueChange={setCloudProvider}
+                    onValueChange={(value) => {
+                      setCloudProvider(value);
+                      // Reset dependent field
+                      setCloudWorkload('');
+                      setSelectedClusters([]);
+                    }}
                   >
                     <SelectTrigger id="cloud-provider">
                       <SelectValue placeholder="Select cloud provider" />
                     </SelectTrigger>
                     <SelectContent>
-                      {cloudProviders.map(cp => (
+                      {getAvailableCloudProviders().map(cp => (
                         <SelectItem key={cp.id} value={cp.id}>{cp.name}</SelectItem>
                       ))}
                     </SelectContent>
@@ -369,13 +447,16 @@ export const AccessRequestForm: React.FC<AccessRequestFormProps> = ({ onSuccess,
                   <Label htmlFor="cloud-workload">Cloud Provider Workload</Label>
                   <Select
                     value={cloudWorkload}
-                    onValueChange={setCloudWorkload}
+                    onValueChange={(value) => {
+                      setCloudWorkload(value);
+                      setSelectedClusters([]);
+                    }}
                   >
                     <SelectTrigger id="cloud-workload">
                       <SelectValue placeholder="Select workload type" />
                     </SelectTrigger>
                     <SelectContent>
-                      {cloudWorkloads.map(cw => (
+                      {getAvailableCloudWorkloads().map(cw => (
                         <SelectItem key={cw.id} value={cw.id}>{cw.name}</SelectItem>
                       ))}
                     </SelectContent>

@@ -54,13 +54,6 @@ export const ApprovalChainPreview: React.FC<ApprovalChainPreviewProps> = ({
             reason: 'Required for CJIS environment access'
           },
           {
-            id: 'security-officer',
-            name: 'Security Officer',
-            title: 'CJIS Security Officer',
-            type: 'security',
-            reason: 'Required for CJIS environment access'
-          },
-          {
             id: 'data-owner',
             name: 'Data Owner',
             title: 'CJIS Data Owner',
@@ -76,13 +69,6 @@ export const ApprovalChainPreview: React.FC<ApprovalChainPreviewProps> = ({
             name: 'Cloud System Admin Approvers',
             title: 'NIST System Administrator',
             type: 'resource-owner',
-            reason: 'Required for NIST 800-53 environment access'
-          },
-          {
-            id: 'security-officer',
-            name: 'Security Officer',
-            title: 'NIST Security Officer',
-            type: 'security',
             reason: 'Required for NIST 800-53 environment access'
           },
           {

@@ -12,6 +12,7 @@ import {
   Clock,
   User
 } from "lucide-react";
+import { useAuth } from "../../contexts/AuthContext";
 
 interface SidebarItemProps {
   icon: React.ElementType;
@@ -40,6 +41,15 @@ const SidebarItem: React.FC<SidebarItemProps> = ({ icon: Icon, label, href, acti
 export function Sidebar() {
   const location = useLocation();
   const pathname = location.pathname;
+  const { currentUser } = useAuth();
+
+  // Determine which menu items to show based on user role
+  const shouldShowAccessReviews = currentUser?.jobFunction === 'Manager' || 
+                               currentUser?.jobFunction === 'CPE Compliance Analyst';
+  
+  const shouldShowReports = currentUser?.jobFunction === 'CPE Compliance Analyst';
+  
+  const shouldShowAuditLogs = currentUser?.jobFunction === 'CPE Compliance Analyst';
 
   return (
     <div className="hidden lg:flex flex-col gap-6 border-r bg-background px-2 py-4 h-full">
@@ -47,12 +57,18 @@ export function Sidebar() {
         <h2 className="px-4 text-lg font-semibold">Navigation</h2>
         <SidebarItem icon={LayoutDashboard} label="Dashboard" href="/dashboard" active={pathname === '/dashboard'} />
         <SidebarItem icon={ClipboardList} label="Access Requests" href="/requests" active={pathname === '/requests'} />
-        <SidebarItem icon={Shield} label="Access Reviews" href="/reviews" active={pathname === '/reviews'} />
+        {shouldShowAccessReviews && (
+          <SidebarItem icon={Shield} label="Access Reviews" href="/reviews" active={pathname === '/reviews'} />
+        )}
         <SidebarItem icon={CheckSquare} label="Approvals" href="/approvals" active={pathname === '/approvals'} />
-        <SidebarItem icon={FileText} label="Reports" href="/reports" active={pathname === '/reports'} />
+        {shouldShowReports && (
+          <SidebarItem icon={FileText} label="Reports" href="/reports" active={pathname === '/reports'} />
+        )}
         <SidebarItem icon={Users} label="Users" href="/users" active={pathname === '/users'} />
         <SidebarItem icon={Briefcase} label="Job Functions" href="/job-functions" active={pathname === '/job-functions'} />
-        <SidebarItem icon={Clock} label="Audit Logs" href="/audit-logs" active={pathname === '/audit-logs'} />
+        {shouldShowAuditLogs && (
+          <SidebarItem icon={Clock} label="Audit Logs" href="/audit-logs" active={pathname === '/audit-logs'} />
+        )}
       </div>
       <div className="mt-auto">
         <SidebarItem icon={User} label="Profile" href="/profile" active={pathname === '/profile'} />

@@ -24,7 +24,7 @@ export const users: User[] = [
     department: 'DLT',
     createdAt: '2023-01-16T08:30:00Z',
     lastLogin: '2023-05-09T11:20:00Z',
-    jobFunction: 'Department Manager',
+    jobFunction: 'Manager',
     accessLevel: 'Approver'
   },
   {
@@ -50,7 +50,7 @@ export const users: User[] = [
     manager: 'user2',
     createdAt: '2023-01-16T09:30:00Z',
     lastLogin: '2023-05-10T10:45:00Z',
-    jobFunction: 'CPE Platform Security Administrator',
+    jobFunction: 'CPE Platform Contributor',
     accessLevel: 'Standard User'
   },
   {
@@ -74,7 +74,7 @@ export const users: User[] = [
     department: 'Security & Compliance',
     createdAt: '2023-01-16T10:30:00Z',
     lastLogin: '2023-05-09T15:10:00Z',
-    jobFunction: 'CPE Cloud Security Reader ',
+    jobFunction: 'CPE Compliance Analyst',
     accessLevel: 'Auditor'
   },
 ];

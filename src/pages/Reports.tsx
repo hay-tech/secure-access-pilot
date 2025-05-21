@@ -1,13 +1,29 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useIAM } from '@/contexts/IAMContext';
 import { ReportTabContent } from '@/components/reports/ReportTabContent';
 import { complianceEnvironments } from '@/components/reports/reportConstants';
+import { useJobFunctionMapping } from '@/hooks/iam/useJobFunctionMapping';
 
 const Reports: React.FC = () => {
   const { users, accessReviews } = useIAM();
+  const { getJobFunctionPermissions } = useJobFunctionMapping();
   const [currentTab, setCurrentTab] = useState('federal');
+  const [usersWithJobFunctions, setUsersWithJobFunctions] = useState(users);
+
+  useEffect(() => {
+    // Enrich users with job function data
+    const enrichedUsers = users.map(user => {
+      const jobFunctionData = user.jobFunction ? getJobFunctionPermissions(user.jobFunction) : null;
+      return {
+        ...user,
+        jobFunctions: jobFunctionData ? jobFunctionData.permissions : []
+      };
+    });
+    
+    setUsersWithJobFunctions(enrichedUsers);
+  }, [users, getJobFunctionPermissions]);
 
   return (
     <div className="space-y-6">
@@ -32,7 +48,7 @@ const Reports: React.FC = () => {
             <ReportTabContent 
               envName={env.name}
               envId={env.id}
-              users={users}
+              users={usersWithJobFunctions}
               accessReviews={accessReviews}
             />
           </TabsContent>
