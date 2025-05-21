@@ -9,7 +9,7 @@ import { useJobFunctionMapping } from '@/hooks/iam/useJobFunctionMapping';
 const Reports: React.FC = () => {
   const { users, accessReviews } = useIAM();
   const { getJobFunctionPermissions } = useJobFunctionMapping();
-  const [currentTab, setCurrentTab] = useState('federal');
+  const [currentTab, setCurrentTab] = useState('fedramp');
   const [usersWithJobFunctions, setUsersWithJobFunctions] = useState(users);
 
   useEffect(() => {
@@ -36,7 +36,7 @@ const Reports: React.FC = () => {
         </div>
       </div>
 
-      <Tabs defaultValue="federal" value={currentTab} onValueChange={setCurrentTab}>
+      <Tabs defaultValue="fedramp" value={currentTab} onValueChange={setCurrentTab}>
         <TabsList className="grid grid-cols-6 mb-4">
           {complianceEnvironments.map(env => (
             <TabsTrigger key={env.id} value={env.id}>{env.name}</TabsTrigger>

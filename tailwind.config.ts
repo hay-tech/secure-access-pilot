@@ -65,14 +65,14 @@ export default {
 				},
 				// IAM specific colors
 				iam: {
-					'primary': '#2563eb',
-					'primary-light': '#3b82f6',
+					'primary': '#0e4174',
+					'primary-light': '#1a5998',
 					'secondary': '#64748b',
-					'accent': '#818cf8',
+					'accent': '#33c3f0',
 					'success': '#10b981',
 					'warning': '#f59e0b',
 					'danger': '#ef4444',
-					'background': '#f8fafc',
+					'background': '#f0f4f8',
 					'card': '#ffffff',
 				}
 			},

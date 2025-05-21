@@ -40,14 +40,18 @@ const Login: React.FC = () => {
   };
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-gray-100">
+    <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100">
+      <div className="w-full max-w-3xl mb-8 text-center">
+        <h1 className="text-4xl font-bold text-iam-primary mb-2">CPE Cloud Access Hub</h1>
+        <p className="text-gray-600">Request secure access to enterprise cloud resources, tools, and systems</p>
+      </div>
+
       <div className="w-full max-w-md">
         <div className="text-center mb-8">
           <div className="inline-flex items-center justify-center mb-2">
             <Shield className="h-10 w-10 text-iam-primary" />
           </div>
-          <h1 className="text-3xl font-bold">CPE Cloud IAM Portal</h1>
-          <p className="text-gray-600">Identity and Access Management Hub</p>
+          <h2 className="text-2xl font-bold">Identity and Access Management Hub</h2>
         </div>
         
         <Card>
@@ -87,7 +91,7 @@ const Login: React.FC = () => {
           </CardContent>
           <CardFooter className="flex justify-center">
             <p className="text-sm text-gray-500">
-              Demo Note: Use any email from the mock data (e.g., bob.dev@example.com, john.manager@example.com, admin@example.com) with any password
+              Demo Note: Use any email from the mock data (e.g., bob.dev@example.com, john.manager@example.com, mike.compliance@example.com) with any password
             </p>
           </CardFooter>
         </Card>

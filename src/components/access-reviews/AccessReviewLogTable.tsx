@@ -85,7 +85,11 @@ const AccessReviewLogTable: React.FC<AccessReviewLogTableProps> = ({ logs }) => 
             </TableCell>
             <TableCell>
               <div className="max-w-[200px] text-xs">
-                {getGroups(log.jobFunctions).map((group) => (
+                {log.groupsMembership?.map((group) => (
+                  <div key={group} className="mb-1">
+                    {group}
+                  </div>
+                )) || getGroups(log.jobFunctions).map((group) => (
                   <div key={group} className="mb-1">
                     {group}
                   </div>
