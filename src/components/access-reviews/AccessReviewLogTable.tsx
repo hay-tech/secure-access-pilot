@@ -1,184 +1,113 @@
 
 import React from 'react';
-import { Table, TableHeader, TableRow, TableHead, TableBody, TableCell } from "@/components/ui/table";
-import { ScrollArea } from "@/components/ui/scroll-area";
-import { Badge } from "@/components/ui/badge";
-import { useIAM } from '@/contexts/IAMContext';
+import { 
+  Table, 
+  TableBody, 
+  TableCaption, 
+  TableCell, 
+  TableHead, 
+  TableHeader, 
+  TableRow 
+} from '@/components/ui/table';
+import { Badge } from '@/components/ui/badge';
 import { AccessReviewLog } from '@/types/iam';
-import { jobFunctionDefinitions } from '@/data/mockJobFunctions';
+import { format } from 'date-fns';
 
 interface AccessReviewLogTableProps {
   logs: AccessReviewLog[];
 }
 
 const AccessReviewLogTable: React.FC<AccessReviewLogTableProps> = ({ logs }) => {
-  const { users } = useIAM();
-  
-  // Get job function name from ID
-  const getJobFunctionName = (id: string) => {
-    const jobFunction = jobFunctionDefinitions.find(jf => jf.id === id);
-    return jobFunction ? jobFunction.title : id;
-  };
-  
-  // Get user name from ID
-  const getUserName = (userId: string) => {
-    const user = users.find(u => u.id === userId);
-    return user ? `${user.firstName} ${user.lastName}` : userId;
-  };
-  
-  // Format group name from job function
-  const formatGroupName = (jobFunction: string, environment?: string) => {
-    const baseGroup = jobFunction.toLowerCase().replace(/\s+/g, '-');
-    const environments = ['dev', 'stage', 'prod', 'cjisstage', 'cjisprod'];
-    
-    // If an environment is specified, add it to the name
-    if (environment && environments.includes(environment.toLowerCase())) {
-      return `cpe-${baseGroup}-${environment.toLowerCase()}`;
-    }
-    
-    // Choose a random environment for demo purposes
-    const randomEnv = environments[Math.floor(Math.random() * environments.length)];
-    return `cpe-${baseGroup}-${randomEnv}`;
-  };
-  
-  // Get decision badge style
-  const getDecisionBadge = (decision: string) => {
-    switch (decision) {
-      case 'maintain':
-        return <Badge className="bg-green-100 text-green-800 border-green-300">Approved</Badge>;
-      case 'revoke':
-        return <Badge className="bg-red-100 text-red-800 border-red-300">Revoked</Badge>;
-      case 'modify':
-        return <Badge className="bg-blue-100 text-blue-800 border-blue-300">Modified</Badge>;
-      default:
-        return <Badge>{decision}</Badge>;
-    }
+  // Mock group data based on job functions
+  const mockGroups = {
+    'Cloud Account Owner': ['cpe-cloud-account-owners'],
+    'Cloud IAM Administrator': ['cpe-iam-administrators'],
+    'Cloud IAM Reader': ['cpe-iam-readers'],
+    'Cloud Platform Tenant Administrator': ['cpe-platform-tenant-administrators'],
+    'Cloud Platform Administrator': ['cpe-platform-administrators-dev', 'cpe-platform-administrators-stage', 'cpe-platform-administrators-prod'],
+    'Cloud Platform Contributor': ['cpe-platform-contributors-dev', 'cpe-platform-contributors-stage', 'cpe-platform-contributors-prod'],
+    'Cloud Platform Reader': ['cpe-platform-readers-dev', 'cpe-platform-readers-stage', 'cpe-platform-readers-prod'],
+    'Cloud Platform Security Administrator': ['cpe-platform-security-administrators-dev', 'cpe-platform-security-administrators-stage', 'cpe-platform-security-administrators-prod'],
+    'Cloud Platform Security Contributor': ['cpe-platform-security-contributors-dev', 'cpe-platform-security-contributors-stage', 'cpe-platform-security-contributors-prod'],
+    'Cloud Platform Security Reader': ['cpe-platform-security-readers-dev', 'cpe-platform-security-readers-stage', 'cpe-platform-security-readers-prod'],
+    'Cloud Platform FinOps Administrator': ['cpe-platform-finops-administrators-dev', 'cpe-platform-finops-administrators-stage', 'cpe-platform-finops-administrators-prod'],
+    'Cloud Platform Site Reliability Engineer': ['cpe-platform-sre-dev', 'cpe-platform-sre-stage', 'cpe-platform-sre-prod']
   };
 
-  // Generate groups based on job function
-  const getGroupsFromJobFunction = (jobFunctionId: string): string[] => {
-    const jobFunction = jobFunctionDefinitions.find(jf => jf.id === jobFunctionId);
-    if (!jobFunction) return [];
-    
-    const baseGroupName = jobFunction.title.toLowerCase().replace(/\s+/g, '-');
-    
-    // Generate different environment groups based on job function
-    const environments = ['dev', 'stage', 'prod'];
-    
-    // For platform security roles, add additional environments
-    if (baseGroupName.includes('security')) {
-      environments.push('cjisstage', 'cjisprod');
-    }
-    
-    // Format group names according to the pattern
-    return environments.map(env => `cpe-${baseGroupName}-${env}`);
+  // Function to get groups based on job functions
+  const getGroups = (jobFunctions: string[]) => {
+    let groups: string[] = [];
+    jobFunctions.forEach(jf => {
+      const jfGroups = mockGroups[jf as keyof typeof mockGroups] || [];
+      groups = [...groups, ...jfGroups];
+    });
+    return groups.length > 0 ? groups : ['No groups assigned'];
   };
 
-  // If no logs, create sample data for demonstration
-  const displayLogs = logs.length > 0 ? logs : [
-    {
-      id: 'sample1',
-      reviewId: 'rev1',
-      environment: 'Federal',
-      approvedUserId: 'user1',
-      jobFunctions: ['cloud-platform-admin'],
-      permissionsGranted: [],
-      groupsMembership: ['cpe-platform-administrators-dev', 'cpe-platform-administrators-stage'],
-      approverId: 'user2',
-      decision: 'maintain',
-      timestamp: new Date().toISOString(),
-      justification: 'Required for cloud platform management duties',
-    },
-    {
-      id: 'sample2',
-      reviewId: 'rev2',
-      environment: 'Commercial',
-      approvedUserId: 'user3',
-      jobFunctions: ['cloud-platform-security-reader'],
-      permissionsGranted: [],
-      groupsMembership: ['cpe-platform-security-readers-dev', 'cpe-platform-security-readers-prod'],
-      approverId: 'user2',
-      decision: 'revoke',
-      timestamp: new Date(Date.now() - 86400000).toISOString(), // Yesterday
-      justification: 'Employee transfer to different team',
-    },
-    {
-      id: 'sample3',
-      reviewId: 'rev3',
-      environment: 'GovCloud',
-      approvedUserId: 'user4',
-      jobFunctions: ['cloud-platform-contributor'],
-      permissionsGranted: [],
-      groupsMembership: ['cpe-platform-contributors-dev', 'cpe-platform-contributors-cjisstage'],
-      approverId: 'user6',
-      decision: 'modify',
-      timestamp: new Date(Date.now() - 172800000).toISOString(), // 2 days ago
-      justification: 'Access scope reduced to align with current responsibilities',
-    }
-  ];
+  if (!logs || logs.length === 0) {
+    return (
+      <div className="text-center py-8 text-muted-foreground">
+        No access review logs found.
+      </div>
+    );
+  }
 
   return (
-    <ScrollArea className="h-[500px] w-full rounded-md border">
-      <Table>
-        <TableHeader>
-          <TableRow>
-            <TableHead>Environment</TableHead>
-            <TableHead>User</TableHead>
-            <TableHead>Job Function</TableHead>
-            <TableHead>Group(s)</TableHead>
-            <TableHead>Approver</TableHead>
-            <TableHead>Decision</TableHead>
-            <TableHead>Justification</TableHead>
-            <TableHead>Date/Time</TableHead>
+    <Table>
+      <TableCaption>Access review accountability database records</TableCaption>
+      <TableHeader>
+        <TableRow>
+          <TableHead>Reviewer</TableHead>
+          <TableHead>User</TableHead>
+          <TableHead>Environment</TableHead>
+          <TableHead>Job Functions</TableHead>
+          <TableHead>Group(s)</TableHead>
+          <TableHead>Decision</TableHead>
+          <TableHead>Justification</TableHead>
+          <TableHead>Date</TableHead>
+        </TableRow>
+      </TableHeader>
+      <TableBody>
+        {logs.map((log) => (
+          <TableRow key={log.id}>
+            <TableCell className="font-medium">{log.approverId}</TableCell>
+            <TableCell>{log.approvedUserId}</TableCell>
+            <TableCell>{log.environment}</TableCell>
+            <TableCell>
+              <div className="max-w-[200px]">
+                {log.jobFunctions.map((jf) => (
+                  <Badge key={jf} variant="outline" className="mr-1 mb-1">
+                    {jf}
+                  </Badge>
+                ))}
+              </div>
+            </TableCell>
+            <TableCell>
+              <div className="max-w-[200px] text-xs">
+                {getGroups(log.jobFunctions).map((group) => (
+                  <div key={group} className="mb-1">
+                    {group}
+                  </div>
+                ))}
+              </div>
+            </TableCell>
+            <TableCell>
+              <Badge
+                variant={log.decision === 'maintain' ? 'outline' : log.decision === 'revoke' ? 'destructive' : 'secondary'}
+              >
+                {log.decision}
+              </Badge>
+            </TableCell>
+            <TableCell>
+              <span className="text-xs">{log.justification || "No change"}</span>
+            </TableCell>
+            <TableCell className="text-nowrap">
+              {format(new Date(log.timestamp), 'MMM d, yyyy')}
+            </TableCell>
           </TableRow>
-        </TableHeader>
-        <TableBody>
-          {displayLogs.map((log) => {
-            const jobFunctionNames = log.jobFunctions.map(jfId => {
-              // Find the corresponding job function definition
-              const jobFunction = jobFunctionDefinitions.find(jf => jf.id === jfId);
-              return jobFunction ? jobFunction.title : jfId;
-            });
-
-            // Get appropriate groups for job functions
-            const groups = log.groupsMembership && log.groupsMembership.length > 0 
-              ? log.groupsMembership 
-              : jobFunctionNames.flatMap(name => {
-                  const baseGroup = name.toLowerCase().replace(/\s+/g, '-');
-                  const environments = ['dev', 'stage', 'prod'];
-                  return environments.map(env => `cpe-${baseGroup}-${env}`);
-                }).slice(0, 2);
-
-            return (
-              <TableRow key={log.id}>
-                <TableCell>{log.environment}</TableCell>
-                <TableCell>{getUserName(log.approvedUserId)}</TableCell>
-                <TableCell>
-                  <div className="flex flex-col gap-1">
-                    {jobFunctionNames.map((name, i) => (
-                      <div key={i}>{name}</div>
-                    ))}
-                  </div>
-                </TableCell>
-                <TableCell>
-                  <div className="flex flex-col gap-1">
-                    {groups.map((group, i) => (
-                      <Badge key={i} variant="outline" className="bg-blue-50 font-mono text-xs">
-                        {group}
-                      </Badge>
-                    ))}
-                  </div>
-                </TableCell>
-                <TableCell>{getUserName(log.approverId)}</TableCell>
-                <TableCell>{getDecisionBadge(log.decision)}</TableCell>
-                <TableCell className="max-w-[200px] truncate">{log.justification || "No justification provided"}</TableCell>
-                <TableCell>{new Date(log.timestamp).toLocaleString()}</TableCell>
-              </TableRow>
-            );
-          })}
-        </TableBody>
-      </Table>
-    </ScrollArea>
+        ))}
+      </TableBody>
+    </Table>
   );
 };
 

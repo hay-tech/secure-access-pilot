@@ -87,7 +87,7 @@ const Login: React.FC = () => {
           </CardContent>
           <CardFooter className="flex justify-center">
             <p className="text-sm text-gray-500">
-              Demo Note: Use any email from the mock data (e.g., admin@example.com) with any password
+              Demo Note: Use any email from the mock data (e.g., bob.dev@example.com, john.manager@example.com, admin@example.com) with any password
             </p>
           </CardFooter>
         </Card>

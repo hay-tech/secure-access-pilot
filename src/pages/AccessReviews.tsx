@@ -20,7 +20,7 @@ const AccessReviews: React.FC = () => {
   const { accessReviewLogs, accessReviews, getPermissionGapsByEnvironment } = useAccessReviewManagement();
   const { currentUser } = useAuth();
   const [currentTab, setCurrentTab] = useState('federal');
-  const [unauthorizedTab, setUnauthorizedTab] = useState('pending');
+  const [unauthorizedTab, setUnauthorizedTab] = useState('removed');
   const [selectedUsers, setSelectedUsers] = useState<string[]>([]);
   const [bulkReviewOpen, setBulkReviewOpen] = useState(false);
   
@@ -94,7 +94,7 @@ const AccessReviews: React.FC = () => {
         {/* Only show charts for compliance analysts */}
         {isComplianceAnalyst && <AccessReviewCharts />}
 
-        {/* Don't show the status by manager card for managers */}
+        {/* Don't show the status cards for managers */}
         {!isManager && <AccessReviewCards accessReviews={accessReviews} />}
 
         <Tabs defaultValue="reviews" className="w-full">
@@ -135,62 +135,14 @@ const AccessReviews: React.FC = () => {
               <Card>
                 <CardHeader className="flex flex-row items-center gap-2">
                   <AlertCircle className="h-6 w-6 text-red-500" />
-                  <CardTitle>Unauthorized Users or Permissions - Users Deprovisioned</CardTitle>
+                  <CardTitle>Unauthorized Users or Permissions</CardTitle>
                 </CardHeader>
                 <CardContent>
                   <Tabs value={unauthorizedTab} onValueChange={setUnauthorizedTab}>
                     <TabsList className="mb-4">
-                      <TabsTrigger value="pending">Pending Action</TabsTrigger>
                       <TabsTrigger value="removed">Removed Access</TabsTrigger>
                       <TabsTrigger value="frozen">Frozen Accounts</TabsTrigger>
                     </TabsList>
-                    
-                    {/* Bulk actions for managers */}
-                    {isManager && unauthorizedUsers.length > 0 && unauthorizedTab === "pending" && (
-                      <div className="mb-4 flex items-center justify-between bg-muted p-3 rounded-md">
-                        <div className="flex items-center space-x-2">
-                          <Checkbox 
-                            id="select-all" 
-                            checked={selectedUsers.length === unauthorizedUsers.length && unauthorizedUsers.length > 0}
-                            onCheckedChange={handleSelectAll}
-                          />
-                          <label htmlFor="select-all" className="text-sm font-medium">
-                            Select All ({unauthorizedUsers.length})
-                          </label>
-                        </div>
-                        
-                        {selectedUsers.length > 0 && (
-                          <div className="flex space-x-2">
-                            <Button 
-                              size="sm" 
-                              onClick={handleBulkApprove}
-                              className="bg-green-600 hover:bg-green-700"
-                            >
-                              <Check className="mr-1 h-4 w-4" /> 
-                              Approve ({selectedUsers.length})
-                            </Button>
-                            <Button 
-                              size="sm" 
-                              onClick={handleBulkReject}
-                              variant="destructive"
-                            >
-                              <X className="mr-1 h-4 w-4" /> 
-                              Reject ({selectedUsers.length})
-                            </Button>
-                          </div>
-                        )}
-                      </div>
-                    )}
-                    
-                    <TabsContent value="pending">
-                      <UnauthorizedUsersTable 
-                        users={unauthorizedUsers} 
-                        status="pending" 
-                        isManager={isManager}
-                        selectedUsers={selectedUsers}
-                        onSelectUser={handleSelectUser}
-                      />
-                    </TabsContent>
                     
                     <TabsContent value="removed">
                       <UnauthorizedUsersTable 

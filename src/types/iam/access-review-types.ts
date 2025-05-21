@@ -19,6 +19,7 @@ export interface AccessReview {
   actualPermissions?: string[];
   approvedPermissions?: string[];
   permissionDiscrepancies?: boolean;
+  justification?: string; // Added justification field
 }
 
 export interface AccessViolation {

@@ -23,12 +23,15 @@ import {
 } from "@/components/ui/select";
 import { Search, Check, X } from "lucide-react";
 import { toast } from "sonner";
+import { useAccessReviewManagement } from '@/hooks/iam/useAccessReviewManagement';
+import { useJobFunctionMapping } from '@/hooks/iam/useJobFunctionMapping';
+import { User } from '@/types/iam';
 
 interface BulkAccessReviewProps {
   onClose: () => void;
 }
 
-interface User {
+interface UserReviewData {
   id: string;
   name: string;
   email: string;
@@ -42,61 +45,28 @@ const BulkAccessReview: React.FC<BulkAccessReviewProps> = ({ onClose }) => {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectAll, setSelectAll] = useState(false);
   const [selectedUsers, setSelectedUsers] = useState<string[]>([]);
-  
-  // Mock list of users for bulk review
-  const mockUsers: User[] = [
-    {
-      id: 'user1',
-      name: 'John Smith',
-      email: 'john.smith@example.com',
-      department: 'CPE DLT',
-      currentRole: 'Cloud Platform Contributor',
-      action: 'change-role'
-    },
-    {
-      id: 'user2',
-      name: 'Sarah Johnson',
-      email: 'sarah.johnson@example.com',
-      department: 'CPE FinOps',
-      currentRole: 'Cloud Platform FinOps Administrator',
-      action: 'certify-as-is'
-    },
-    {
-      id: 'user3',
-      name: 'Michael Brown',
-      email: 'michael.brown@example.com',
-      department: 'Product',
-      currentRole: 'Cloud Platform Reader',
-      action: 'revoke-access'
-    },
-    {
-      id: 'user4',
-      name: 'Emily Davis',
-      email: 'emily.davis@example.com',
-      department: 'CPE Security & Compliance',
-      currentRole: 'Cloud Platform Security Administrator',
-      action: 'certify-as-is'
-    },
-    {
-      id: 'user5',
-      name: 'David Wilson',
-      email: 'david.wilson@example.com',
-      department: 'IT',
-      currentRole: 'Cloud IAM Reader',
-      action: 'certify-as-is'
-    },
-    {
-      id: 'user6',
-      name: 'Jennifer Taylor',
-      email: 'jennifer.taylor@example.com',
-      department: 'CPE Infrastructure',
-      currentRole: 'Cloud Platform Administrator',
-      action: 'certify-as-is'
-    },
-  ];
+  const { accessReviews } = useAccessReviewManagement();
+  const { jobFunctionDefinitions } = useJobFunctionMapping();
 
+  // Get users that need reviews from active reviews
+  const pendingReviews = accessReviews.filter(review => 
+    review.status === 'pending' || review.status === 'overdue'
+  );
+  
+  // Create user review data from pending reviews
+  const usersReviewData: UserReviewData[] = pendingReviews.map((review) => {
+    return {
+      id: review.subjectId,
+      name: `User ${review.subjectId.slice(-4)}`, // Mock name based on ID
+      email: `user${review.subjectId.slice(-4)}@example.com`, // Mock email
+      department: review.regulatoryEnvironment || 'CPE',
+      currentRole: review.roleId || 'Cloud Platform Reader',
+      action: 'certify-as-is' // Default action
+    };
+  });
+  
   // Filter users based on search query
-  const filteredUsers = mockUsers.filter(user => 
+  const filteredUsers = usersReviewData.filter(user => 
     user.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
     user.email.toLowerCase().includes(searchQuery.toLowerCase()) ||
     user.department.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -124,7 +94,7 @@ const BulkAccessReview: React.FC<BulkAccessReviewProps> = ({ onClose }) => {
   };
 
   // Handle user action change
-  const handleActionChange = (userId: string, action: User['action']) => {
+  const handleActionChange = (userId: string, action: UserReviewData['action']) => {
     // In a real app, we would update the user's action in state
     console.log(`Changed action for user ${userId} to ${action}`);
   };
@@ -142,9 +112,9 @@ const BulkAccessReview: React.FC<BulkAccessReviewProps> = ({ onClose }) => {
   };
 
   // Get the new role value for a user
-  const getNewRole = (user: User) => {
+  const getNewRole = (user: UserReviewData) => {
     if (user.action === 'change-role') {
-      return user.newRole || 'Cloud Platform Administrator';
+      return user.newRole || 'No change';
     }
     if (user.action === 'revoke-access') {
       return 'N/A';
@@ -152,15 +122,8 @@ const BulkAccessReview: React.FC<BulkAccessReviewProps> = ({ onClose }) => {
     return 'No change';
   };
   
-  const availableRoles = [
-    'Cloud Platform Administrator',
-    'Cloud Platform Contributor',
-    'Cloud Platform Reader',
-    'Cloud Platform Security Administrator',
-    'Cloud Platform Security Contributor',
-    'Cloud Platform Security Reader',
-    'Cloud Platform FinOps Administrator',
-  ];
+  // Available job functions for role selection
+  const availableRoles = jobFunctionDefinitions.map(jf => jf.title);
 
   return (
     <div className="space-y-4">
@@ -214,8 +177,8 @@ const BulkAccessReview: React.FC<BulkAccessReviewProps> = ({ onClose }) => {
                 <TableCell>{user.currentRole}</TableCell>
                 <TableCell>
                   <Select 
-                    defaultValue={user.action} 
-                    onValueChange={(value) => handleActionChange(user.id, value as User['action'])}
+                    defaultValue="certify-as-is"
+                    onValueChange={(value) => handleActionChange(user.id, value as UserReviewData['action'])}
                   >
                     <SelectTrigger className="w-[140px]">
                       <SelectValue />
@@ -230,7 +193,7 @@ const BulkAccessReview: React.FC<BulkAccessReviewProps> = ({ onClose }) => {
                 <TableCell>
                   {user.action === 'change-role' ? (
                     <Select 
-                      defaultValue={user.newRole || availableRoles[0]} 
+                      defaultValue={user.newRole || "No change"} 
                       onValueChange={(value) => handleRoleChange(user.id, value)}
                     >
                       <SelectTrigger className="w-[200px]">
