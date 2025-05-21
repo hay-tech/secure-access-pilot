@@ -93,6 +93,10 @@ const Dashboard: React.FC = () => {
     { name: 'Remaining', value: remainingReviews },
   ];
 
+  // Count unauthorized users for UAR validation findings
+  const fedrampGaps = accessReviews.filter(review => review.violationType === 'unauthorized_user');
+  const unauthorizedUsersCount = fedrampGaps.length;
+
   return (
     <div className="space-y-6">
       <div className="flex justify-between items-center">
@@ -118,10 +122,11 @@ const Dashboard: React.FC = () => {
         />
         
         <UserStatsCard
-          title="Resources Access"
-          value={userPermissions.length}
-          description={`Across ${new Set(userPermissions.map(p => p.resource)).size} resources`}
+          title="Automated UAR Validation Findings"
+          value={unauthorizedUsersCount}
+          description="Unauthorized user access findings"
           icon="permissions"
+          linkTo="/reviews?tab=unauthorized"
         />
         
         <UserStatsCard

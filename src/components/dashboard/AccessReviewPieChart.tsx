@@ -25,8 +25,8 @@ const AccessReviewPieChart: React.FC<AccessReviewPieChartProps> = ({ data }) => 
         <CardDescription>Status of current access review cycle</CardDescription>
       </CardHeader>
       <CardContent className="pt-2">
-        <div className="h-[240px] flex flex-col items-center">
-          <ResponsiveContainer width="100%" height="100%">
+        <div className="h-[240px]">
+          <ResponsiveContainer width="100%" height="80%">
             <PieChart>
               <Pie
                 data={data}
@@ -46,19 +46,9 @@ const AccessReviewPieChart: React.FC<AccessReviewPieChartProps> = ({ data }) => 
               <Legend />
             </PieChart>
           </ResponsiveContainer>
-          <div className="mt-4 grid grid-cols-2 gap-4 text-center w-full">
-            <div className="flex flex-col">
-              <span className="text-xl font-bold text-green-500">{completedReviews}</span>
-              <span className="text-sm text-muted-foreground">Completed</span>
-            </div>
-            <div className="flex flex-col">
-              <span className="text-xl font-bold text-red-400">{remainingReviews}</span>
-              <span className="text-sm text-muted-foreground">Remaining</span>
-            </div>
-            <div className="col-span-2 pt-2">
-              <span className="text-xl font-bold">{completionPercentage}%</span>
-              <span className="text-sm text-muted-foreground ml-2">Overall Completion</span>
-            </div>
+          <div className="text-center mt-4">
+            <span className="text-xl font-bold">{completionPercentage}%</span>
+            <span className="text-sm text-muted-foreground ml-2">Overall Completion</span>
           </div>
         </div>
       </CardContent>
