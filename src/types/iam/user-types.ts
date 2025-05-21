@@ -17,4 +17,5 @@ export interface User {
   securityLevel?: string;
   employeeId?: string;
   startDate?: string;
+  lastReviewDate?: string; // New field for tracking last review date
 }

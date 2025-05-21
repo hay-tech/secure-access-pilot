@@ -23,14 +23,33 @@ export const ReportTabContent: React.FC<ReportTabContentProps> = ({
 }) => {
   const [filterJobFunction, setFilterJobFunction] = useState('');
   const [searchQuery, setSearchQuery] = useState('');
+  const [filterManager, setFilterManager] = useState('');
   
-  // Filter users based on compliance environment and job function
+  // Get unique managers from the users data
+  const managers = users
+    .filter(user => user.manager)
+    .map(user => {
+      // Find the manager user object
+      const managerUser = users.find(u => u.id === user.manager);
+      return managerUser ? {
+        id: managerUser.id,
+        name: `${managerUser.firstName} ${managerUser.lastName}`
+      } : null;
+    })
+    .filter((manager, index, self) => 
+      // Remove nulls and duplicates
+      manager && self.findIndex(m => m?.id === manager?.id) === index
+    );
+  
+  // Filter users based on compliance environment, job function, and search query
   const filteredUsers = users.filter(user => {
-    // In a real app, we would filter by compliance environment 
-    // For now, we'll show all users on all tabs
-    
     // Filter by job function if set
     if (filterJobFunction && (!user.jobFunctions || !user.jobFunctions.includes(filterJobFunction))) {
+      return false;
+    }
+    
+    // Filter by manager if set
+    if (filterManager && user.manager !== filterManager) {
       return false;
     }
     
@@ -74,6 +93,9 @@ export const ReportTabContent: React.FC<ReportTabContentProps> = ({
           setSearchQuery={setSearchQuery}
           filterJobFunction={filterJobFunction}
           setFilterJobFunction={setFilterJobFunction}
+          filterManager={filterManager}
+          setFilterManager={setFilterManager}
+          managers={managers}
         />
         <UserAccessTable users={filteredUsers} accessReviews={accessReviews} />
       </CardContent>

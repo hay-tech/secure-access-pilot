@@ -4,27 +4,51 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useIAM } from '@/contexts/IAMContext';
 import { ReportTabContent } from '@/components/reports/ReportTabContent';
 import { complianceEnvironments } from '@/components/reports/reportConstants';
-import { useJobFunctionMapping } from '@/hooks/iam/useJobFunctionMapping';
+import { jobFunctionDefinitions } from '@/data/mockJobFunctions';
 import { User } from '@/types/iam';
+import { subMonths, format } from 'date-fns';
 
 const Reports: React.FC = () => {
   const { users, accessReviews } = useIAM();
-  const { getJobFunctionPermissions } = useJobFunctionMapping();
   const [currentTab, setCurrentTab] = useState('FedRamp');
-  const [usersWithJobFunctions, setUsersWithJobFunctions] = useState<User[]>(users);
+  const [enrichedUsers, setEnrichedUsers] = useState<User[]>([]);
+
+  // Function to get a random date within the last 4 months
+  const getRandomRecentDate = () => {
+    const today = new Date();
+    const fourMonthsAgo = subMonths(today, 4);
+    const randomTime = fourMonthsAgo.getTime() + Math.random() * (today.getTime() - fourMonthsAgo.getTime());
+    return new Date(randomTime).toISOString();
+  };
+
+  // Function to get random job functions for a user
+  const getRandomJobFunctions = (userId: string) => {
+    // Generate a semi-random number based on the user ID to ensure consistency
+    const randomSeed = userId.charCodeAt(0) % 3 + 1; // 1-3 job functions
+    
+    // Create a copy of the job function definitions to shuffle
+    const shuffledJobFunctions = [...jobFunctionDefinitions]
+      .sort(() => 0.5 - Math.random())
+      .slice(0, randomSeed);
+    
+    return shuffledJobFunctions.map(jf => jf.id);
+  };
 
   useEffect(() => {
-    // Enrich users with job function data
-    const enrichedUsers = users.map(user => {
-      const jobFunctionData = user.jobFunction ? getJobFunctionPermissions(user.jobFunction) : null;
+    // Enrich users with random job functions and review dates
+    const updatedUsers = users.map(user => {
+      const randomJobFunctions = getRandomJobFunctions(user.id);
+      const lastReviewDate = getRandomRecentDate();
+      
       return {
         ...user,
-        jobFunctions: jobFunctionData ? [jobFunctionData.title] : [] // Ensure this is always an array
+        jobFunctions: randomJobFunctions,
+        lastReviewDate // Adding this custom field to track the random review date
       };
     });
     
-    setUsersWithJobFunctions(enrichedUsers as User[]);
-  }, [users, getJobFunctionPermissions]);
+    setEnrichedUsers(updatedUsers as User[]);
+  }, [users]);
 
   return (
     <div className="space-y-6">
@@ -49,7 +73,7 @@ const Reports: React.FC = () => {
             <ReportTabContent 
               envName={env.name}
               envId={env.id}
-              users={usersWithJobFunctions}
+              users={enrichedUsers}
               accessReviews={accessReviews}
             />
           </TabsContent>
