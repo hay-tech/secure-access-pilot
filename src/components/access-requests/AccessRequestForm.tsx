@@ -124,7 +124,9 @@ export const AccessRequestForm: React.FC<AccessRequestFormProps> = ({ onSuccess,
     prevStep,
     onSubmit,
     watchedResources,
-    watchedAccessType
+    watchedAccessType,
+    isFormValid,
+    availableClusters
   } = useAccessRequestForm(onSuccess, onCancel);
   
   // Additional state for new form fields
@@ -529,8 +531,10 @@ export const AccessRequestForm: React.FC<AccessRequestFormProps> = ({ onSuccess,
               <Button 
                 type="button" 
                 onClick={nextStep}
-                disabled={!selectedJobFunction || !watchedResources.length || 
-                          (availableClusters.length > 0 && selectedClusters.length === 0)}
+                disabled={!isFormValid}
+                className={cn(
+                  isFormValid ? "bg-iam-primary hover:bg-iam-primary-light" : "bg-gray-300 cursor-not-allowed"
+                )}
               >
                 Next
               </Button>

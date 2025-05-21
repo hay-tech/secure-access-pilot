@@ -52,9 +52,9 @@ export const AccessRequestsTable: React.FC<AccessRequestsTableProps> = ({ reques
         <TableRow>
           <TableHead>Resource</TableHead>
           <TableHead>Role</TableHead>
-          <TableHead>Status</TableHead>
           <TableHead>Access Type</TableHead>
           <TableHead>Expiration</TableHead>
+          <TableHead>Status</TableHead>
           <TableHead>Approval Status</TableHead>
         </TableRow>
       </TableHeader>
@@ -72,7 +72,6 @@ export const AccessRequestsTable: React.FC<AccessRequestsTableProps> = ({ reques
               <TableCell>
                 {request.jobFunction || "Standard Role"}
               </TableCell>
-              <TableCell>{renderStatusBadge(request.status)}</TableCell>
               <TableCell>
                 {request.accessType ? (
                   <Badge variant="outline" className={request.accessType === 'permanent' ? 
@@ -91,6 +90,7 @@ export const AccessRequestsTable: React.FC<AccessRequestsTableProps> = ({ reques
                   "N/A"
                 )}
               </TableCell>
+              <TableCell>{renderStatusBadge(request.status)}</TableCell>
               <TableCell>
                 {request.approvalChain ? (
                   `${request.approvalChain.filter(a => a.status === 'approved').length}/${request.approvalChain.length} Approvals`

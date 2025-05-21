@@ -73,6 +73,7 @@ export const useAccessRequestForm = (onSuccess: () => void, onCancel: () => void
   const [riskScore, setRiskScore] = useState({ score: 0, level: 'Low' });
   const [showProjectField, setShowProjectField] = useState(false);
   const [selectedClusters, setSelectedClusters] = useState<string[]>([]);
+  const [isFormValid, setIsFormValid] = useState(false);
 
   const form = useForm<AccessRequestFormValues>({
     resolver: zodResolver(conditionalAccessRequestSchema),
@@ -95,6 +96,10 @@ export const useAccessRequestForm = (onSuccess: () => void, onCancel: () => void
   const watchedResources = form.watch('resources');
   const watchedJobFunction = form.watch('jobFunction');
   const watchedAccessType = form.watch('accessType');
+  const watchedEnvironment = form.watch('environmentFilter');
+  const watchedSecurityClass = form.watch('securityClassification');
+  const watchedCloudProvider = form.watch('cloudProvider');
+  const watchedCloudWorkload = form.watch('cloudWorkload');
 
   // Check if job function contains "project" to show project field
   useEffect(() => {
@@ -133,6 +138,46 @@ export const useAccessRequestForm = (onSuccess: () => void, onCancel: () => void
     }
   }, [watchedJobFunction, form]);
 
+  // Check form validity for Next button highlighting
+  useEffect(() => {
+    const checkFormValidity = () => {
+      // Basic check for required fields in step 1
+      const jobFunctionValid = !!watchedJobFunction;
+      const resourcesValid = watchedResources.length > 0;
+      
+      // Additional validation for environment-specific fields
+      let environmentValid = true;
+      
+      if (watchedEnvironment && watchedSecurityClass) {
+        if (cloudProvider) {
+          if (watchedCloudWorkload) {
+            // If we have selected clusters and there are available clusters, check if at least one is selected
+            if (selectedClusters.length === 0 && availableClusters.length > 0) {
+              environmentValid = false;
+            }
+          } else {
+            environmentValid = false; // Need cloud workload if provider is selected
+          }
+        } else {
+          environmentValid = false; // Need cloud provider if environment and security class are selected
+        }
+      }
+      
+      setIsFormValid(jobFunctionValid && resourcesValid && environmentValid);
+    };
+    
+    checkFormValidity();
+  }, [
+    watchedJobFunction, 
+    watchedResources, 
+    watchedEnvironment, 
+    watchedSecurityClass, 
+    cloudProvider, 
+    watchedCloudWorkload, 
+    selectedClusters, 
+    availableClusters
+  ]);
+
   // Filter resources based on selected job function and filters
   const getFilteredResources = () => {
     let filtered = [...targetResources];
@@ -166,10 +211,7 @@ export const useAccessRequestForm = (onSuccess: () => void, onCancel: () => void
 
   const nextStep = () => {
     form.trigger(['jobFunction', 'resources']);
-    const jobFunctionValid = !!form.getValues('jobFunction');
-    const resourcesValid = form.getValues('resources').length > 0;
-    
-    if (jobFunctionValid && resourcesValid) {
+    if (isFormValid) {
       setFormStep(2);
     }
   };
@@ -246,6 +288,19 @@ export const useAccessRequestForm = (onSuccess: () => void, onCancel: () => void
     }
   };
 
+  const [availableClusters, setAvailableClusters] = useState<any[]>([]);
+
+  // Update available clusters when filters change
+  useEffect(() => {
+    if (environmentFilter && securityClassification && cloudProvider && cloudWorkload) {
+      // This would be populated from clusterData in the AccessRequestForm component
+      // We're keeping a reference here to track if clusters are available
+      setAvailableClusters([{}]); // Dummy data to indicate clusters are available
+    } else {
+      setAvailableClusters([]);
+    }
+  }, [environmentFilter, securityClassification, cloudProvider, cloudWorkload]);
+
   return {
     form,
     formStep,
@@ -268,6 +323,8 @@ export const useAccessRequestForm = (onSuccess: () => void, onCancel: () => void
     prevStep,
     onSubmit,
     watchedResources,
-    watchedAccessType
+    watchedAccessType,
+    isFormValid,
+    availableClusters
   };
 };
