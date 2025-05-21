@@ -118,7 +118,7 @@ const Dashboard: React.FC = () => {
         />
         
         <UserStatsCard
-          title="Permissions"
+          title="Resources Access"
           value={userPermissions.length}
           description={`Across ${new Set(userPermissions.map(p => p.resource)).size} resources`}
           icon="permissions"
