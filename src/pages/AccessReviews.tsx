@@ -7,12 +7,14 @@ import AccessReviewCards from '@/components/access-reviews/AccessReviewCards';
 import AccessReviewCharts from '@/components/access-reviews/AccessReviewCharts';
 import AccessReviewEnvironmentHandler from '@/components/access-reviews/AccessReviewEnvironmentHandler';
 import UnauthorizedUsersTable from '@/components/access-reviews/UnauthorizedUsersTable';
+import BulkAccessReview from '@/components/access-reviews/BulkAccessReview';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Database, AlertCircle, Check, X } from "lucide-react";
+import { Database, AlertCircle, Check, X, Users } from "lucide-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { toast } from "sonner";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 
 const AccessReviews: React.FC = () => {
   const { accessReviewLogs, accessReviews, getPermissionGapsByEnvironment } = useAccessReviewManagement();
@@ -20,6 +22,7 @@ const AccessReviews: React.FC = () => {
   const [currentTab, setCurrentTab] = useState('federal');
   const [unauthorizedTab, setUnauthorizedTab] = useState('pending');
   const [selectedUsers, setSelectedUsers] = useState<string[]>([]);
+  const [bulkReviewOpen, setBulkReviewOpen] = useState(false);
   
   // Get users with permission gaps (including unauthorized users)
   const federalGaps = getPermissionGapsByEnvironment('federal');
@@ -64,6 +67,11 @@ const AccessReviews: React.FC = () => {
     toast.success(`Rejected access for ${selectedUsers.length} users`);
     setSelectedUsers([]);
   };
+
+  // Open the bulk review dialog
+  const openBulkReview = () => {
+    setBulkReviewOpen(true);
+  };
   
   return (
     <div className="space-y-6">
@@ -74,11 +82,17 @@ const AccessReviews: React.FC = () => {
             Review and manage user permissions and job functions.
           </p>
         </div>
+        {isManager && (
+          <Button onClick={openBulkReview} className="flex items-center gap-2">
+            <Users size={16} />
+            Bulk Access Review
+          </Button>
+        )}
       </div>
 
       <div className="grid gap-6">
-        {/* Only show charts for managers and compliance analysts */}
-        {!isDeveloper && <AccessReviewCharts />}
+        {/* Only show charts for compliance analysts */}
+        {isComplianceAnalyst && <AccessReviewCharts />}
 
         {/* Don't show the status by manager card for managers */}
         {!isManager && <AccessReviewCards accessReviews={accessReviews} />}
@@ -128,6 +142,7 @@ const AccessReviews: React.FC = () => {
                     <TabsList className="mb-4">
                       <TabsTrigger value="pending">Pending Action</TabsTrigger>
                       <TabsTrigger value="removed">Removed Access</TabsTrigger>
+                      <TabsTrigger value="frozen">Frozen Accounts</TabsTrigger>
                     </TabsList>
                     
                     {/* Bulk actions for managers */}
@@ -179,8 +194,17 @@ const AccessReviews: React.FC = () => {
                     
                     <TabsContent value="removed">
                       <UnauthorizedUsersTable 
-                        users={[]} // This would be populated with the list of already-removed users
+                        users={unauthorizedUsers.slice(0, 2)} 
                         status="removed" 
+                        isManager={false}
+                      />
+                    </TabsContent>
+                    
+                    <TabsContent value="frozen">
+                      <UnauthorizedUsersTable 
+                        users={unauthorizedUsers.slice(1, 3)} 
+                        status="frozen" 
+                        isManager={false}
                       />
                     </TabsContent>
                   </Tabs>
@@ -190,6 +214,16 @@ const AccessReviews: React.FC = () => {
           )}
         </Tabs>
       </div>
+
+      {/* Bulk Access Review Dialog */}
+      <Dialog open={bulkReviewOpen} onOpenChange={setBulkReviewOpen}>
+        <DialogContent className="max-w-4xl max-h-[80vh] overflow-auto">
+          <DialogHeader>
+            <DialogTitle>Bulk Access Review</DialogTitle>
+          </DialogHeader>
+          <BulkAccessReview onClose={() => setBulkReviewOpen(false)} />
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };

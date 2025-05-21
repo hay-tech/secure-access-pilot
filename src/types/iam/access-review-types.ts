@@ -102,7 +102,7 @@ export interface AccessReviewLog {
   groupsMembership: string[];
   timestamp: string;
   decision: 'maintain' | 'revoke' | 'modify';
-  justification?: string;
+  justification?: string;  // Added justification field
 }
 
 export interface RegulatoryEnvironment {

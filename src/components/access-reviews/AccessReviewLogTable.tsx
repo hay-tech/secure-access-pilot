@@ -26,9 +26,19 @@ const AccessReviewLogTable: React.FC<AccessReviewLogTableProps> = ({ logs }) => 
     return user ? `${user.firstName} ${user.lastName}` : userId;
   };
   
-  // Format permission group name from job function
-  const formatPermissionGroupName = (jobFunction: string) => {
-    return jobFunction.toLowerCase().replace(/\s+/g, '-') + '-permissions';
+  // Format group name from job function
+  const formatGroupName = (jobFunction: string, environment?: string) => {
+    const baseGroup = jobFunction.toLowerCase().replace(/\s+/g, '-');
+    const environments = ['dev', 'stage', 'prod', 'cjisstage', 'cjisprod'];
+    
+    // If an environment is specified, add it to the name
+    if (environment && environments.includes(environment.toLowerCase())) {
+      return `cpe-${baseGroup}-${environment.toLowerCase()}`;
+    }
+    
+    // Choose a random environment for demo purposes
+    const randomEnv = environments[Math.floor(Math.random() * environments.length)];
+    return `cpe-${baseGroup}-${randomEnv}`;
   };
   
   // Get decision badge style
@@ -45,6 +55,25 @@ const AccessReviewLogTable: React.FC<AccessReviewLogTableProps> = ({ logs }) => 
     }
   };
 
+  // Generate groups based on job function
+  const getGroupsFromJobFunction = (jobFunctionId: string): string[] => {
+    const jobFunction = jobFunctionDefinitions.find(jf => jf.id === jobFunctionId);
+    if (!jobFunction) return [];
+    
+    const baseGroupName = jobFunction.title.toLowerCase().replace(/\s+/g, '-');
+    
+    // Generate different environment groups based on job function
+    const environments = ['dev', 'stage', 'prod'];
+    
+    // For platform security roles, add additional environments
+    if (baseGroupName.includes('security')) {
+      environments.push('cjisstage', 'cjisprod');
+    }
+    
+    // Format group names according to the pattern
+    return environments.map(env => `cpe-${baseGroupName}-${env}`);
+  };
+
   // If no logs, create sample data for demonstration
   const displayLogs = logs.length > 0 ? logs : [
     {
@@ -53,11 +82,12 @@ const AccessReviewLogTable: React.FC<AccessReviewLogTableProps> = ({ logs }) => 
       environment: 'Federal',
       approvedUserId: 'user1',
       jobFunctions: ['cloud-platform-admin'],
-      permissionsGranted: ['platform:read', 'platform:create', 'platform:update', 'platform:delete'],
-      groupsMembership: [],
+      permissionsGranted: [],
+      groupsMembership: ['cpe-platform-administrators-dev', 'cpe-platform-administrators-stage'],
       approverId: 'user2',
       decision: 'maintain',
       timestamp: new Date().toISOString(),
+      justification: 'Required for cloud platform management duties',
     },
     {
       id: 'sample2',
@@ -65,11 +95,12 @@ const AccessReviewLogTable: React.FC<AccessReviewLogTableProps> = ({ logs }) => 
       environment: 'Commercial',
       approvedUserId: 'user3',
       jobFunctions: ['cloud-platform-security-reader'],
-      permissionsGranted: ['security:read', 'logs:read', 'monitor:read'],
-      groupsMembership: [],
+      permissionsGranted: [],
+      groupsMembership: ['cpe-platform-security-readers-dev', 'cpe-platform-security-readers-prod'],
       approverId: 'user2',
       decision: 'revoke',
       timestamp: new Date(Date.now() - 86400000).toISOString(), // Yesterday
+      justification: 'Employee transfer to different team',
     },
     {
       id: 'sample3',
@@ -77,11 +108,12 @@ const AccessReviewLogTable: React.FC<AccessReviewLogTableProps> = ({ logs }) => 
       environment: 'GovCloud',
       approvedUserId: 'user4',
       jobFunctions: ['cloud-platform-contributor'],
-      permissionsGranted: ['compute:read', 'compute:update', 'storage:read', 'storage:update'],
-      groupsMembership: [],
+      permissionsGranted: [],
+      groupsMembership: ['cpe-platform-contributors-dev', 'cpe-platform-contributors-cjisstage'],
       approverId: 'user6',
       decision: 'modify',
       timestamp: new Date(Date.now() - 172800000).toISOString(), // 2 days ago
+      justification: 'Access scope reduced to align with current responsibilities',
     }
   ];
 
@@ -93,9 +125,10 @@ const AccessReviewLogTable: React.FC<AccessReviewLogTableProps> = ({ logs }) => 
             <TableHead>Environment</TableHead>
             <TableHead>User</TableHead>
             <TableHead>Job Function</TableHead>
-            <TableHead>Permissions</TableHead>
+            <TableHead>Group(s)</TableHead>
             <TableHead>Approver</TableHead>
             <TableHead>Decision</TableHead>
+            <TableHead>Justification</TableHead>
             <TableHead>Date/Time</TableHead>
           </TableRow>
         </TableHeader>
@@ -106,6 +139,15 @@ const AccessReviewLogTable: React.FC<AccessReviewLogTableProps> = ({ logs }) => 
               const jobFunction = jobFunctionDefinitions.find(jf => jf.id === jfId);
               return jobFunction ? jobFunction.title : jfId;
             });
+
+            // Get appropriate groups for job functions
+            const groups = log.groupsMembership && log.groupsMembership.length > 0 
+              ? log.groupsMembership 
+              : jobFunctionNames.flatMap(name => {
+                  const baseGroup = name.toLowerCase().replace(/\s+/g, '-');
+                  const environments = ['dev', 'stage', 'prod'];
+                  return environments.map(env => `cpe-${baseGroup}-${env}`);
+                }).slice(0, 2);
 
             return (
               <TableRow key={log.id}>
@@ -120,23 +162,16 @@ const AccessReviewLogTable: React.FC<AccessReviewLogTableProps> = ({ logs }) => 
                 </TableCell>
                 <TableCell>
                   <div className="flex flex-col gap-1">
-                    {jobFunctionNames.map((name, i) => {
-                      const groupName = formatPermissionGroupName(name);
-                      return (
-                        <Badge key={i} variant="outline" className="bg-blue-50 font-mono text-xs">
-                          {groupName}
-                        </Badge>
-                      );
-                    })}
-                    {log.permissionsGranted.length > 0 && (
-                      <div className="text-xs text-muted-foreground mt-1">
-                        {log.permissionsGranted.length} permission(s)
-                      </div>
-                    )}
+                    {groups.map((group, i) => (
+                      <Badge key={i} variant="outline" className="bg-blue-50 font-mono text-xs">
+                        {group}
+                      </Badge>
+                    ))}
                   </div>
                 </TableCell>
                 <TableCell>{getUserName(log.approverId)}</TableCell>
                 <TableCell>{getDecisionBadge(log.decision)}</TableCell>
+                <TableCell className="max-w-[200px] truncate">{log.justification || "No justification provided"}</TableCell>
                 <TableCell>{new Date(log.timestamp).toLocaleString()}</TableCell>
               </TableRow>
             );
