@@ -5,12 +5,13 @@ import { useIAM } from '@/contexts/IAMContext';
 import { ReportTabContent } from '@/components/reports/ReportTabContent';
 import { complianceEnvironments } from '@/components/reports/reportConstants';
 import { useJobFunctionMapping } from '@/hooks/iam/useJobFunctionMapping';
+import { User } from '@/types/iam';
 
 const Reports: React.FC = () => {
   const { users, accessReviews } = useIAM();
   const { getJobFunctionPermissions } = useJobFunctionMapping();
-  const [currentTab, setCurrentTab] = useState('fedramp');
-  const [usersWithJobFunctions, setUsersWithJobFunctions] = useState(users);
+  const [currentTab, setCurrentTab] = useState('FedRamp');
+  const [usersWithJobFunctions, setUsersWithJobFunctions] = useState<User[]>(users);
 
   useEffect(() => {
     // Enrich users with job function data
@@ -18,11 +19,11 @@ const Reports: React.FC = () => {
       const jobFunctionData = user.jobFunction ? getJobFunctionPermissions(user.jobFunction) : null;
       return {
         ...user,
-        jobFunctions: jobFunctionData ? jobFunctionData.title : []
+        jobFunctions: jobFunctionData ? [jobFunctionData.title] : [] // Ensure this is always an array
       };
     });
     
-    setUsersWithJobFunctions(enrichedUsers);
+    setUsersWithJobFunctions(enrichedUsers as User[]);
   }, [users, getJobFunctionPermissions]);
 
   return (
@@ -36,7 +37,7 @@ const Reports: React.FC = () => {
         </div>
       </div>
 
-      <Tabs defaultValue="fedramp" value={currentTab} onValueChange={setCurrentTab}>
+      <Tabs defaultValue="FedRamp" value={currentTab} onValueChange={setCurrentTab}>
         <TabsList className="grid grid-cols-6 mb-4">
           {complianceEnvironments.map(env => (
             <TabsTrigger key={env.id} value={env.id}>{env.name}</TabsTrigger>
