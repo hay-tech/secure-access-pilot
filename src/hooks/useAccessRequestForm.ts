@@ -9,7 +9,6 @@ import {
   jobFunctionDefinitions,
   targetResources,
   approvers,
-  complianceEnvironments
 } from '../data/mockData';
 import { getApprovalChain, calculateRiskScore } from '../utils/accessRequestUtils';
 
@@ -20,8 +19,11 @@ const accessRequestSchema = z.object({
   justification: z.string()
     .min(10, { message: "Please provide a detailed justification (at least 10 characters)" })
     .max(500, { message: "Justification is too long (maximum 500 characters)" }),
-  complianceFilter: z.string().optional(),
   environmentFilter: z.string().optional(),
+  cloudProvider: z.string().optional(),
+  cloudWorkload: z.string().optional(),
+  securityClassification: z.string().optional(),
+  clusters: z.array(z.string()).optional(),
   accessType: z.enum(['permanent', 'temporary'], {
     required_error: "Please select an access type",
   }),
@@ -64,11 +66,14 @@ export const useAccessRequestForm = (onSuccess: () => void, onCancel: () => void
   const { createAccessRequest } = useIAM();
   const [formStep, setFormStep] = useState(1);
   const [selectedJobFunction, setSelectedJobFunction] = useState('');
-  const [complianceFilter, setComplianceFilter] = useState('');
   const [environmentFilter, setEnvironmentFilter] = useState('');
+  const [securityClassification, setSecurityClassification] = useState('');
+  const [cloudProvider, setCloudProvider] = useState('');
+  const [cloudWorkload, setCloudWorkload] = useState('');
   const [approvalChain, setApprovalChain] = useState<any[]>([]);
   const [riskScore, setRiskScore] = useState({ score: 0, level: 'Low' });
   const [showProjectField, setShowProjectField] = useState(false);
+  const [selectedClusters, setSelectedClusters] = useState<string[]>([]);
 
   const form = useForm<AccessRequestFormValues>({
     resolver: zodResolver(conditionalAccessRequestSchema),
@@ -76,8 +81,11 @@ export const useAccessRequestForm = (onSuccess: () => void, onCancel: () => void
       jobFunction: '',
       resources: [],
       justification: '',
-      complianceFilter: '',
       environmentFilter: '',
+      cloudProvider: '',
+      cloudWorkload: '',
+      securityClassification: '',
+      clusters: [],
       accessType: 'permanent',
       tempDuration: '',
       projectName: '',
@@ -88,15 +96,6 @@ export const useAccessRequestForm = (onSuccess: () => void, onCancel: () => void
   const watchedResources = form.watch('resources');
   const watchedJobFunction = form.watch('jobFunction');
   const watchedAccessType = form.watch('accessType');
-
-  // Set default compliance framework when Development environment is selected
-  useEffect(() => {
-    if (environmentFilter === 'dev') {
-      const commercialUs = complianceEnvironments.find(env => env.name === 'Commercial (US)')?.id || '';
-      setComplianceFilter(commercialUs);
-      form.setValue('complianceFilter', commercialUs);
-    }
-  }, [environmentFilter, form]);
 
   // Check if job function contains "project" to show project field
   useEffect(() => {
@@ -149,14 +148,18 @@ export const useAccessRequestForm = (onSuccess: () => void, onCancel: () => void
       }
     }
     
-    // Apply compliance filter
-    if (complianceFilter) {
-      filtered = filtered.filter(resource => resource.compliance === complianceFilter);
+    // Apply security classification filter
+    if (securityClassification) {
+      filtered = filtered.filter(resource => 
+        resource.compliance === securityClassification
+      );
     }
     
     // Apply environment filter
     if (environmentFilter) {
-      filtered = filtered.filter(resource => resource.environment === environmentFilter);
+      filtered = filtered.filter(resource => 
+        resource.environment === environmentFilter
+      );
     }
     
     return filtered;
@@ -189,8 +192,12 @@ export const useAccessRequestForm = (onSuccess: () => void, onCancel: () => void
     }
     
     // Collect resource names for the selected resources
-    const selectedResources = targetResources.filter(resource => data.resources.includes(resource.id));
-    const resourceNames = selectedResources.map(resource => resource.name).join(', ');
+    const selectedResources = targetResources.filter(resource => 
+      data.resources.includes(resource.id)
+    );
+    const resourceNames = selectedResources.map(resource => 
+      resource.name
+    ).join(', ');
     
     // Get the first resource for determining compliance and resource hierarchy
     const primaryResource = selectedResources[0];
@@ -208,7 +215,7 @@ export const useAccessRequestForm = (onSuccess: () => void, onCancel: () => void
         justification: data.justification,
         accessType: data.accessType,
         expiresAt: expiresAt,
-        complianceFramework: primaryResource?.compliance,
+        complianceFramework: data.securityClassification || primaryResource?.compliance,
         resourceHierarchy: primaryResource?.resourceHierarchy as "Organization" | "Tenant" | "Environment/Region" | "Project/RG" | "Resources/Services" || "Resources/Services",
         projectName: data.projectName,
         approvalChain: generatedApprovalChain.map(approver => ({
@@ -218,7 +225,11 @@ export const useAccessRequestForm = (onSuccess: () => void, onCancel: () => void
           approverType: (approver?.type || "manager") as 'manager' | 'resource-owner' | 'security' | 'compliance',
           status: 'pending',
           reason: approver?.reason
-        }))
+        })),
+        // Add additional fields for clusters if selected
+        cloudEnvironment: data.cloudProvider,
+        cspSubtype: data.cloudWorkload,
+        environmentType: data.environmentFilter,
       });
       
       // Reset form and close dialog
@@ -234,13 +245,19 @@ export const useAccessRequestForm = (onSuccess: () => void, onCancel: () => void
     form,
     formStep,
     selectedJobFunction,
-    complianceFilter,
-    setComplianceFilter,
     environmentFilter,
     setEnvironmentFilter,
+    securityClassification,
+    setSecurityClassification,
+    cloudProvider,
+    setCloudProvider,
+    cloudWorkload,
+    setCloudWorkload,
     approvalChain,
     riskScore,
     showProjectField,
+    selectedClusters,
+    setSelectedClusters,
     getFilteredResources,
     nextStep,
     prevStep,

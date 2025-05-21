@@ -1,5 +1,5 @@
 
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -12,7 +12,7 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { Badge } from '@/components/ui/badge';
-import { HelpCircle, AlertCircle, CheckCircle } from 'lucide-react';
+import { HelpCircle, AlertCircle, CheckCircle, Info } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { 
   Form, 
@@ -24,10 +24,12 @@ import {
   FormMessage 
 } from '@/components/ui/form';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
-import { complianceEnvironments, environmentTypes, jobFunctionDefinitions } from '../../data/mockData';
+import { environmentTypes, jobFunctionDefinitions } from '../../data/mockData';
 import { ApprovalChainPreview } from './ApprovalChainPreview';
 import { ResourceSelectionList } from './ResourceSelectionList';
 import { useAccessRequestForm, AccessRequestFormValues } from '../../hooks/useAccessRequestForm';
+import { Checkbox } from '@/components/ui/checkbox';
+import { ScrollArea } from '@/components/ui/scroll-area';
 
 // Export the type for use in other components
 export type { AccessRequestFormValues } from '../../hooks/useAccessRequestForm';
@@ -37,13 +39,81 @@ interface AccessRequestFormProps {
   onCancel: () => void;
 }
 
+// Define cluster data structure
+interface Cluster {
+  environmentTier: string;
+  cluster: string;
+  clusterName: string;
+  cloud: string;
+  cspSubtype: string;
+  region: string;
+  securityClassification: string;
+}
+
+// Define security classification options
+const securityClassifications = [
+  { id: 'fedramp-high', name: 'FedRAMP High' },
+  { id: 'cccs', name: 'CCCS' },
+  { id: 'cjis', name: 'CJIS' },
+  { id: 'nist-800-53-moderate', name: 'NIST 800-53 Moderate' }
+];
+
+// Define cloud provider options
+const cloudProviders = [
+  { id: 'azure', name: 'Azure' },
+  { id: 'aws', name: 'AWS' },
+  { id: 'gcp', name: 'GCP' }
+];
+
+// Define cloud provider workload options
+const cloudWorkloads = [
+  { id: 'commercial', name: 'Commercial' },
+  { id: 'usgov', name: 'USGov' }
+];
+
+// Cluster data
+const clusterData: Cluster[] = [
+  { environmentTier: 'dev', cluster: 'Dev West (Azure)', clusterName: 'az-dev-us-west2', cloud: 'azure', cspSubtype: 'commercial', region: 'uswest2', securityClassification: 'nist-800-53-moderate' },
+  { environmentTier: 'dev', cluster: 'Dev East (Azure)', clusterName: 'az-dev-us-east', cloud: 'azure', cspSubtype: 'commercial', region: 'useast', securityClassification: 'nist-800-53-moderate' },
+  { environmentTier: 'dev', cluster: 'AWS Dev', clusterName: 'aws-dev-us-east1', cloud: 'aws', cspSubtype: 'commercial', region: 'us-east-1', securityClassification: 'nist-800-53-moderate' },
+  { environmentTier: 'dev', cluster: 'GCP Dev', clusterName: 'gcp-dev-us-east1', cloud: 'gcp', cspSubtype: 'commercial', region: 'us-east1', securityClassification: 'nist-800-53-moderate' },
+  { environmentTier: 'dev', cluster: 'AWS SPSS Dev', clusterName: 'aws-spss-dev-us-west1', cloud: 'aws', cspSubtype: 'commercial', region: 'us-west1', securityClassification: 'nist-800-53-moderate' },
+  { environmentTier: 'stage', cluster: 'Stage West (Azure)', clusterName: 'az-stage-us-west2', cloud: 'azure', cspSubtype: 'commercial', region: 'uswest2', securityClassification: 'nist-800-53-moderate' },
+  { environmentTier: 'stage', cluster: 'AWS Stage Oregon', clusterName: 'aws-stage-us-west2', cloud: 'aws', cspSubtype: 'commercial', region: 'us-west-2', securityClassification: 'nist-800-53-moderate' },
+  { environmentTier: 'stage', cluster: 'Stage West 3 (Azure)', clusterName: 'az-stage-us-west3', cloud: 'azure', cspSubtype: 'commercial', region: 'uswest3', securityClassification: 'nist-800-53-moderate' },
+  { environmentTier: 'stage', cluster: 'Stage East (Azure)', clusterName: 'az-stage-us-east', cloud: 'azure', cspSubtype: 'commercial', region: 'useast', securityClassification: 'nist-800-53-moderate' },
+  { environmentTier: 'stage', cluster: 'AWS Stage Ohio', clusterName: 'aws-stage-us-east2', cloud: 'aws', cspSubtype: 'commercial', region: 'us-east-2', securityClassification: 'nist-800-53-moderate' },
+  { environmentTier: 'stage', cluster: 'Gov Stage (Azure)', clusterName: 'az-stage-usgov-east', cloud: 'azure', cspSubtype: 'usgov', region: 'usgovvirginia', securityClassification: 'nist-800-53-moderate' },
+  { environmentTier: 'stage', cluster: 'GCP Stage', clusterName: 'gcp-stage-us-east1', cloud: 'gcp', cspSubtype: 'commercial', region: 'us-east1', securityClassification: 'nist-800-53-moderate' },
+  { environmentTier: 'stage', cluster: 'EaaS Commercial Pre-Prod', clusterName: 'az-preprod-obs-us-east', cloud: 'azure', cspSubtype: 'commercial', region: 'useast', securityClassification: 'nist-800-53-moderate' },
+  { environmentTier: 'prod', cluster: 'EaaS Commercial Prod', clusterName: 'az-prod-obs-east', cloud: 'azure', cspSubtype: 'commercial', region: 'useast', securityClassification: 'nist-800-53-moderate' },
+  { environmentTier: 'prod', cluster: 'EaaS Gov Prod', clusterName: 'az-prod-obs-usgov-east', cloud: 'azure', cspSubtype: 'usgov', region: 'usgovvirginia', securityClassification: 'cjis' },
+  { environmentTier: 'prod', cluster: 'BDP Search EaaD', clusterName: 'az-prod-eaad-usgov-east', cloud: 'azure', cspSubtype: 'usgov', region: 'usgovvirginia', securityClassification: 'cjis' },
+  { environmentTier: 'prod', cluster: 'UK Prod (Azure)', clusterName: 'az-prod-uk-south', cloud: 'azure', cspSubtype: 'commercial', region: 'uksouth', securityClassification: 'nist-800-53-moderate' },
+  { environmentTier: 'prod', cluster: 'CA Prod (Azure)', clusterName: 'az-prod-ca-central', cloud: 'azure', cspSubtype: 'commercial', region: 'canadacentral', securityClassification: 'nist-800-53-moderate' },
+  { environmentTier: 'prod', cluster: 'AU Prod (Azure)', clusterName: 'az-prod-au-central', cloud: 'azure', cspSubtype: 'commercial', region: 'australiacentral', securityClassification: 'nist-800-53-moderate' },
+  { environmentTier: 'prod', cluster: 'US Prod West (Azure)', clusterName: 'az-prod-us-west2', cloud: 'azure', cspSubtype: 'commercial', region: 'uswest2', securityClassification: 'nist-800-53-moderate' },
+  { environmentTier: 'prod', cluster: 'US Prod West 3 (Azure)', clusterName: 'az-prod-us-west3', cloud: 'azure', cspSubtype: 'commercial', region: 'uswest3', securityClassification: 'nist-800-53-moderate' },
+  { environmentTier: 'prod', cluster: 'US Prod East (Azure)', clusterName: 'az-prod-us-east', cloud: 'azure', cspSubtype: 'commercial', region: 'useast', securityClassification: 'nist-800-53-moderate' },
+  { environmentTier: 'prod', cluster: 'US Gov Prod AZ (Azure)', clusterName: 'az-prod-usgov-az', cloud: 'azure', cspSubtype: 'usgov', region: 'usgovarizona', securityClassification: 'cjis' },
+  { environmentTier: 'prod', cluster: 'US Gov Prod VA (Azure)', clusterName: 'az-prod-usgov-va', cloud: 'azure', cspSubtype: 'usgov', region: 'usgovvirginia', securityClassification: 'cjis' },
+  { environmentTier: 'prod', cluster: 'AWS Prod VA', clusterName: 'aws-prod-us-east1', cloud: 'aws', cspSubtype: 'commercial', region: 'us-east-1', securityClassification: 'nist-800-53-moderate' },
+  { environmentTier: 'prod', cluster: 'AWS Gov Prod VA', clusterName: 'aws-prod-usgov-east1', cloud: 'aws', cspSubtype: 'usgov', region: 'us-gov-east-1', securityClassification: 'cjis' },
+  { environmentTier: 'prod', cluster: 'AWS Prod Oregon', clusterName: 'aws-prod-us-west2', cloud: 'aws', cspSubtype: 'commercial', region: 'us-west-2', securityClassification: 'nist-800-53-moderate' },
+  { environmentTier: 'prod', cluster: 'AWS Prod Ohio', clusterName: 'aws-prod-us-east2', cloud: 'aws', cspSubtype: 'commercial', region: 'us-east-2', securityClassification: 'nist-800-53-moderate' },
+  { environmentTier: 'stage', cluster: 'Fed Stage AZ', clusterName: 'az-stage-fed-us-az', cloud: 'azure', cspSubtype: 'usgov', region: 'usgovarizona', securityClassification: 'fedramp-high' },
+  { environmentTier: 'stage', cluster: 'Fed Stage VA', clusterName: 'az-stage-fed-us-va', cloud: 'azure', cspSubtype: 'usgov', region: 'usgovvirginia', securityClassification: 'fedramp-high' },
+  { environmentTier: 'prod', cluster: 'Fed Prod AZ', clusterName: 'az-prod-fed-us-az', cloud: 'azure', cspSubtype: 'usgov', region: 'usgovarizona', securityClassification: 'fedramp-high' },
+  { environmentTier: 'prod', cluster: 'Fed Prod VA', clusterName: 'az-prod-fed-us-va', cloud: 'azure', cspSubtype: 'usgov', region: 'usgovvirginia', securityClassification: 'fedramp-high' },
+  { environmentTier: 'prod', cluster: 'CCCS East', clusterName: 'az-prod-cccs-ca-east', cloud: 'azure', cspSubtype: 'commercial', region: 'canadaeast', securityClassification: 'cccs' },
+  { environmentTier: 'prod', cluster: 'CCCS Central', clusterName: 'az-prod-cccs-ca-central', cloud: 'azure', cspSubtype: 'commercial', region: 'canadacentral', securityClassification: 'cccs' }
+];
+
 export const AccessRequestForm: React.FC<AccessRequestFormProps> = ({ onSuccess, onCancel }) => {
   const {
     form,
     formStep,
     selectedJobFunction,
-    complianceFilter,
-    setComplianceFilter,
     environmentFilter,
     setEnvironmentFilter,
     approvalChain,
@@ -56,6 +126,84 @@ export const AccessRequestForm: React.FC<AccessRequestFormProps> = ({ onSuccess,
     watchedResources,
     watchedAccessType
   } = useAccessRequestForm(onSuccess, onCancel);
+  
+  // Additional state for new form fields
+  const [securityClassification, setSecurityClassification] = useState<string>('');
+  const [cloudProvider, setCloudProvider] = useState<string>('');
+  const [cloudWorkload, setCloudWorkload] = useState<string>('');
+  const [availableClusters, setAvailableClusters] = useState<Cluster[]>([]);
+  const [selectedClusters, setSelectedClusters] = useState<string[]>([]);
+  
+  // Update available clusters when filters change
+  useEffect(() => {
+    if (environmentFilter && securityClassification && cloudProvider && cloudWorkload) {
+      const filtered = clusterData.filter(cluster => 
+        cluster.environmentTier === environmentFilter && 
+        cluster.securityClassification === securityClassification &&
+        cluster.cloud === cloudProvider &&
+        cluster.cspSubtype === cloudWorkload
+      );
+      setAvailableClusters(filtered);
+    } else {
+      setAvailableClusters([]);
+    }
+  }, [environmentFilter, securityClassification, cloudProvider, cloudWorkload]);
+  
+  // Handle cluster selection
+  const handleClusterChange = (clusterName: string, checked: boolean) => {
+    if (checked) {
+      setSelectedClusters(prev => [...prev, clusterName]);
+    } else {
+      setSelectedClusters(prev => prev.filter(name => name !== clusterName));
+    }
+  };
+  
+  // Get personnel prerequisites based on security classification
+  const getPersonnelPrerequisites = () => {
+    switch (securityClassification) {
+      case 'fedramp-high':
+        return (
+          <div className="mt-2 p-2 border border-orange-200 bg-orange-50 rounded-md">
+            <h4 className="font-medium text-orange-800">Personnel Prerequisites</h4>
+            <ul className="list-disc pl-5 text-sm text-orange-700">
+              <li>US Citizen</li>
+              <li>Background Check</li>
+              <li>Federal Training</li>
+            </ul>
+          </div>
+        );
+      case 'cccs':
+        return (
+          <div className="mt-2 p-2 border border-blue-200 bg-blue-50 rounded-md">
+            <h4 className="font-medium text-blue-800">Personnel Prerequisites</h4>
+            <ul className="list-disc pl-5 text-sm text-blue-700">
+              <li>Five Eyes Citizen</li>
+              <li>Background Check</li>
+              <li>Federal Training</li>
+            </ul>
+          </div>
+        );
+      case 'cjis':
+        return (
+          <div className="mt-2 p-2 border border-purple-200 bg-purple-50 rounded-md">
+            <h4 className="font-medium text-purple-800">Personnel Prerequisites</h4>
+            <div className="text-sm text-purple-700">
+              <p>CJIS Screening Process</p>
+              <a 
+                href="https://batchat.motorolasolutions.com/home/ls/community/cjis-personnel" 
+                target="_blank"
+                rel="noreferrer"
+                className="text-purple-600 hover:underline"
+              >
+                View CJIS Screening Details
+              </a>
+            </div>
+          </div>
+        );
+      default:
+        return null;
+    }
+  };
 
   return (
     <Form {...form}>
@@ -146,20 +294,25 @@ export const AccessRequestForm: React.FC<AccessRequestFormProps> = ({ onSuccess,
               />
             )}
             
-            {/* Resource filters - Swapped order of Environment and Compliance */}
+            {/* Environment Tier and Security Classification - Updated Labels */}
             {selectedJobFunction && (
               <div className="grid grid-cols-2 gap-4 p-4 bg-gray-50 rounded-md">
+                {/* Environment Tier (renamed from Environment) */}
                 <div>
-                  <Label htmlFor="environment-filter">Environment</Label>
+                  <Label htmlFor="environment-filter">Environment Tier</Label>
                   <Select
                     value={environmentFilter}
                     onValueChange={(value) => {
                       setEnvironmentFilter(value);
                       form.setValue('environmentFilter', value);
+                      // Reset security classification if not dev environment
+                      if (value !== 'dev') {
+                        setSecurityClassification('');
+                      }
                     }}
                   >
                     <SelectTrigger id="environment-filter">
-                      <SelectValue placeholder="Select an environment" />
+                      <SelectValue placeholder="Select an environment tier" />
                     </SelectTrigger>
                     <SelectContent>
                       {environmentTypes.map(et => (
@@ -168,23 +321,117 @@ export const AccessRequestForm: React.FC<AccessRequestFormProps> = ({ onSuccess,
                     </SelectContent>
                   </Select>
                 </div>
+                
+                {/* Security Classification (renamed from Compliance Framework) */}
                 <div>
-                  <Label htmlFor="compliance-filter">Compliance Framework</Label>
+                  <Label htmlFor="security-classification">Security Classification</Label>
                   <Select
-                    value={complianceFilter}
-                    onValueChange={setComplianceFilter}
-                    disabled={environmentFilter === 'dev'}
+                    value={securityClassification}
+                    onValueChange={setSecurityClassification}
                   >
-                    <SelectTrigger id="compliance-filter">
-                      <SelectValue placeholder="Select a framework" />
+                    <SelectTrigger id="security-classification">
+                      <SelectValue placeholder="Select a security classification" />
                     </SelectTrigger>
                     <SelectContent>
-                      {complianceEnvironments.map(ce => (
-                        <SelectItem key={ce.id} value={ce.id}>{ce.name}</SelectItem>
+                      {securityClassifications.map(sc => (
+                        <SelectItem key={sc.id} value={sc.id}>{sc.name}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                  {getPersonnelPrerequisites()}
+                </div>
+              </div>
+            )}
+            
+            {/* Cloud Provider and Workload - New Fields */}
+            {selectedJobFunction && environmentFilter && securityClassification && (
+              <div className="grid grid-cols-2 gap-4 p-4 bg-gray-50 rounded-md">
+                {/* Cloud Provider */}
+                <div>
+                  <Label htmlFor="cloud-provider">Cloud Provider</Label>
+                  <Select
+                    value={cloudProvider}
+                    onValueChange={setCloudProvider}
+                  >
+                    <SelectTrigger id="cloud-provider">
+                      <SelectValue placeholder="Select cloud provider" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {cloudProviders.map(cp => (
+                        <SelectItem key={cp.id} value={cp.id}>{cp.name}</SelectItem>
                       ))}
                     </SelectContent>
                   </Select>
                 </div>
+                
+                {/* Cloud Workload */}
+                <div>
+                  <Label htmlFor="cloud-workload">Cloud Provider Workload</Label>
+                  <Select
+                    value={cloudWorkload}
+                    onValueChange={setCloudWorkload}
+                  >
+                    <SelectTrigger id="cloud-workload">
+                      <SelectValue placeholder="Select workload type" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {cloudWorkloads.map(cw => (
+                        <SelectItem key={cw.id} value={cw.id}>{cw.name}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
+            )}
+            
+            {/* Available Clusters - Based on selected filters */}
+            {availableClusters.length > 0 && (
+              <div className="border rounded-md p-4">
+                <h3 className="font-medium mb-2">Available Clusters</h3>
+                <p className="text-sm text-gray-500 mb-3">
+                  Select the clusters you need access to:
+                </p>
+                <ScrollArea className="h-[200px] pr-4">
+                  <div className="space-y-2">
+                    {availableClusters.map((cluster) => (
+                      <div key={cluster.clusterName} className="flex items-start gap-2">
+                        <Checkbox 
+                          id={cluster.clusterName}
+                          checked={selectedClusters.includes(cluster.clusterName)}
+                          onCheckedChange={(checked) => 
+                            handleClusterChange(cluster.clusterName, !!checked)
+                          }
+                        />
+                        <div className="grid gap-1">
+                          <Label 
+                            htmlFor={cluster.clusterName}
+                            className="font-medium cursor-pointer"
+                          >
+                            {cluster.cluster}
+                          </Label>
+                          <div className="text-xs text-gray-500">
+                            {cluster.clusterName} • Region: {cluster.region}
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </ScrollArea>
+                
+                {selectedClusters.length > 0 && (
+                  <div className="mt-3 pt-3 border-t">
+                    <div className="flex items-center justify-between">
+                      <span className="text-sm font-medium">Selected: {selectedClusters.length}</span>
+                      <Button 
+                        variant="ghost" 
+                        size="sm" 
+                        onClick={() => setSelectedClusters([])}
+                      >
+                        Clear
+                      </Button>
+                    </div>
+                  </div>
+                )}
               </div>
             )}
             
@@ -201,7 +448,8 @@ export const AccessRequestForm: React.FC<AccessRequestFormProps> = ({ onSuccess,
               <Button 
                 type="button" 
                 onClick={nextStep}
-                disabled={!selectedJobFunction || !watchedResources.length}
+                disabled={!selectedJobFunction || !watchedResources.length || 
+                          (availableClusters.length > 0 && selectedClusters.length === 0)}
               >
                 Next
               </Button>
@@ -354,8 +602,28 @@ export const AccessRequestForm: React.FC<AccessRequestFormProps> = ({ onSuccess,
               )}
             />
             
+            {/* Selected Clusters Summary */}
+            {selectedClusters.length > 0 && (
+              <div className="border rounded-md p-4 bg-gray-50">
+                <h3 className="font-medium mb-2">Selected Clusters</h3>
+                <div className="flex flex-wrap gap-2">
+                  {selectedClusters.map(clusterName => {
+                    const cluster = clusterData.find(c => c.clusterName === clusterName);
+                    return cluster ? (
+                      <Badge key={clusterName} variant="secondary">
+                        {cluster.cluster}
+                      </Badge>
+                    ) : null;
+                  })}
+                </div>
+              </div>
+            )}
+            
             {/* Approval Chain Preview */}
-            <ApprovalChainPreview approvalChain={approvalChain} />
+            <ApprovalChainPreview 
+              approvalChain={approvalChain} 
+              securityClassification={securityClassification} 
+            />
             
             <div className="flex justify-between">
               <Button type="button" variant="outline" onClick={prevStep}>
