@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -125,11 +124,10 @@ export const AccessRequestForm: React.FC<AccessRequestFormProps> = ({ onSuccess,
     onSubmit,
     watchedResources,
     watchedAccessType,
-    isFormValid,
-    availableClusters
+    isFormValid
   } = useAccessRequestForm(onSuccess, onCancel);
   
-  // Additional state for new form fields
+  // Additional state for form fields
   const [securityClassification, setSecurityClassification] = useState<string>('');
   const [cloudProvider, setCloudProvider] = useState<string>('');
   const [cloudWorkload, setCloudWorkload] = useState<string>('');

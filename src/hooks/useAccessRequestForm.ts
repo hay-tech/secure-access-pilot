@@ -74,6 +74,9 @@ export const useAccessRequestForm = (onSuccess: () => void, onCancel: () => void
   const [showProjectField, setShowProjectField] = useState(false);
   const [selectedClusters, setSelectedClusters] = useState<string[]>([]);
   const [isFormValid, setIsFormValid] = useState(false);
+  
+  // Define this variable here before using it
+  const [availableClusters, setAvailableClusters] = useState<any[]>([]);
 
   const form = useForm<AccessRequestFormValues>({
     resolver: zodResolver(conditionalAccessRequestSchema),
@@ -149,7 +152,7 @@ export const useAccessRequestForm = (onSuccess: () => void, onCancel: () => void
       let environmentValid = true;
       
       if (watchedEnvironment && watchedSecurityClass) {
-        if (cloudProvider) {
+        if (watchedCloudProvider) {
           if (watchedCloudWorkload) {
             // If we have selected clusters and there are available clusters, check if at least one is selected
             if (selectedClusters.length === 0 && availableClusters.length > 0) {
@@ -172,7 +175,7 @@ export const useAccessRequestForm = (onSuccess: () => void, onCancel: () => void
     watchedResources, 
     watchedEnvironment, 
     watchedSecurityClass, 
-    cloudProvider, 
+    watchedCloudProvider, 
     watchedCloudWorkload, 
     selectedClusters, 
     availableClusters
@@ -288,8 +291,6 @@ export const useAccessRequestForm = (onSuccess: () => void, onCancel: () => void
     }
   };
 
-  const [availableClusters, setAvailableClusters] = useState<any[]>([]);
-
   // Update available clusters when filters change
   useEffect(() => {
     if (environmentFilter && securityClassification && cloudProvider && cloudWorkload) {
@@ -325,6 +326,6 @@ export const useAccessRequestForm = (onSuccess: () => void, onCancel: () => void
     watchedResources,
     watchedAccessType,
     isFormValid,
-    availableClusters
+    // Don't expose availableClusters from the hook since AccessRequestForm manages it locally
   };
 };
