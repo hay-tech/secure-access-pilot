@@ -18,7 +18,7 @@ const Reports: React.FC = () => {
       const jobFunctionData = user.jobFunction ? getJobFunctionPermissions(user.jobFunction) : null;
       return {
         ...user,
-        jobFunctions: jobFunctionData ? jobFunctionData.permissions : []
+        jobFunctions: jobFunctionData ? jobFunctionData.title : []
       };
     });
     
