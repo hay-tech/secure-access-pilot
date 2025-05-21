@@ -88,10 +88,10 @@ const Dashboard: React.FC = () => {
   const totalReviews = accessReviews.length;
   const remainingReviews = totalReviews - completedReviews;
 
-  const reviewProgressData = [
-    { name: 'Completed', value: completedReviews },
-    { name: 'Remaining', value: remainingReviews },
-  ];
+//  const reviewProgressData = [
+//    { name: 'Completed', value: completedReviews },
+//    { name: 'Remaining', value: remainingReviews },
+//  ];
 
   // Count unauthorized users for UAR validation findings
   const fedrampGaps = accessReviews.filter(review => review.violationType === 'unauthorized_user');
