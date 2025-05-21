@@ -33,12 +33,25 @@ export const AccessRequestsTable: React.FC<AccessRequestsTableProps> = ({ reques
     );
   };
 
+  // Helper to get cluster names (for demo purposes)
+  const getClusters = (request: AccessRequest): string => {
+    // Use cloudWorkload if available, otherwise create a mock cluster name
+    if (request.cloudWorkload) {
+      return request.cloudWorkload;
+    }
+    
+    // Create a mock cluster name based on the environment and resource
+    const env = request.environment || 'default';
+    const envPrefix = env.split('-')[0]?.toLowerCase() || 'cloud';
+    return `${envPrefix}-cluster-${Math.floor(Math.random() * 3) + 1}`;
+  };
+
   return (
     <Table>
       <TableHeader>
         <TableRow>
           <TableHead>Resource</TableHead>
-          <TableHead>Type</TableHead>
+          <TableHead>Role</TableHead>
           <TableHead>Status</TableHead>
           <TableHead>Access Type</TableHead>
           <TableHead>Expiration</TableHead>
@@ -55,9 +68,9 @@ export const AccessRequestsTable: React.FC<AccessRequestsTableProps> = ({ reques
         ) : (
           requests.map((request) => (
             <TableRow key={request.id}>
-              <TableCell className="font-medium">{request.resourceName}</TableCell>
+              <TableCell className="font-medium">{getClusters(request)}</TableCell>
               <TableCell>
-                {request.requestType.charAt(0).toUpperCase() + request.requestType.slice(1)}
+                {request.jobFunction || "Standard Role"}
               </TableCell>
               <TableCell>{renderStatusBadge(request.status)}</TableCell>
               <TableCell>

@@ -18,29 +18,38 @@ interface AccessReviewLogTableProps {
 }
 
 const AccessReviewLogTable: React.FC<AccessReviewLogTableProps> = ({ logs }) => {
-  // Mock group data based on job functions
+  // Mock group data based on job functions and environments
   const mockGroups = {
-    'Cloud Account Owner': ['cpe-cloud-account-owners'],
-    'Cloud IAM Administrator': ['cpe-iam-administrators'],
-    'Cloud IAM Reader': ['cpe-iam-readers'],
-    'Cloud Platform Tenant Administrator': ['cpe-platform-tenant-administrators'],
-    'Cloud Platform Administrator': ['cpe-platform-administrators-dev', 'cpe-platform-administrators-stage', 'cpe-platform-administrators-prod', 'cpe-platform-administrators-cjisstage', 'cpe-platform-administrators-cjisprod'],
-    'Cloud Platform Contributor': ['cpe-platform-contributors-dev', 'cpe-platform-contributors-stage', 'cpe-platform-contributors-prod', 'cpe-platform-contributors-cjisstage', 'cpe-platform-contributors-cjisprod'],
-    'Cloud Platform Reader': ['cpe-platform-readers-dev', 'cpe-platform-readers-stage', 'cpe-platform-readers-prod', 'cpe-platform-readers-cjisstage', 'cpe-platform-readers-cjisprod'],
-    'Cloud Platform Security Administrator': ['cpe-platform-security-administrators-dev', 'cpe-platform-security-administrators-stage', 'cpe-platform-security-administrators-prod', 'cpe-platform-security-administrators-cjisstage', 'cpe-platform-security-administrators-cjisprod'],
-    'Cloud Platform Security Contributor': ['cpe-platform-security-contributors-dev', 'cpe-platform-security-contributors-stage', 'cpe-platform-security-contributors-prod', 'cpe-platform-security-contributors-cjisstage', 'cpe-platform-security-contributors-cjisprod'],
-    'Cloud Platform Security Reader': ['cpe-platform-security-readers-dev', 'cpe-platform-security-readers-stage', 'cpe-platform-security-readers-prod', 'cpe-platform-security-readers-cjisstage', 'cpe-platform-security-readers-cjisprod'],
-    'Cloud Platform FinOps Administrator': ['cpe-platform-finops-administrators-dev', 'cpe-platform-finops-administrators-stage', 'cpe-platform-finops-administrators-prod', 'cpe-platform-finops-administrators-cjisstage', 'cpe-platform-finops-administrators-cjisprod'],
-    'Cloud Platform Site Reliability Engineer': ['cpe-platform-sre-dev', 'cpe-platform-sre-stage', 'cpe-platform-sre-prod', 'cpe-platform-sre-cjisstage', 'cpe-platform-sre-cjisprod']
+    'FedRamp': {
+      'Cloud Platform Administrator': ['cpe-platform-administrators-fedrampdev', 'cpe-platform-administrators-fedrampstage', 'cpe-platform-administrators-fedramprod'],
+      'Cloud Platform Contributor': ['cpe-platform-contributors-fedrampdev', 'cpe-platform-contributors-fedrampstage', 'cpe-platform-contributors-fedramprod'],
+      'Cloud Platform Reader': ['cpe-platform-readers-fedrampdev', 'cpe-platform-readers-fedrampstage', 'cpe-platform-readers-fedramprod'],
+      'Cloud Platform Security Administrator': ['cpe-platform-security-administrators-fedrampdev', 'cpe-platform-security-administrators-fedrampstage', 'cpe-platform-security-administrators-fedramprod'],
+    },
+    'CJIS': {
+      'Cloud Platform Administrator': ['cpe-platform-administrators-cjisdev', 'cpe-platform-administrators-cjisstage', 'cpe-platform-administrators-cjisprod'],
+      'Cloud Platform Contributor': ['cpe-platform-contributors-cjisdev', 'cpe-platform-contributors-cjisstage', 'cpe-platform-contributors-cjisprod'],
+      'Cloud Platform Reader': ['cpe-platform-readers-cjisdev', 'cpe-platform-readers-cjisstage', 'cpe-platform-readers-cjisprod'],
+      'Cloud Platform Security Administrator': ['cpe-platform-security-administrators-cjisdev', 'cpe-platform-security-administrators-cjisstage', 'cpe-platform-security-administrators-cjisprod'],
+    },
+    'CCCS': {
+      'Cloud Platform Administrator': ['cpe-platform-administrators-cccsdev', 'cpe-platform-administrators-cccsstage', 'cpe-platform-administrators-cccsprod'],
+      'Cloud Platform Contributor': ['cpe-platform-contributors-cccsdev', 'cpe-platform-contributors-cccsstage', 'cpe-platform-contributors-cccsprod'],
+      'Cloud Platform Reader': ['cpe-platform-readers-cccsdev', 'cpe-platform-readers-cccsstage', 'cpe-platform-readers-cccsprod'],
+      'Cloud Platform Security Administrator': ['cpe-platform-security-administrators-cccsdev', 'cpe-platform-security-administrators-cccsstage', 'cpe-platform-security-administrators-cccsprod'],
+    }
   };
 
-  // Function to get groups based on job functions
-  const getGroups = (jobFunctions: string[]) => {
+  // Function to get groups based on job functions and environment
+  const getGroups = (jobFunctions: string[], environment: string) => {
     let groups: string[] = [];
+    const envGroups = mockGroups[environment as keyof typeof mockGroups] || {};
+    
     jobFunctions.forEach(jf => {
-      const jfGroups = mockGroups[jf as keyof typeof mockGroups] || [];
+      const jfGroups = envGroups[jf as keyof typeof envGroups] || [];
       groups = [...groups, ...jfGroups];
     });
+    
     return groups.length > 0 ? groups : ['No groups assigned'];
   };
 
@@ -57,7 +66,7 @@ const AccessReviewLogTable: React.FC<AccessReviewLogTableProps> = ({ logs }) => 
       <TableCaption>Access review accountability database records</TableCaption>
       <TableHeader>
         <TableRow>
-          <TableHead>Reviewer</TableHead>
+          <TableHead>Approver</TableHead>
           <TableHead>User</TableHead>
           <TableHead>Environment</TableHead>
           <TableHead>Job Functions</TableHead>
@@ -89,7 +98,7 @@ const AccessReviewLogTable: React.FC<AccessReviewLogTableProps> = ({ logs }) => 
                   <div key={group} className="mb-1">
                     {group}
                   </div>
-                )) || getGroups(log.jobFunctions).map((group) => (
+                )) || getGroups(log.jobFunctions, log.environment).map((group) => (
                   <div key={group} className="mb-1">
                     {group}
                   </div>

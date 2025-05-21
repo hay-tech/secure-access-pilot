@@ -61,6 +61,7 @@ const Dashboard: React.FC = () => {
   const isManager = currentUser.jobFunction?.includes('Manager') || 
                     (currentUser.jobFunctions && currentUser.jobFunctions.some(jf => jf.includes('Manager')));
   
+  // Only show system stats if user is not a manager and has 'reports' read permission
   const canViewSystemStats = hasPermission(currentUser.id, 'reports', 'read') && !isManager;
   
   // Data for job function distribution - get directly from users
@@ -165,13 +166,13 @@ const Dashboard: React.FC = () => {
         />
       </div>
 
+      {/* Hide specific components for manager role */}
       {canViewSystemStats && (
         <>
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             <RoleDistributionTable data={jobFunctionDistribution} title="Job Function to User Mapping" description="Number of users assigned to each job function" />
             <PendingAccessReviewsTable data={pendingReviewsData} />
           </div>
-
           <AccessReviewProgress progressItems={progressItems} />
         </>
       )}
