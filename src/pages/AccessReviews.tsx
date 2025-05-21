@@ -19,16 +19,16 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/u
 const AccessReviews: React.FC = () => {
   const { accessReviewLogs, accessReviews, getPermissionGapsByEnvironment } = useAccessReviewManagement();
   const { currentUser } = useAuth();
-  const [currentTab, setCurrentTab] = useState('federal');
+  const [currentTab, setCurrentTab] = useState('fedramp');
   const [unauthorizedTab, setUnauthorizedTab] = useState('removed');
   const [selectedUsers, setSelectedUsers] = useState<string[]>([]);
   const [bulkReviewOpen, setBulkReviewOpen] = useState(false);
   
   // Get users with permission gaps (including unauthorized users)
-  const federalGaps = getPermissionGapsByEnvironment('federal');
+  const fedrampGaps = getPermissionGapsByEnvironment('fedramp');
   
   // Filter out unauthorized users specifically
-  const unauthorizedUsers = federalGaps.filter(item => 
+  const unauthorizedUsers = fedrampGaps.filter(item => 
     item.gaps.some(gap => gap.gapType === 'unauthorized_user')
   );
 
@@ -135,7 +135,7 @@ const AccessReviews: React.FC = () => {
               <Card>
                 <CardHeader className="flex flex-row items-center gap-2">
                   <AlertCircle className="h-6 w-6 text-red-500" />
-                  <CardTitle>Unauthorized Users or Permissions</CardTitle>
+                  <CardTitle>Automated User Access Validation - Actuals vs Approved Permissions</CardTitle>
                 </CardHeader>
                 <CardContent>
                   <Tabs value={unauthorizedTab} onValueChange={setUnauthorizedTab}>

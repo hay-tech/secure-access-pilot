@@ -24,7 +24,6 @@ const UserAccessReviewRow: React.FC<UserAccessReviewRowProps> = ({
   onCompleteReview
 }) => {
   const [justification, setJustification] = useState("No change");
-  const [isEditing, setIsEditing] = useState(false);
   
   const jobFunctions = user.jobFunction 
     ? [user.jobFunction]
@@ -33,30 +32,26 @@ const UserAccessReviewRow: React.FC<UserAccessReviewRowProps> = ({
   // For demo, we'll just use the first gap
   const firstGap = gaps[0];
   
-  const handleApprove = async () => {
+  const handleRecertify = async () => {
     try {
       await onApproveGap(user.id, 0, true, justification);
       await onCompleteReview(user.id, 'maintain', justification);
-      toast.success(`Approved access for ${user.firstName} ${user.lastName}`);
+      toast.success(`Recertified access for ${user.firstName} ${user.lastName}`);
     } catch (error) {
       console.error(error);
-      toast.error("Failed to approve access");
+      toast.error("Failed to recertify access");
     }
   };
   
-  const handleReject = async () => {
+  const handleRevokeAccess = async () => {
     try {
       await onApproveGap(user.id, 0, false, justification);
       await onCompleteReview(user.id, 'revoke', justification);
-      toast.success(`Rejected access for ${user.firstName} ${user.lastName}`);
+      toast.success(`Revoked all access for ${user.firstName} ${user.lastName}`);
     } catch (error) {
       console.error(error);
-      toast.error("Failed to reject access");
+      toast.error("Failed to revoke access");
     }
-  };
-  
-  const toggleEditing = () => {
-    setIsEditing(!isEditing);
   };
   
   return (
@@ -78,25 +73,12 @@ const UserAccessReviewRow: React.FC<UserAccessReviewRowProps> = ({
       </TableCell>
       <TableCell>
         <div className="max-w-xs">
-          {isEditing ? (
-            <Textarea
-              value={justification}
-              onChange={(e) => setJustification(e.target.value)}
-              className="text-sm"
-              rows={2}
-            />
-          ) : (
-            <div className="flex items-center gap-2">
-              <span>{justification}</span>
-              <Button 
-                size="sm" 
-                variant="ghost" 
-                onClick={toggleEditing} 
-                className="h-6 px-2">
-                Edit
-              </Button>
-            </div>
-          )}
+          <Textarea
+            value={justification}
+            onChange={(e) => setJustification(e.target.value)}
+            className="text-sm min-h-[40px] resize-none border-transparent hover:border-input focus:border-input"
+            placeholder="No change"
+          />
         </div>
       </TableCell>
       <TableCell>
@@ -105,17 +87,17 @@ const UserAccessReviewRow: React.FC<UserAccessReviewRowProps> = ({
             size="sm"
             variant="outline"
             className="bg-green-50 text-green-700 hover:bg-green-100 hover:text-green-800 border-green-200"
-            onClick={handleApprove}
+            onClick={handleRecertify}
           >
-            <Check className="h-4 w-4 mr-1" /> Approve
+            <Check className="h-4 w-4 mr-1" /> Recertify
           </Button>
           <Button
             size="sm"
             variant="outline"
             className="bg-red-50 text-red-700 hover:bg-red-100 hover:text-red-800 border-red-200"
-            onClick={handleReject}
+            onClick={handleRevokeAccess}
           >
-            <X className="h-4 w-4 mr-1" /> Reject
+            <X className="h-4 w-4 mr-1" /> Revoke All Access
           </Button>
         </div>
       </TableCell>

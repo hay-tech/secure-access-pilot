@@ -24,8 +24,8 @@ const AccessReviewEnvironmentHandler: React.FC<AccessReviewEnvironmentHandlerPro
   // Define regulatory environments
   const regulatoryEnvironments = [
     {
-      id: 'federal',
-      name: 'Federal',
+      id: 'fedramp',
+      name: 'FedRamp',
       description: 'Federal government compliance requirements',
       complianceFrameworks: ['FedRAMP', 'FISMA'],
       riskLevel: 'High' as const

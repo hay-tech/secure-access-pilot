@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -45,6 +45,9 @@ const BulkAccessReview: React.FC<BulkAccessReviewProps> = ({ onClose }) => {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectAll, setSelectAll] = useState(false);
   const [selectedUsers, setSelectedUsers] = useState<string[]>([]);
+  const [userActions, setUserActions] = useState<Record<string, UserReviewData['action']>>({});
+  const [userRoles, setUserRoles] = useState<Record<string, string>>({});
+  
   const { accessReviews } = useAccessReviewManagement();
   const { jobFunctionDefinitions } = useJobFunctionMapping();
 
@@ -55,13 +58,15 @@ const BulkAccessReview: React.FC<BulkAccessReviewProps> = ({ onClose }) => {
   
   // Create user review data from pending reviews
   const usersReviewData: UserReviewData[] = pendingReviews.map((review) => {
+    const userId = review.subjectId;
     return {
-      id: review.subjectId,
+      id: userId,
       name: `User ${review.subjectId.slice(-4)}`, // Mock name based on ID
       email: `user${review.subjectId.slice(-4)}@example.com`, // Mock email
       department: review.regulatoryEnvironment || 'CPE',
       currentRole: review.roleId || 'Cloud Platform Reader',
-      action: 'certify-as-is' // Default action
+      action: userActions[userId] || 'certify-as-is', // Use stored action or default
+      newRole: userRoles[userId] || undefined
     };
   });
   
@@ -95,14 +100,18 @@ const BulkAccessReview: React.FC<BulkAccessReviewProps> = ({ onClose }) => {
 
   // Handle user action change
   const handleActionChange = (userId: string, action: UserReviewData['action']) => {
-    // In a real app, we would update the user's action in state
-    console.log(`Changed action for user ${userId} to ${action}`);
+    setUserActions(prev => ({
+      ...prev,
+      [userId]: action
+    }));
   };
 
   // Handle role change
   const handleRoleChange = (userId: string, role: string) => {
-    // In a real app, we would update the user's new role in state
-    console.log(`Changed role for user ${userId} to ${role}`);
+    setUserRoles(prev => ({
+      ...prev,
+      [userId]: role
+    }));
   };
 
   // Handle bulk save
@@ -113,10 +122,12 @@ const BulkAccessReview: React.FC<BulkAccessReviewProps> = ({ onClose }) => {
 
   // Get the new role value for a user
   const getNewRole = (user: UserReviewData) => {
-    if (user.action === 'change-role') {
-      return user.newRole || 'No change';
+    const action = userActions[user.id] || user.action;
+    
+    if (action === 'change-role') {
+      return userRoles[user.id] || 'No change';
     }
-    if (user.action === 'revoke-access') {
+    if (action === 'revoke-access') {
       return 'N/A';
     }
     return 'No change';
@@ -159,58 +170,62 @@ const BulkAccessReview: React.FC<BulkAccessReviewProps> = ({ onClose }) => {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {filteredUsers.map(user => (
-              <TableRow key={user.id}>
-                <TableCell>
-                  <Checkbox 
-                    checked={selectedUsers.includes(user.id)}
-                    onCheckedChange={(checked) => handleSelectUser(user.id, !!checked)}
-                  />
-                </TableCell>
-                <TableCell>
-                  <div>
-                    <div className="font-medium">{user.name}</div>
-                    <div className="text-xs text-muted-foreground">{user.email}</div>
-                  </div>
-                </TableCell>
-                <TableCell>{user.department}</TableCell>
-                <TableCell>{user.currentRole}</TableCell>
-                <TableCell>
-                  <Select 
-                    defaultValue="certify-as-is"
-                    onValueChange={(value) => handleActionChange(user.id, value as UserReviewData['action'])}
-                  >
-                    <SelectTrigger className="w-[140px]">
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="certify-as-is">Certify as-is</SelectItem>
-                      <SelectItem value="change-role">Change role</SelectItem>
-                      <SelectItem value="revoke-access">Revoke access</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </TableCell>
-                <TableCell>
-                  {user.action === 'change-role' ? (
+            {filteredUsers.map(user => {
+              const userAction = userActions[user.id] || 'certify-as-is';
+              
+              return (
+                <TableRow key={user.id}>
+                  <TableCell>
+                    <Checkbox 
+                      checked={selectedUsers.includes(user.id)}
+                      onCheckedChange={(checked) => handleSelectUser(user.id, !!checked)}
+                    />
+                  </TableCell>
+                  <TableCell>
+                    <div>
+                      <div className="font-medium">{user.name}</div>
+                      <div className="text-xs text-muted-foreground">{user.email}</div>
+                    </div>
+                  </TableCell>
+                  <TableCell>{user.department}</TableCell>
+                  <TableCell>{user.currentRole}</TableCell>
+                  <TableCell>
                     <Select 
-                      defaultValue={user.newRole || "No change"} 
-                      onValueChange={(value) => handleRoleChange(user.id, value)}
+                      value={userAction}
+                      onValueChange={(value) => handleActionChange(user.id, value as UserReviewData['action'])}
                     >
-                      <SelectTrigger className="w-[200px]">
+                      <SelectTrigger className="w-[140px]">
                         <SelectValue />
                       </SelectTrigger>
                       <SelectContent>
-                        {availableRoles.map(role => (
-                          <SelectItem key={role} value={role}>{role}</SelectItem>
-                        ))}
+                        <SelectItem value="certify-as-is">Certify as-is</SelectItem>
+                        <SelectItem value="change-role">Change role</SelectItem>
+                        <SelectItem value="revoke-access">Revoke access</SelectItem>
                       </SelectContent>
                     </Select>
-                  ) : (
-                    <span className="text-muted-foreground">{getNewRole(user)}</span>
-                  )}
-                </TableCell>
-              </TableRow>
-            ))}
+                  </TableCell>
+                  <TableCell>
+                    {userAction === 'change-role' ? (
+                      <Select 
+                        value={userRoles[user.id] || "No change"} 
+                        onValueChange={(value) => handleRoleChange(user.id, value)}
+                      >
+                        <SelectTrigger className="w-[200px]">
+                          <SelectValue placeholder="Select a role" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {availableRoles.map(role => (
+                            <SelectItem key={role} value={role}>{role}</SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    ) : (
+                      <span className="text-muted-foreground">{getNewRole(user)}</span>
+                    )}
+                  </TableCell>
+                </TableRow>
+              );
+            })}
           </TableBody>
         </Table>
       </div>
