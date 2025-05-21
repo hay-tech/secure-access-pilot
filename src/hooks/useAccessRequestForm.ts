@@ -1,83 +1,22 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { z } from 'zod';
 import { useAuth } from '../contexts/AuthContext';
 import { useIAM } from '../contexts/IAMContext';
-import {
-  jobFunctionDefinitions,
-  targetResources,
-  approvers,
-} from '../data/mockData';
-import { getApprovalChain, calculateRiskScore } from '../utils/accessRequestUtils';
+import { jobFunctionDefinitions, targetResources } from '../data/mockData';
+import { useAccessRequestState } from './useAccessRequestState';
+import { useAccessFormValidation } from './useAccessFormValidation';
+import { useAccessApprovalChain } from './useAccessApprovalChain';
+import { AccessRequestFormValues, conditionalAccessRequestSchema } from '../schemas/accessRequestSchema';
+import { getFilteredResources } from '../utils/accessFormUtils';
 
-// Define form schema with access type and temporary duration
-const accessRequestSchema = z.object({
-  jobFunction: z.string().min(1, { message: "Please select a job function" }),
-  resources: z.array(z.string()).min(1, { message: "Please select at least one resource" }),
-  justification: z.string()
-    .min(10, { message: "Please provide a detailed justification (at least 10 characters)" })
-    .max(500, { message: "Justification is too long (maximum 500 characters)" }),
-  environmentFilter: z.string().optional(),
-  cloudProvider: z.string().optional(),
-  cloudWorkload: z.string().optional(),
-  securityClassification: z.string().optional(),
-  clusters: z.array(z.string()).optional(),
-  accessType: z.enum(['permanent', 'temporary'], {
-    required_error: "Please select an access type",
-  }),
-  tempDuration: z.string().optional(),
-  projectName: z.string().optional(),
-});
-
-// Add conditional validation for tempDuration when accessType is 'temporary'
-const conditionalAccessRequestSchema = z.intersection(
-  accessRequestSchema,
-  z.object({
-    tempDuration: z.string().optional(),
-    projectName: z.string().optional(),
-  })
-).refine(
-  (data) => !(data.accessType === 'temporary' && !data.tempDuration),
-  {
-    message: "Duration is required for temporary access",
-    path: ['tempDuration'],
-  }
-).refine(
-  (data) => {
-    // Check if job function has "project" in the name and require projectName
-    const selectedJob = jobFunctionDefinitions.find(jf => jf.id === data.jobFunction);
-    if (selectedJob && selectedJob.title.toLowerCase().includes('project') && !data.projectName) {
-      return false;
-    }
-    return true;
-  },
-  {
-    message: "Project name is required for this job function",
-    path: ['projectName'],
-  }
-);
-
-export type AccessRequestFormValues = z.infer<typeof conditionalAccessRequestSchema>;
+export type { AccessRequestFormValues } from '../schemas/accessRequestSchema';
 
 export const useAccessRequestForm = (onSuccess: () => void, onCancel: () => void) => {
   const { currentUser } = useAuth();
   const { createAccessRequest } = useIAM();
-  const [formStep, setFormStep] = useState(1);
-  const [selectedJobFunction, setSelectedJobFunction] = useState('');
-  const [environmentFilter, setEnvironmentFilter] = useState('');
-  const [securityClassification, setSecurityClassification] = useState('');
-  const [cloudProvider, setCloudProvider] = useState('');
-  const [cloudWorkload, setCloudWorkload] = useState('');
-  const [approvalChain, setApprovalChain] = useState<any[]>([]);
-  const [riskScore, setRiskScore] = useState({ score: 0, level: 'Low' });
-  const [showProjectField, setShowProjectField] = useState(false);
-  const [selectedClusters, setSelectedClusters] = useState<string[]>([]);
-  const [isFormValid, setIsFormValid] = useState(false);
-  
-  // Define this variable here before using it
-  const [availableClusters, setAvailableClusters] = useState<any[]>([]);
 
+  // Use form with zod resolver
   const form = useForm<AccessRequestFormValues>({
     resolver: zodResolver(conditionalAccessRequestSchema),
     defaultValues: {
@@ -104,113 +43,63 @@ export const useAccessRequestForm = (onSuccess: () => void, onCancel: () => void
   const watchedCloudProvider = form.watch('cloudProvider');
   const watchedCloudWorkload = form.watch('cloudWorkload');
 
-  // Check if job function contains "project" to show project field
-  useEffect(() => {
-    if (watchedJobFunction) {
-      const jobFunction = jobFunctionDefinitions.find(jf => jf.id === watchedJobFunction);
-      if (jobFunction && jobFunction.title.toLowerCase().includes('project')) {
-        setShowProjectField(true);
-      } else {
-        setShowProjectField(false);
-        form.setValue('projectName', '');
-      }
-    }
-  }, [watchedJobFunction, form]);
-  
-  // Update approval chain when resources or job function changes
-  useEffect(() => {
-    if (watchedResources.length > 0) {
-      setApprovalChain(getApprovalChain(watchedResources, watchedJobFunction));
-      setRiskScore(calculateRiskScore(watchedResources));
-    } else {
-      setApprovalChain([]);
-      setRiskScore({ score: 0, level: 'Low' });
-    }
-  }, [watchedResources, watchedJobFunction]);
-  
+  // Use our custom state hook
+  const {
+    formStep,
+    setFormStep,
+    selectedJobFunction,
+    setSelectedJobFunction,
+    environmentFilter,
+    setEnvironmentFilter,
+    securityClassification,
+    setSecurityClassification,
+    cloudProvider,
+    setCloudProvider,
+    cloudWorkload,
+    setCloudWorkload,
+    approvalChain,
+    setApprovalChain,
+    riskScore,
+    setRiskScore,
+    showProjectField,
+    selectedClusters,
+    setSelectedClusters,
+    isFormValid,
+    setIsFormValid,
+    availableClusters
+  } = useAccessRequestState(watchedJobFunction);
+
+  // Use validation hook
+  useAccessFormValidation(
+    watchedJobFunction,
+    watchedResources,
+    watchedEnvironment,
+    watchedSecurityClass,
+    watchedCloudProvider,
+    watchedCloudWorkload,
+    selectedClusters,
+    availableClusters,
+    setIsFormValid
+  );
+
+  // Use approval chain hook
+  useAccessApprovalChain(
+    watchedResources,
+    watchedJobFunction,
+    setApprovalChain,
+    setRiskScore
+  );
+
   // Handle job function selection
   useEffect(() => {
     if (watchedJobFunction) {
-      setSelectedJobFunction(watchedJobFunction);
-      
       // Auto-select recommended resources
       const jobFunction = jobFunctionDefinitions.find(jf => jf.id === selectedJobFunction);
       if (jobFunction) {
         form.setValue('resources', jobFunction.recommendedResources);
       }
     }
-  }, [watchedJobFunction, form]);
-
-  // Check form validity for Next button highlighting
-  useEffect(() => {
-    const checkFormValidity = () => {
-      // Basic check for required fields in step 1
-      const jobFunctionValid = !!watchedJobFunction;
-      const resourcesValid = watchedResources.length > 0;
-      
-      // Additional validation for environment-specific fields
-      let environmentValid = true;
-      
-      if (watchedEnvironment && watchedSecurityClass) {
-        if (watchedCloudProvider) {
-          if (watchedCloudWorkload) {
-            // If we have selected clusters and there are available clusters, check if at least one is selected
-            if (selectedClusters.length === 0 && availableClusters.length > 0) {
-              environmentValid = false;
-            }
-          } else {
-            environmentValid = false; // Need cloud workload if provider is selected
-          }
-        } else {
-          environmentValid = false; // Need cloud provider if environment and security class are selected
-        }
-      }
-      
-      setIsFormValid(jobFunctionValid && resourcesValid && environmentValid);
-    };
-    
-    checkFormValidity();
-  }, [
-    watchedJobFunction, 
-    watchedResources, 
-    watchedEnvironment, 
-    watchedSecurityClass, 
-    watchedCloudProvider, 
-    watchedCloudWorkload, 
-    selectedClusters, 
-    availableClusters
-  ]);
-
-  // Filter resources based on selected job function and filters
-  const getFilteredResources = () => {
-    let filtered = [...targetResources];
-    
-    // Filter by job function recommendations
-    if (selectedJobFunction) {
-      const jobFunction = jobFunctionDefinitions.find(jf => jf.id === selectedJobFunction);
-      if (jobFunction) {
-        filtered = filtered.filter(resource => 
-          jobFunction.recommendedResources.includes(resource.id)
-        );
-      }
-    }
-    
-    // Apply security classification filter
-    if (securityClassification) {
-      filtered = filtered.filter(resource => 
-        resource.compliance === securityClassification
-      );
-    }
-    
-    // Apply environment filter
-    if (environmentFilter) {
-      filtered = filtered.filter(resource => 
-        resource.environment === environmentFilter
-      );
-    }
-    
-    return filtered;
-  };
+  }, [watchedJobFunction, form, selectedJobFunction]);
 
   const nextStep = () => {
     form.trigger(['jobFunction', 'resources']);
@@ -291,16 +180,9 @@ export const useAccessRequestForm = (onSuccess: () => void, onCancel: () => void
     }
   };
 
-  // Update available clusters when filters change
-  useEffect(() => {
-    if (environmentFilter && securityClassification && cloudProvider && cloudWorkload) {
-      // This would be populated from clusterData in the AccessRequestForm component
-      // We're keeping a reference here to track if clusters are available
-      setAvailableClusters([{}]); // Dummy data to indicate clusters are available
-    } else {
-      setAvailableClusters([]);
-    }
-  }, [environmentFilter, securityClassification, cloudProvider, cloudWorkload]);
+  // Import necessary React hooks
+  import { useEffect } from 'react';
+  import { getApprovalChain } from '../utils/accessRequestUtils';
 
   return {
     form,
@@ -319,13 +201,12 @@ export const useAccessRequestForm = (onSuccess: () => void, onCancel: () => void
     showProjectField,
     selectedClusters,
     setSelectedClusters,
-    getFilteredResources,
+    getFilteredResources: () => getFilteredResources(selectedJobFunction, securityClassification, environmentFilter),
     nextStep,
     prevStep,
     onSubmit,
     watchedResources,
     watchedAccessType,
     isFormValid,
-    // Don't expose availableClusters from the hook since AccessRequestForm manages it locally
   };
 };
