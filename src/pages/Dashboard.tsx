@@ -50,8 +50,9 @@ const Dashboard: React.FC = () => {
   const userJobFunctions = currentUser.jobFunction ? [currentUser.jobFunction] : 
                           currentUser.jobFunctions ? currentUser.jobFunctions : [];
   
-  // Get the correct count of pending requests from the mock data
+  // Get the correct count of pending requests from the mock data - use only pending status
   const pendingRequests = accessRequests.filter(r => r.status === 'pending').length;
+  
   const myPendingApprovals = accessRequests.filter(r => 
     (r.managerApproval?.approverId === currentUser.id && r.managerApproval?.status === 'pending') ||
     (r.securityApproval?.approverId === currentUser.id && r.securityApproval?.status === 'pending')

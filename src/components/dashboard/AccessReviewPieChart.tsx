@@ -13,10 +13,6 @@ interface AccessReviewPieChartProps {
 const COLORS = ['#4ade80', '#f87171'];
 
 const AccessReviewPieChart: React.FC<AccessReviewPieChartProps> = ({ data }) => {
-  const totalReviews = data.reduce((sum, item) => sum + item.value, 0);
-  const completedReviews = data.find(item => item.name === 'Completed')?.value || 0;
-  const completionPercentage = totalReviews > 0 ? Math.round((completedReviews / totalReviews) * 100) : 0;
-
   return (
     <Card>
       <CardHeader>
@@ -25,7 +21,7 @@ const AccessReviewPieChart: React.FC<AccessReviewPieChartProps> = ({ data }) => 
       </CardHeader>
       <CardContent className="pt-2">
         <div className="h-[240px]">
-          <ResponsiveContainer width="100%" height="80%">
+          <ResponsiveContainer width="100%" height="100%">
             <PieChart>
               <Pie
                 data={data}
@@ -45,10 +41,6 @@ const AccessReviewPieChart: React.FC<AccessReviewPieChartProps> = ({ data }) => 
               <Legend />
             </PieChart>
           </ResponsiveContainer>
-          <div className="text-center mt-4">
-            <span className="text-xl font-bold">{completionPercentage}%</span>
-            <span className="text-sm text-muted-foreground ml-2">Overall Completion</span>
-          </div>
         </div>
       </CardContent>
     </Card>
