@@ -1,4 +1,5 @@
-import { useState } from 'react';
+
+import { useState, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useAuth } from '../contexts/AuthContext';
@@ -9,6 +10,7 @@ import { useAccessFormValidation } from './useAccessFormValidation';
 import { useAccessApprovalChain } from './useAccessApprovalChain';
 import { AccessRequestFormValues, conditionalAccessRequestSchema } from '../schemas/accessRequestSchema';
 import { getFilteredResources } from '../utils/accessFormUtils';
+import { getApprovalChain } from '../utils/accessRequestUtils';
 
 export type { AccessRequestFormValues } from '../schemas/accessRequestSchema';
 
@@ -66,7 +68,6 @@ export const useAccessRequestForm = (onSuccess: () => void, onCancel: () => void
     setSelectedClusters,
     isFormValid,
     setIsFormValid,
-    availableClusters
   } = useAccessRequestState(watchedJobFunction);
 
   // Use validation hook
@@ -78,7 +79,7 @@ export const useAccessRequestForm = (onSuccess: () => void, onCancel: () => void
     watchedCloudProvider,
     watchedCloudWorkload,
     selectedClusters,
-    availableClusters,
+    [],
     setIsFormValid
   );
 
@@ -179,10 +180,6 @@ export const useAccessRequestForm = (onSuccess: () => void, onCancel: () => void
       console.error("Failed to submit access request:", error);
     }
   };
-
-  // Import necessary React hooks
-  import { useEffect } from 'react';
-  import { getApprovalChain } from '../utils/accessRequestUtils';
 
   return {
     form,
