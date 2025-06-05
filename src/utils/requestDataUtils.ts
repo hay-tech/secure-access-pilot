@@ -21,7 +21,7 @@ export const prepareRequestData = (
   const selectedJobFunctionObj = jobFunctionDefinitions.find(jf => jf.id === data.jobFunction);
   const jobFunctionTitle = selectedJobFunctionObj?.title || "Standard Role";
   
-  // Get the cluster names from the selected clusters in the form
+  // Use the selected clusters from the form for the resource name
   const clusterNames = selectedClusters.length > 0 ? selectedClusters.join(', ') : "Default Cluster";
   
   // Collect resource names for the selected resources
@@ -41,7 +41,7 @@ export const prepareRequestData = (
   return {
     userId: currentUserId,
     resourceId: data.resources.join(','),
-    resourceName: clusterNames,
+    resourceName: clusterNames, // This should contain the selected cluster names
     requestType: 'role' as const,
     justification: data.justification,
     accessType: data.accessType,

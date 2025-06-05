@@ -67,6 +67,13 @@ export const useAccessRequestForm = (onSuccess: () => void, onCancel: () => void
     setIsFormValid,
   } = useAccessRequestState(watchedJobFunction);
 
+  // Sync form clusters with state
+  useEffect(() => {
+    if (watchedClusters && watchedClusters.length > 0) {
+      setSelectedClusters(watchedClusters);
+    }
+  }, [watchedClusters, setSelectedClusters]);
+
   // Use validation hook
   useAccessFormValidation(
     watchedJobFunction,
@@ -88,7 +95,7 @@ export const useAccessRequestForm = (onSuccess: () => void, onCancel: () => void
     setRiskScore
   );
 
-  // Use submission hook
+  // Use submission hook with the current selected clusters
   const { submitRequest } = useAccessRequestSubmission(onSuccess, selectedClusters);
 
   // Use step navigation hook
