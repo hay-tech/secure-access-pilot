@@ -130,8 +130,9 @@ export const useAccessRequestForm = (onSuccess: () => void, onCancel: () => void
     const selectedJobFunctionObj = jobFunctionDefinitions.find(jf => jf.id === data.jobFunction);
     const jobFunctionTitle = selectedJobFunctionObj?.title || "Standard Role";
     
-    // Get selected cluster name
-    const clusterName = data.cloudWorkload || (data.clusters && data.clusters.length > 0 ? data.clusters[0] : "Default Cluster");
+    // Get the cluster names from the selected clusters in the form
+    // Use the selectedClusters state which contains the actual cluster names
+    const clusterNames = selectedClusters.length > 0 ? selectedClusters.join(', ') : "Default Cluster";
     
     // Collect resource names for the selected resources
     const selectedResources = targetResources.filter(resource => 
@@ -152,7 +153,7 @@ export const useAccessRequestForm = (onSuccess: () => void, onCancel: () => void
       await createAccessRequest({
         userId: currentUser.id,
         resourceId: data.resources.join(','),
-        resourceName: clusterName, // Use cluster name as resource name
+        resourceName: clusterNames, // Use the actual selected cluster names
         requestType: 'role',
         justification: data.justification,
         accessType: data.accessType,
