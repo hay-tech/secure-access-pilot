@@ -33,17 +33,20 @@ export const AccessRequestsTable: React.FC<AccessRequestsTableProps> = ({ reques
     );
   };
 
-  // Helper to get cluster names (for demo purposes)
-  const getClusters = (request: AccessRequest): string => {
-    // Use cloudWorkload if available, otherwise create a mock cluster name
+  // Helper to get the resource name (cluster name) directly from the request
+  const getResourceName = (request: AccessRequest): string => {
+    // Use the resourceName field which should contain the cluster name from the form
+    if (request.resourceName) {
+      return request.resourceName;
+    }
+    
+    // Fallback to cloudWorkload if available
     if (request.cloudWorkload) {
       return request.cloudWorkload;
     }
     
-    // Create a mock cluster name based on the environment and resource
-    const env = request.environment || 'default';
-    const envPrefix = env.split('-')[0]?.toLowerCase() || 'cloud';
-    return `${envPrefix}-cluster-${Math.floor(Math.random() * 3) + 1}`;
+    // Final fallback to a default name
+    return 'Default Cluster';
   };
 
   return (
@@ -68,7 +71,7 @@ export const AccessRequestsTable: React.FC<AccessRequestsTableProps> = ({ reques
         ) : (
           requests.map((request) => (
             <TableRow key={request.id}>
-              <TableCell className="font-medium">{getClusters(request)}</TableCell>
+              <TableCell className="font-medium">{getResourceName(request)}</TableCell>
               <TableCell>
                 {request.jobFunction || "Standard Role"}
               </TableCell>
