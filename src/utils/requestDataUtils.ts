@@ -42,7 +42,7 @@ export const prepareRequestData = (
     userId: currentUserId,
     resourceId: data.resources.join(','),
     resourceName: clusterNames, // Contains the selected cluster names
-    requestType: data.accessType === 'temporary' ? 'temporary' : 'permanent', // Use access type as request type
+    requestType: 'role' as const, // Fixed: Use valid requestType value
     justification: data.justification,
     accessType: data.accessType,
     expiresAt: expiresAt,

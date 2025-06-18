@@ -61,7 +61,7 @@ const PendingApprovalsTable: React.FC<PendingApprovalsTableProps> = ({
                 {request.projectName || 'N/A'}
               </TableCell>
               <TableCell>
-                {request.requestType || 'permanent'}
+                {request.accessType === 'temporary' ? 'Temporary' : 'Permanent'}
               </TableCell>
               <TableCell>
                 <div className="max-w-sm truncate" title={request.justification}>
