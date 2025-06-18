@@ -52,16 +52,16 @@ const PendingApprovalsTable: React.FC<PendingApprovalsTableProps> = ({
         ) : (
           pendingApprovals.map((request) => (
             <TableRow key={request.id}>
-              <TableCell>{request.environmentType || 'N/A'}</TableCell>
+              <TableCell>{request.resourceName || 'N/A'}</TableCell>
               <TableCell className="font-medium">
                 {getUserName(request.userId)}
               </TableCell>
-              <TableCell>{getUserJobFunctions(request.userId)}</TableCell>
+              <TableCell>{request.jobFunction || 'N/A'}</TableCell>
               <TableCell>
                 {request.projectName || 'N/A'}
               </TableCell>
               <TableCell>
-                {getAccessType(request)}
+                {request.requestType || 'permanent'}
               </TableCell>
               <TableCell>
                 <div className="max-w-sm truncate" title={request.justification}>

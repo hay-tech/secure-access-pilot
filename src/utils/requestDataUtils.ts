@@ -41,8 +41,8 @@ export const prepareRequestData = (
   return {
     userId: currentUserId,
     resourceId: data.resources.join(','),
-    resourceName: clusterNames, // This should contain the selected cluster names
-    requestType: 'role' as const,
+    resourceName: clusterNames, // Contains the selected cluster names
+    requestType: data.accessType === 'temporary' ? 'temporary' : 'permanent', // Use access type as request type
     justification: data.justification,
     accessType: data.accessType,
     expiresAt: expiresAt,
@@ -65,5 +65,7 @@ export const prepareRequestData = (
     environmentType: data.environmentFilter,
     cloudWorkload: data.cloudWorkload,
     jobFunction: jobFunctionTitle,
+    // Store selected clusters for use in approvals
+    selectedClusters: selectedClusters,
   };
 };

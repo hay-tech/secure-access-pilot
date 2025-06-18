@@ -99,7 +99,7 @@ export const useApprovalManagement = (): ApprovalManagementReturn => {
   };
 
   const getAccessType = (request: AccessRequest) => {
-    return request.accessType === 'temporary' ? 'Temporary' : 'Permanent';
+    return request.requestType || (request.accessType === 'temporary' ? 'Temporary' : 'Permanent');
   };
 
   return {
