@@ -76,7 +76,7 @@ export const useIAMStore = () => {
   const [auditLogs, setAuditLogs] = useState<AuditLog[]>(initialAuditLogs);
   const [accessReviews, setAccessReviews] = useState<AccessReview[]>(initialAccessReviews);
   
-  // Enhanced mock data for accountability logs with recent dates
+  // Enhanced mock data for accountability logs with recent dates and updated structure
   const [accessReviewLogs, setAccessReviewLogs] = useState<AccessReviewLog[]>([
     {
       id: 'arl1',
@@ -85,10 +85,9 @@ export const useIAMStore = () => {
       approvedUserId: 'Alice Developer',
       environment: 'FedRamp',
       jobFunctions: ['Cloud Platform Administrator'],
-      permissionsGranted: ['read', 'write', 'delete'],
+      permissionsGranted: ['cpe-cloud-account-owners', 'cpe-iam-administrators'],
       groupsMembership: ['cpe-platform-administrators-fedrampdev', 'cpe-platform-administrators-fedrampprod'],
       timestamp: getRandomDateWithinLastMonth(),
-      decision: 'maintain',
       justification: 'Required for project maintenance'
     },
     {
@@ -98,10 +97,9 @@ export const useIAMStore = () => {
       approvedUserId: 'Bob Developer',
       environment: 'CCCS',
       jobFunctions: ['Cloud Platform Contributor'],
-      permissionsGranted: ['read', 'write'],
+      permissionsGranted: ['cpe-platform-contributors-dev', 'cpe-platform-contributors-prod'],
       groupsMembership: ['cpe-platform-contributors-cccsdev', 'cpe-platform-contributors-cccsprod'],
       timestamp: getRandomDateWithinLastMonth(),
-      decision: 'maintain',
       justification: 'Needed for development work'
     },
     {
@@ -111,11 +109,10 @@ export const useIAMStore = () => {
       approvedUserId: 'Charlie DevOps',
       environment: 'NIST 800-53 Mod',
       jobFunctions: ['Cloud Platform Security Administrator'],
-      permissionsGranted: ['read', 'write', 'admin'],
+      permissionsGranted: ['cpe-platform-security-administrators-prod', 'cpe-platform-security-administrators-staging'],
       groupsMembership: ['cpe-platform-security-administrators-fedramprod'],
       timestamp: getRandomDateWithinLastMonth(),
-      decision: 'revoke',
-      justification: 'No longer working on security projects'
+      justification: 'Security administration responsibilities'
     },
     {
       id: 'arl4',
@@ -124,10 +121,9 @@ export const useIAMStore = () => {
       approvedUserId: 'David Analyst',
       environment: 'CJIS',
       jobFunctions: ['Cloud Platform Security Reader'],
-      permissionsGranted: ['read'],
+      permissionsGranted: ['cpe-platform-security-readers-dev', 'cpe-platform-security-readers-prod'],
       groupsMembership: ['cpe-platform-security-readers-cjisdev', 'cpe-platform-security-readers-cjisprod'],
       timestamp: getRandomDateWithinLastMonth(),
-      decision: 'maintain',
       justification: 'Required for security audit work'
     },
     {
@@ -137,11 +133,10 @@ export const useIAMStore = () => {
       approvedUserId: 'Eve Developer',
       environment: 'FedRamp',
       jobFunctions: ['Cloud Platform Contributor'],
-      permissionsGranted: ['read', 'write', 'delete'],
+      permissionsGranted: ['cpe-platform-contributors-dev', 'cpe-platform-contributors-staging'],
       groupsMembership: ['cpe-platform-contributors-fedrampdev'],
       timestamp: getRandomDateWithinLastMonth(),
-      decision: 'modify',
-      justification: 'Reduced permissions to align with job responsibilities'
+      justification: 'Development and staging environment access'
     }
   ]);
 
