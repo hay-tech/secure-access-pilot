@@ -45,20 +45,40 @@ export const ApprovalChainPreview: React.FC<ApprovalChainPreviewProps> = ({
         ];
       case 'cjis':
         return [
-          ...baseApprovalChain,
           {
-            id: 'cjis-admin',
-            name: 'Cloud System Admin Approvers',
-            title: 'CJIS System Administrator',
-            type: 'resource-owner',
-            reason: 'Required for CJIS environment access'
+            id: 'manager-1',
+            name: 'Engineering Manager',
+            title: 'Your Manager',
+            type: 'manager',
+            reason: 'Required for all access requests'
           },
           {
-            id: 'data-owner',
-            name: 'Data Owner',
-            title: 'CJIS Data Owner',
+            id: 'resource-owner',
+            name: 'Resource Owner Group',
+            title: 'Resource Owner Group',
+            type: 'resource-owner',
+            reason: 'Resource owner approval required for CJIS environment'
+          },
+          {
+            id: 'compliance-approval',
+            name: 'Compliance Team',
+            title: 'Compliance Approval',
             type: 'compliance',
-            reason: 'Required for CJIS environment access'
+            reason: 'Compliance review required for CJIS environment'
+          },
+          {
+            id: 'legal-approval',
+            name: 'Legal Team',
+            title: 'Legal Approval',
+            type: 'legal',
+            reason: 'Legal review required for CJIS environment access'
+          },
+          {
+            id: 'hr-approval',
+            name: 'HR Team',
+            title: 'HR Approval',
+            type: 'hr',
+            reason: 'HR approval required for CJIS environment access'
           }
         ];
       case 'nist-800-53-moderate':
@@ -150,7 +170,7 @@ export const ApprovalChainPreview: React.FC<ApprovalChainPreviewProps> = ({
       {securityClassification === 'cjis' && (
         <div className="mt-3 p-3 bg-purple-50 border border-purple-200 rounded-md text-purple-800 flex items-center">
           <Info className="h-5 w-5 mr-2" />
-          <span>CJIS access requires completion of the CJIS screening process before approval.</span>
+          <span>CJIS access requires Manager, Resource Owner Group, Compliance, Legal, and HR approvals before access is granted.</span>
         </div>
       )}
       

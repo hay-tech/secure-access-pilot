@@ -21,7 +21,7 @@ export const getApprovalChain = (resources: string[], jobFunction: string) => {
   
   // For CJIS and Commercial, use the approval matrix based on resource hierarchy
   let approvalTypes: string[] = [];
-  const resourceHierarchy = selectedResource.resourceHierarchy || "Resources/Services";
+  const resourceHierarchy = selectedResource.resourceHierarchy || "resource";
   const complianceType = selectedResource.compliance === 'cjis' ? 'cjis' : 'commercial';
   
   // Get the appropriate approval chain from the matrix
@@ -47,7 +47,13 @@ export const getApprovalChain = (resources: string[], jobFunction: string) => {
         reason = "Security review required";
         break;
       case 'compliance':
-        reason = "Compliance review required";
+        reason = "Compliance review required for CJIS environment";
+        break;
+      case 'legal':
+        reason = "Legal review required for CJIS environment access";
+        break;
+      case 'hr':
+        reason = "HR approval required for CJIS environment access";
         break;
       case 'org-owner':
         reason = "Organization-level access requires owner approval";
@@ -62,7 +68,7 @@ export const getApprovalChain = (resources: string[], jobFunction: string) => {
         reason = "Project-level access requires owner approval";
         break;
       case 'resource-owner':
-        reason = "Resource-specific access requires owner approval";
+        reason = "Resource owner approval required for CJIS environment";
         break;
     }
     
