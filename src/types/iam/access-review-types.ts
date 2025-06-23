@@ -58,7 +58,7 @@ export interface ApprovalStep {
   approverId?: string; // Added to support current code patterns
   approverName?: string; // Added to support current code patterns
   approverTitle?: string; // Added to support current code patterns
-  approverType: 'manager' | 'security' | 'compliance' | 'admin' | 'resource-owner' | 'legal' | 'hr' | 'cjis-screening';
+  approverType: 'manager' | 'security' | 'compliance' | 'admin' | 'resource-owner' | 'legal' | 'hr' | 'cjis-screening' | 'nist-resource-owner';
   status: 'pending' | 'approved' | 'rejected';
   timestamp?: string;
   comments?: string;

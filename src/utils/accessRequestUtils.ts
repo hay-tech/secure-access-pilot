@@ -19,10 +19,19 @@ export const getApprovalChain = (resources: string[], jobFunction: string) => {
     ];
   }
   
-  // For CJIS and Commercial, use the approval matrix based on resource hierarchy
+  // For CJIS, NIST, and Commercial, use the approval matrix based on resource hierarchy
   let approvalTypes: string[] = [];
   const resourceHierarchy = selectedResource.resourceHierarchy || "resource";
-  const complianceType = selectedResource.compliance === 'cjis' ? 'cjis' : 'commercial';
+  let complianceType = 'default';
+  
+  // Determine compliance type
+  if (selectedResource.compliance === 'cjis') {
+    complianceType = 'cjis';
+  } else if (selectedResource.compliance === 'nist-800-53-moderate') {
+    complianceType = 'nist-800-53-moderate';
+  } else if (selectedResource.compliance === 'commercial') {
+    complianceType = 'commercial';
+  }
   
   // Get the appropriate approval chain from the matrix
   if (approvalMatrix[complianceType] && approvalMatrix[complianceType][resourceHierarchy]) {
@@ -57,6 +66,9 @@ export const getApprovalChain = (resources: string[], jobFunction: string) => {
         break;
       case 'cjis-screening':
         reason = "CJIS screening and compliance approval required";
+        break;
+      case 'nist-resource-owner':
+        reason = "NIST resource owner approval required";
         break;
       case 'org-owner':
         reason = "Organization-level access requires owner approval";

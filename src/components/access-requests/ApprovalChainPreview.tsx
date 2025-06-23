@@ -69,20 +69,19 @@ export const ApprovalChainPreview: React.FC<ApprovalChainPreviewProps> = ({
         ];
       case 'nist-800-53-moderate':
         return [
-          ...baseApprovalChain,
           {
-            id: 'nist-admin',
-            name: 'Cloud System Admin Approvers',
-            title: 'NIST System Administrator',
-            type: 'resource-owner',
-            reason: 'Required for NIST 800-53 environment access'
+            id: 'manager-1',
+            name: 'Engineering Manager',
+            title: 'Requestor\'s Manager',
+            type: 'manager',
+            reason: 'Required for all access requests'
           },
           {
-            id: 'data-owner',
-            name: 'Data Owner',
-            title: 'NIST Data Owner',
-            type: 'compliance',
-            reason: 'Required for NIST 800-53 environment access'
+            id: 'nist-resource-owner',
+            name: 'NIST Resource Owner',
+            title: 'Resource Owner',
+            type: 'resource-owner',
+            reason: 'Resource owner approval required for NIST environment'
           }
         ];
       default:
@@ -157,6 +156,13 @@ export const ApprovalChainPreview: React.FC<ApprovalChainPreviewProps> = ({
         <div className="mt-3 p-3 bg-purple-50 border border-purple-200 rounded-md text-purple-800 flex items-center">
           <Info className="h-5 w-5 mr-2" />
           <span>CJIS access requires Manager, Resource Owner Group, and Data Privacy CJIS Screening Team approvals before access is granted.</span>
+        </div>
+      )}
+      
+      {securityClassification === 'nist-800-53-moderate' && (
+        <div className="mt-3 p-3 bg-blue-50 border border-blue-200 rounded-md text-blue-800 flex items-center">
+          <Info className="h-5 w-5 mr-2" />
+          <span>NIST access requires Manager and Resource Owner approvals before access is granted.</span>
         </div>
       )}
       

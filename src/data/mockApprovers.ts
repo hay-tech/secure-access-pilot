@@ -73,6 +73,12 @@ export const approvers: Approver[] = [
     name: 'Data Privacy CJIS Screening Team',
     title: 'Data Privacy CJIS Screening Team',
     type: 'cjis-screening'
+  },
+  {
+    id: 'approver13',
+    name: 'NIST Resource Owner',
+    title: 'NIST Resource Owner',
+    type: 'nist-resource-owner'
   }
 ];
 
@@ -84,6 +90,13 @@ export const approvalMatrix = {
     'environment': ['manager', 'resource-owner', 'cjis-screening'],
     'project': ['manager', 'resource-owner', 'cjis-screening'],
     'resource': ['manager', 'resource-owner', 'cjis-screening']
+  },
+  'nist-800-53-moderate': {
+    'organization': ['manager', 'nist-resource-owner'],
+    'tenant': ['manager', 'nist-resource-owner'],
+    'environment': ['manager', 'nist-resource-owner'],
+    'project': ['manager', 'nist-resource-owner'],
+    'resource': ['manager', 'nist-resource-owner']
   },
   'commercial': {
     'organization': ['manager', 'org-owner', 'security'],
