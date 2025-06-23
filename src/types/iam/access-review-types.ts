@@ -1,4 +1,3 @@
-
 import { Permission, Role } from './role-types';
 
 export interface AccessReview {
@@ -29,7 +28,7 @@ export interface AccessReviewLog {
   permissionsGranted: string[];
   groupsMembership: string[];
   timestamp: string;
-  decision: 'maintain' | 'revoke' | 'modify';
+  decision?: 'maintain' | 'revoke' | 'modify'; // Made optional since we removed it from accountability database
   justification?: string;
 }
 
