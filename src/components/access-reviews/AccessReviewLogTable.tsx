@@ -14,7 +14,7 @@ const sampleExampleLogs: AccessReviewLog[] = [
   {
     id: 'example-1',
     reviewId: 'review-2023-001',
-    approverId: 'Scott Dale',
+    approverId: 'Scott Dale, Sarah L.',
     approvedUserId: 'Jane Smith',
     environment: 'FedRAMP High',
     jobFunctions: ['Cloud Platform Administrator'],
@@ -26,7 +26,7 @@ const sampleExampleLogs: AccessReviewLog[] = [
   {
     id: 'example-2',
     reviewId: 'review-2023-015',
-    approverId: 'Scott Dale',
+    approverId: 'Scott Dale, DevOps Team',
     approvedUserId: 'John Doe',
     environment: 'Commercial',
     jobFunctions: ['Cloud Platform Contributor'],
@@ -38,7 +38,7 @@ const sampleExampleLogs: AccessReviewLog[] = [
   {
     id: 'example-3',
     reviewId: 'review-2023-022',
-    approverId: 'Scott Dale',
+    approverId: 'Scott Dale, Data Privacy CJIS Screening Team',
     approvedUserId: 'Alex Johnson',
     environment: 'CJIS',
     jobFunctions: ['Cloud Platform Security Administrator'],
@@ -50,7 +50,7 @@ const sampleExampleLogs: AccessReviewLog[] = [
   {
     id: 'example-4',
     reviewId: 'review-2023-030',
-    approverId: 'Scott Dale',
+    approverId: 'Scott Dale, Sovereign Ops Team',
     approvedUserId: 'Maria Garcia',
     environment: 'CCCS',
     jobFunctions: ['Cloud Platform Security Reader'],
@@ -62,9 +62,9 @@ const sampleExampleLogs: AccessReviewLog[] = [
   {
     id: 'example-5',
     reviewId: 'review-2023-035',
-    approverId: 'Scott Dale',
+    approverId: 'Scott Dale, NIST Resource Owner',
     approvedUserId: 'Tom Wilson',
-    environment: 'Commercial',
+    environment: 'NIST 800-53 Moderate',
     jobFunctions: ['Cloud Platform Reader'],
     permissionsGranted: ['Viewer'],
     groupsMembership: ['cpe-platform-readers-dev', 'cpe-platform-readers-prod'],
