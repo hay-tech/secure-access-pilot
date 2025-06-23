@@ -67,17 +67,23 @@ export const approvers: Approver[] = [
     name: 'HR Team',
     title: 'HR Approval',
     type: 'hr'
+  },
+  {
+    id: 'approver12',
+    name: 'Data Privacy CJIS Screening Team',
+    title: 'Data Privacy CJIS Screening Team',
+    type: 'cjis-screening'
   }
 ];
 
 // Approval matrix for different resource hierarchies based on compliance framework
 export const approvalMatrix = {
   'cjis': {
-    'organization': ['manager', 'resource-owner', 'compliance', 'legal', 'hr'],
-    'tenant': ['manager', 'resource-owner', 'compliance', 'legal', 'hr'],
-    'environment': ['manager', 'resource-owner', 'compliance', 'legal', 'hr'],
-    'project': ['manager', 'resource-owner', 'compliance', 'legal', 'hr'],
-    'resource': ['manager', 'resource-owner', 'compliance', 'legal', 'hr']
+    'organization': ['manager', 'resource-owner', 'cjis-screening'],
+    'tenant': ['manager', 'resource-owner', 'cjis-screening'],
+    'environment': ['manager', 'resource-owner', 'cjis-screening'],
+    'project': ['manager', 'resource-owner', 'cjis-screening'],
+    'resource': ['manager', 'resource-owner', 'cjis-screening']
   },
   'commercial': {
     'organization': ['manager', 'org-owner', 'security'],

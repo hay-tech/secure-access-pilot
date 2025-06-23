@@ -55,6 +55,9 @@ export const getApprovalChain = (resources: string[], jobFunction: string) => {
       case 'hr':
         reason = "HR approval required for CJIS environment access";
         break;
+      case 'cjis-screening':
+        reason = "CJIS screening and compliance approval required";
+        break;
       case 'org-owner':
         reason = "Organization-level access requires owner approval";
         break;

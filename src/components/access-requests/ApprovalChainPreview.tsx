@@ -60,25 +60,11 @@ export const ApprovalChainPreview: React.FC<ApprovalChainPreviewProps> = ({
             reason: 'Resource owner approval required for CJIS environment'
           },
           {
-            id: 'compliance-approval',
-            name: 'Compliance Team',
-            title: 'Compliance Approval',
-            type: 'compliance',
-            reason: 'Compliance review required for CJIS environment'
-          },
-          {
-            id: 'legal-approval',
-            name: 'Legal Team',
-            title: 'Legal Approval',
-            type: 'legal',
-            reason: 'Legal review required for CJIS environment access'
-          },
-          {
-            id: 'hr-approval',
-            name: 'HR Team',
-            title: 'HR Approval',
-            type: 'hr',
-            reason: 'HR approval required for CJIS environment access'
+            id: 'cjis-screening',
+            name: 'Data Privacy CJIS Screening Team',
+            title: 'Data Privacy CJIS Screening Team',
+            type: 'cjis-screening',
+            reason: 'CJIS screening and compliance approval required'
           }
         ];
       case 'nist-800-53-moderate':
@@ -170,7 +156,7 @@ export const ApprovalChainPreview: React.FC<ApprovalChainPreviewProps> = ({
       {securityClassification === 'cjis' && (
         <div className="mt-3 p-3 bg-purple-50 border border-purple-200 rounded-md text-purple-800 flex items-center">
           <Info className="h-5 w-5 mr-2" />
-          <span>CJIS access requires Manager, Resource Owner Group, Compliance, Legal, and HR approvals before access is granted.</span>
+          <span>CJIS access requires Manager, Resource Owner Group, and Data Privacy CJIS Screening Team approvals before access is granted.</span>
         </div>
       )}
       
