@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { User, Role, Permission, AccessRequest, AuditLog, AccessReview, AccessReviewLog } from '../../types/iam';
 import { 
@@ -81,11 +80,11 @@ export const useIAMStore = () => {
     {
       id: 'arl1',
       reviewId: 'rev1',
-      approverId: 'John Manager',
+      approverId: 'Scott Dale',
       approvedUserId: 'Alice Developer',
       environment: 'FedRamp',
       jobFunctions: ['Cloud Platform Administrator'],
-      permissionsGranted: ['cpe-cloud-account-owners', 'cpe-iam-administrators'],
+      permissionsGranted: ['Editor', 'Compute Admin', 'Storage Admin'],
       groupsMembership: ['cpe-platform-administrators-fedrampdev', 'cpe-platform-administrators-fedrampprod'],
       timestamp: getRandomDateWithinLastMonth(),
       justification: 'Required for project maintenance'
@@ -93,11 +92,11 @@ export const useIAMStore = () => {
     {
       id: 'arl2',
       reviewId: 'rev2',
-      approverId: 'Sarah Security',
+      approverId: 'Scott Dale',
       approvedUserId: 'Bob Developer',
       environment: 'CCCS',
       jobFunctions: ['Cloud Platform Contributor'],
-      permissionsGranted: ['cpe-platform-contributors-dev', 'cpe-platform-contributors-prod'],
+      permissionsGranted: ['Viewer', 'Cloud SQL Editor'],
       groupsMembership: ['cpe-platform-contributors-cccsdev', 'cpe-platform-contributors-cccsprod'],
       timestamp: getRandomDateWithinLastMonth(),
       justification: 'Needed for development work'
@@ -105,11 +104,11 @@ export const useIAMStore = () => {
     {
       id: 'arl3',
       reviewId: 'rev3',
-      approverId: 'Mark Director',
+      approverId: 'Scott Dale',
       approvedUserId: 'Charlie DevOps',
       environment: 'NIST 800-53 Mod',
       jobFunctions: ['Cloud Platform Security Administrator'],
-      permissionsGranted: ['cpe-platform-security-administrators-prod', 'cpe-platform-security-administrators-staging'],
+      permissionsGranted: ['Security Admin', 'IAM Admin', 'Monitoring Admin'],
       groupsMembership: ['cpe-platform-security-administrators-fedramprod'],
       timestamp: getRandomDateWithinLastMonth(),
       justification: 'Security administration responsibilities'
@@ -117,11 +116,11 @@ export const useIAMStore = () => {
     {
       id: 'arl4',
       reviewId: 'rev4',
-      approverId: 'John Manager',
+      approverId: 'Scott Dale',
       approvedUserId: 'David Analyst',
       environment: 'CJIS',
       jobFunctions: ['Cloud Platform Security Reader'],
-      permissionsGranted: ['cpe-platform-security-readers-dev', 'cpe-platform-security-readers-prod'],
+      permissionsGranted: ['Viewer', 'Security Reviewer'],
       groupsMembership: ['cpe-platform-security-readers-cjisdev', 'cpe-platform-security-readers-cjisprod'],
       timestamp: getRandomDateWithinLastMonth(),
       justification: 'Required for security audit work'
@@ -129,11 +128,11 @@ export const useIAMStore = () => {
     {
       id: 'arl5',
       reviewId: 'rev5',
-      approverId: 'Mike Compliance',
+      approverId: 'Scott Dale',
       approvedUserId: 'Eve Developer',
       environment: 'FedRamp',
       jobFunctions: ['Cloud Platform Contributor'],
-      permissionsGranted: ['cpe-platform-contributors-dev', 'cpe-platform-contributors-staging'],
+      permissionsGranted: ['Viewer', 'Cloud SQL Editor'],
       groupsMembership: ['cpe-platform-contributors-fedrampdev'],
       timestamp: getRandomDateWithinLastMonth(),
       justification: 'Development and staging environment access'

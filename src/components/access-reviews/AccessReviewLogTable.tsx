@@ -14,11 +14,11 @@ const sampleExampleLogs: AccessReviewLog[] = [
   {
     id: 'example-1',
     reviewId: 'review-2023-001',
-    approverId: 'user-scott',
-    approvedUserId: 'user-jane',
+    approverId: 'Scott Dale',
+    approvedUserId: 'Jane Smith',
     environment: 'FedRAMP High',
     jobFunctions: ['Cloud Platform Administrator'],
-    permissionsGranted: ['cpe-cloud-account-owners', 'cpe-iam-administrators'],
+    permissionsGranted: ['Editor', 'Compute Admin', 'Storage Admin'],
     groupsMembership: ['cpe-platform-administrators-fedrampdev', 'cpe-platform-administrators-fedrampprod'],
     timestamp: new Date(Date.now() - Math.random() * 30 * 24 * 60 * 60 * 1000).toISOString(),
     justification: 'Annual certification - all permissions validated'
@@ -26,11 +26,11 @@ const sampleExampleLogs: AccessReviewLog[] = [
   {
     id: 'example-2',
     reviewId: 'review-2023-015',
-    approverId: 'user-scott',
-    approvedUserId: 'user-john',
+    approverId: 'Scott Dale',
+    approvedUserId: 'John Doe',
     environment: 'Commercial',
     jobFunctions: ['Cloud Platform Contributor'],
-    permissionsGranted: ['cpe-platform-contributors-dev', 'cpe-platform-contributors-prod'],
+    permissionsGranted: ['Viewer', 'Cloud SQL Editor'],
     groupsMembership: ['cpe-platform-contributors-dev', 'cpe-platform-contributors-prod'],
     timestamp: new Date(Date.now() - Math.random() * 30 * 24 * 60 * 60 * 1000).toISOString(),
     justification: 'Role change - updated permissions for new responsibilities'
@@ -38,11 +38,11 @@ const sampleExampleLogs: AccessReviewLog[] = [
   {
     id: 'example-3',
     reviewId: 'review-2023-022',
-    approverId: 'user-scott',
-    approvedUserId: 'user-alex',
+    approverId: 'Scott Dale',
+    approvedUserId: 'Alex Johnson',
     environment: 'CJIS',
     jobFunctions: ['Cloud Platform Security Administrator'],
-    permissionsGranted: ['cpe-platform-security-administrators-prod', 'cpe-platform-security-administrators-staging'],
+    permissionsGranted: ['Security Admin', 'IAM Admin', 'Monitoring Admin'],
     groupsMembership: ['cpe-platform-security-administrators-cjisprod'],
     timestamp: new Date(Date.now() - Math.random() * 30 * 24 * 60 * 60 * 1000).toISOString(),
     justification: 'Security administration access for compliance requirements'
@@ -50,11 +50,11 @@ const sampleExampleLogs: AccessReviewLog[] = [
   {
     id: 'example-4',
     reviewId: 'review-2023-030',
-    approverId: 'user-scott',
-    approvedUserId: 'user-maria',
+    approverId: 'Scott Dale',
+    approvedUserId: 'Maria Garcia',
     environment: 'CCCS',
     jobFunctions: ['Cloud Platform Security Reader'],
-    permissionsGranted: ['cpe-platform-security-readers-dev', 'cpe-platform-security-readers-prod'],
+    permissionsGranted: ['Viewer', 'Security Reviewer'],
     groupsMembership: ['cpe-platform-security-readers-cccsdev', 'cpe-platform-security-readers-cccsprod'],
     timestamp: new Date(Date.now() - Math.random() * 30 * 24 * 60 * 60 * 1000).toISOString(),
     justification: 'Quarterly review - all permissions appropriate'
@@ -62,11 +62,11 @@ const sampleExampleLogs: AccessReviewLog[] = [
   {
     id: 'example-5',
     reviewId: 'review-2023-035',
-    approverId: 'user-scott',
-    approvedUserId: 'user-tom',
+    approverId: 'Scott Dale',
+    approvedUserId: 'Tom Wilson',
     environment: 'Commercial',
     jobFunctions: ['Cloud Platform Reader'],
-    permissionsGranted: ['cpe-platform-readers-dev', 'cpe-platform-readers-prod'],
+    permissionsGranted: ['Viewer'],
     groupsMembership: ['cpe-platform-readers-dev', 'cpe-platform-readers-prod'],
     timestamp: new Date(Date.now() - Math.random() * 30 * 24 * 60 * 60 * 1000).toISOString(),
     justification: 'Read-only access for monitoring and reporting'
@@ -84,7 +84,7 @@ const AccessReviewLogTable: React.FC<AccessReviewLogTableProps> = ({ logs, isExa
           <TableHead>Job Function</TableHead>
           <TableHead>Environment</TableHead>
           <TableHead>Groups</TableHead>
-          <TableHead>Permissions</TableHead>
+          <TableHead>GCP Assigned Pre-Defined Role</TableHead>
           <TableHead>Approvers</TableHead>
           <TableHead>Date</TableHead>
           <TableHead>Justification</TableHead>
@@ -140,7 +140,7 @@ const AccessReviewLogTable: React.FC<AccessReviewLogTableProps> = ({ logs, isExa
                 </div>
               </TableCell>
               <TableCell>
-                {isExample ? "Scott Dale" : log.approverId}
+                {log.approverId}
               </TableCell>
               <TableCell>
                 {formatDistanceToNow(new Date(log.timestamp))} ago
