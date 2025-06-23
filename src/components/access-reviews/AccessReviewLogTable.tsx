@@ -84,7 +84,7 @@ const AccessReviewLogTable: React.FC<AccessReviewLogTableProps> = ({ logs, isExa
           <TableHead>Job Function</TableHead>
           <TableHead>Environment</TableHead>
           <TableHead>Groups</TableHead>
-          <TableHead>GCP Assigned Pre-Defined Role</TableHead>
+          <TableHead>Permissions</TableHead>
           <TableHead>Approvers</TableHead>
           <TableHead>Date</TableHead>
           <TableHead>Justification</TableHead>
