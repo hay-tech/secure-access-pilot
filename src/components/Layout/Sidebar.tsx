@@ -10,7 +10,8 @@ import {
   FileText, 
   Briefcase,
   Clock,
-  User
+  User,
+  Mail
 } from "lucide-react";
 import { useAuth } from "../../contexts/AuthContext";
 
@@ -51,6 +52,8 @@ export function Sidebar() {
   
   const shouldShowAuditLogs = currentUser?.jobFunction === 'CPE Compliance Analyst';
 
+  const shouldShowAccessReviewEmail = currentUser?.jobFunction === 'Manager';
+
   return (
     <div className="hidden lg:flex flex-col gap-6 border-r bg-background px-2 py-4 h-full">
       <div className="flex flex-col gap-1">
@@ -60,6 +63,9 @@ export function Sidebar() {
         <SidebarItem icon={CheckSquare} label="Approvals" href="/approvals" active={pathname === '/approvals'} />
         {shouldShowAccessReviews && (
           <SidebarItem icon={Shield} label="Access Reviews" href="/reviews" active={pathname === '/reviews'} />
+        )}
+        {shouldShowAccessReviewEmail && (
+          <SidebarItem icon={Mail} label="Review Email" href="/review-email" active={pathname === '/review-email'} />
         )}
         {shouldShowReports && (
           <SidebarItem icon={FileText} label="Reports" href="/reports" active={pathname === '/reports'} />

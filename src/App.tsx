@@ -9,6 +9,7 @@ import Index from './pages/Index';
 import Dashboard from './pages/Dashboard';
 import AccessRequests from './pages/AccessRequests';
 import AccessReviews from './pages/AccessReviews';
+import AccessReviewEmail from './pages/AccessReviewEmail';
 import Approvals from './pages/Approvals';
 import Reports from './pages/Reports';
 import Users from './pages/Users';
@@ -34,6 +35,7 @@ function App() {
                 <Route path="dashboard" element={<Dashboard />} />
                 <Route path="requests" element={<AccessRequests />} />
                 <Route path="reviews" element={<AccessReviews />} />
+                <Route path="review-email" element={<AccessReviewEmail />} />
                 <Route path="approvals" element={<Approvals />} />
                 <Route path="reports" element={<Reports />} />
                 <Route path="users" element={<Users />} />
