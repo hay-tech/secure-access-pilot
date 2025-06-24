@@ -5,7 +5,6 @@ import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { ShieldCheck, Info, AlertTriangle } from "lucide-react";
 import { JobFunctionDefinition } from '@/types/iam';
-import { AspectRatio } from "@/components/ui/aspect-ratio";
 
 interface JobFunctionDetailProps {
   jobFunction: JobFunctionDefinition;
@@ -54,12 +53,12 @@ const JobFunctionDetail: React.FC<JobFunctionDetailProps> = ({ jobFunction }) =>
           </ul>
         </div>
 
-        {jobFunction.defaultPermissions && (
-          <div>
-            <h3 className="text-lg font-medium mb-2 flex items-center gap-2">
-              <ShieldCheck className="h-5 w-5 text-muted-foreground" />
-              GCP Permissions
-            </h3>
+        <div>
+          <h3 className="text-lg font-medium mb-2 flex items-center gap-2">
+            <ShieldCheck className="h-5 w-5 text-muted-foreground" />
+            GCP Permissions
+          </h3>
+          {jobFunction.defaultPermissions && jobFunction.defaultPermissions.length > 0 ? (
             <div className="flex flex-wrap gap-2">
               {jobFunction.defaultPermissions.map((permission) => (
                 <Badge key={permission} variant="secondary" className="bg-blue-50 text-blue-700">
@@ -67,8 +66,10 @@ const JobFunctionDetail: React.FC<JobFunctionDetailProps> = ({ jobFunction }) =>
                 </Badge>
               ))}
             </div>
-          </div>
-        )}
+          ) : (
+            <p className="text-sm text-muted-foreground">No permissions defined for this job function.</p>
+          )}
+        </div>
 
         {jobFunction.recommendedResources && (
           <div>
