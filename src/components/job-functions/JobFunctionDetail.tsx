@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -58,9 +57,9 @@ const JobFunctionDetail: React.FC<JobFunctionDetailProps> = ({ jobFunction }) =>
             <ShieldCheck className="h-5 w-5 text-muted-foreground" />
             GCP Permissions
           </h3>
-          {jobFunction.defaultPermissions && jobFunction.defaultPermissions.length > 0 ? (
+          {jobFunction.permissions && jobFunction.permissions.length > 0 ? (
             <div className="flex flex-wrap gap-2">
-              {jobFunction.defaultPermissions.map((permission) => (
+              {jobFunction.permissions.map((permission) => (
                 <Badge key={permission} variant="secondary" className="bg-blue-50 text-blue-700">
                   {permission}
                 </Badge>

@@ -28,7 +28,7 @@ export interface JobFunctionDefinition {
   description: string;
   actions: string[];
   environmentRestrictions?: string[];
-  defaultPermissions?: string[];
+  permissions?: string[];
   recommendedResources?: string[];
 }
 
