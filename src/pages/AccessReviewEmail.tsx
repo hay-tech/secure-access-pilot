@@ -155,7 +155,6 @@ const AccessReviewEmail: React.FC = () => {
 
           <div className="space-y-4 pt-4 border-t">             
             <div className="space-y-2 text-sm">
-              <p>Your response may include the following actions:</p>
               <ul className="space-y-1 ml-4">
                 <li><strong>"Approve All":</strong> If the roles of all the listed users have not changed.</li>
                 <li><strong>"Reject All":</strong> To remove access for all the listed users.</li>
