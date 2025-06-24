@@ -329,7 +329,7 @@ export const AccessRequestForm: React.FC<AccessRequestFormProps> = ({ onSuccess,
                         <SelectItem key={jf.id} value={jf.id}>
                           <div className="flex flex-col">
                             <span>{jf.title}</span>
-                            <span className="text-xs text-gray-500">{jf.description}</span>
+                            <span className="text-xs text-gray-500">{jf.shortDescription}</span>
                           </div>
                         </SelectItem>
                       ))}
