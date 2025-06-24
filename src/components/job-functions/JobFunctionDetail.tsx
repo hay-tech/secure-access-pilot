@@ -1,4 +1,5 @@
 
+
 import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -62,17 +63,11 @@ const JobFunctionDetail: React.FC<JobFunctionDetailProps> = ({ jobFunction }) =>
             <ShieldCheck className="h-5 w-5 text-muted-foreground" />
             GCP Permissions
           </h3>
-          {jobFunction.permissions && jobFunction.permissions.length > 0 ? (
-            <div className="flex flex-wrap gap-2">
-              {jobFunction.permissions.map((permission) => (
-                <Badge key={permission} variant="secondary" className="bg-blue-50 text-blue-700">
-                  {permission}
-                </Badge>
-              ))}
-            </div>
-          ) : (
-            <p className="text-sm text-muted-foreground">No permissions defined for this job function.</p>
-          )}
+          <ul className="list-disc pl-5 space-y-2 text-sm">
+            {jobFunction.permissions?.map((permission, idx) => (
+              <li key={idx} className="text-gray-700">{permission}</li>
+            )) || <li className="text-sm text-muted-foreground">No permissions defined for this job function.</li>}
+          </ul>
         </div>
 
         {jobFunction.recommendedResources && (
@@ -96,3 +91,4 @@ const JobFunctionDetail: React.FC<JobFunctionDetailProps> = ({ jobFunction }) =>
 };
 
 export default JobFunctionDetail;
+
