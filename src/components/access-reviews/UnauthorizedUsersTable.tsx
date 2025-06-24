@@ -44,26 +44,17 @@ const UnauthorizedUsersTable: React.FC<UnauthorizedUsersTableProps> = ({
     }
   };
 
-  // Get status badge
-  const getStatusBadge = (userStatus: 'removed' | 'frozen', violationType?: string) => {
-    switch (userStatus) {
-      case 'removed':
-        return <Badge variant="outline" className="bg-green-100 text-green-800">Permissions Removed</Badge>;
-      case 'frozen':
-        return <Badge variant="outline" className="bg-amber-100 text-amber-800">Account Frozen</Badge>;
-      default:
-        return <Badge>Unknown</Badge>;
-    }
-  };
-
-  // Mock unauthorized users data
+  // Mock unauthorized users data with updated structure
   const mockUnauthorizedUsers = [
     {
       userId: 'user1',
       userName: 'John Smith',
-      department: 'CPE DLT',
-      currentRole: 'CPE Platform Administrator',
-      approvedRole: 'CPE Platform Reader',
+      jobFunction: 'Cloud Platform Administrator',
+      environment: 'FedRAMP High',
+      approvedGroups: ['cpe-platform-contributors-fedrampdev'],
+      approvedPermissions: ['Viewer', 'Cloud SQL Editor'],
+      currentGroups: ['cpe-platform-administrators-fedrampdev', 'cpe-platform-administrators-fedrampprod'],
+      currentPermissions: ['Editor', 'Compute Admin', 'Storage Admin'],
       violationType: 'excessive',
       status: 'removed',
       gaps: [{ gapType: 'excess', resourceName: 'cpe-platform-administrators-dev' }]
@@ -71,12 +62,28 @@ const UnauthorizedUsersTable: React.FC<UnauthorizedUsersTableProps> = ({
     {
       userId: 'user2',
       userName: 'Joe Doe',
-      department: 'CPE Security',
-      currentRole: 'CPE Platform Security Administrator',
-      approvedRole: 'None (No Approval Record)',
+      jobFunction: 'Cloud Platform Security Administrator',
+      environment: 'CJIS',
+      approvedGroups: ['None (No Approval Record)'],
+      approvedPermissions: ['None (No Approval Record)'],
+      currentGroups: ['cpe-platform-security-administrators-cjisprod'],
+      currentPermissions: ['Security Admin', 'IAM Admin', 'Monitoring Admin'],
       violationType: 'unauthorized_user',
       status: 'frozen',
       gaps: [{ gapType: 'unauthorized_user' }]
+    },
+    {
+      userId: 'user3',
+      userName: 'Maria Garcia',
+      jobFunction: 'Cloud Platform Security Reader',
+      environment: 'CCCS',
+      approvedGroups: ['cpe-platform-security-readers-cccsdev'],
+      approvedPermissions: ['Viewer'],
+      currentGroups: ['cpe-platform-security-readers-cccsdev', 'cpe-platform-security-readers-cccsprod'],
+      currentPermissions: ['Viewer', 'Security Reviewer'],
+      violationType: 'excessive',
+      status: 'removed',
+      gaps: [{ gapType: 'excess', resourceName: 'cpe-platform-security-readers-cccsprod' }]
     }
   ];
   
@@ -102,9 +109,12 @@ const UnauthorizedUsersTable: React.FC<UnauthorizedUsersTableProps> = ({
         <TableRow>
           {isManager && <TableHead className="w-[40px]"></TableHead>}
           <TableHead>User</TableHead>
-          <TableHead>Department</TableHead>
-          <TableHead>Current Role</TableHead>
-          <TableHead>Approved Role</TableHead>
+          <TableHead>Job Function</TableHead>
+          <TableHead>Environment</TableHead>
+          <TableHead>Approved Groups</TableHead>
+          <TableHead>Approved Permissions</TableHead>
+          <TableHead>Current Groups</TableHead>
+          <TableHead>Current Permissions</TableHead>
           <TableHead>Violation Type</TableHead>
           <TableHead>Status</TableHead>
         </TableRow>
@@ -127,9 +137,68 @@ const UnauthorizedUsersTable: React.FC<UnauthorizedUsersTableProps> = ({
                 {user.userName || 'Unknown User'}
                 <div className="text-xs text-muted-foreground">{user.userId}</div>
               </TableCell>
-              <TableCell>{user.department || 'Unknown'}</TableCell>
-              <TableCell>{user.currentRole || 'N/A'}</TableCell>
-              <TableCell>{user.approvedRole || 'N/A'}</TableCell>
+              <TableCell>{user.jobFunction || 'N/A'}</TableCell>
+              <TableCell>
+                <Badge variant="outline" className="bg-blue-50 text-blue-700 hover:bg-blue-100 border-blue-200">
+                  {user.environment}
+                </Badge>
+              </TableCell>
+              <TableCell>
+                <div className="max-w-xs">
+                  {user.approvedGroups.slice(0, 2).map((group, index) => (
+                    <div key={index} className="text-xs text-muted-foreground truncate">
+                      {group}
+                    </div>
+                  ))}
+                  {user.approvedGroups.length > 2 && (
+                    <div className="text-xs text-muted-foreground">
+                      +{user.approvedGroups.length - 2} more
+                    </div>
+                  )}
+                </div>
+              </TableCell>
+              <TableCell>
+                <div className="max-w-xs">
+                  {user.approvedPermissions.slice(0, 2).map((permission, index) => (
+                    <div key={index} className="text-xs text-muted-foreground truncate">
+                      {permission}
+                    </div>
+                  ))}
+                  {user.approvedPermissions.length > 2 && (
+                    <div className="text-xs text-muted-foreground">
+                      +{user.approvedPermissions.length - 2} more
+                    </div>
+                  )}
+                </div>
+              </TableCell>
+              <TableCell>
+                <div className="max-w-xs">
+                  {user.currentGroups.slice(0, 2).map((group, index) => (
+                    <div key={index} className="text-xs text-muted-foreground truncate">
+                      {group}
+                    </div>
+                  ))}
+                  {user.currentGroups.length > 2 && (
+                    <div className="text-xs text-muted-foreground">
+                      +{user.currentGroups.length - 2} more
+                    </div>
+                  )}
+                </div>
+              </TableCell>
+              <TableCell>
+                <div className="max-w-xs">
+                  {user.currentPermissions.slice(0, 2).map((permission, index) => (
+                    <div key={index} className="text-xs text-muted-foreground truncate">
+                      {permission}
+                    </div>
+                  ))}
+                  {user.currentPermissions.length > 2 && (
+                    <div className="text-xs text-muted-foreground">
+                      +{user.currentPermissions.length - 2} more
+                    </div>
+                  )}
+                </div>
+              </TableCell>
               <TableCell>
                 {isExcessPermissions ? (
                   <Badge variant="outline" className="bg-amber-100 text-amber-800">Excessive Permissions</Badge>
