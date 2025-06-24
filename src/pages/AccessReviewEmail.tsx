@@ -15,10 +15,10 @@ const AccessReviewEmail: React.FC = () => {
 
   // Example data matching the uploaded image
   const reviewData = {
-    reviewName: "Monthly Sovereign Environments Review - July 2025 7",
+    reviewName: "UAR-July 2025",
     reviewType: "Monthly",
     probableEndDate: "7/25/2025",
-    description: "email-test-7"
+    description: "Sovereign Environments"
   };
 
   const userAccounts = [
