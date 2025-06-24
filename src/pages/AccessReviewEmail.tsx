@@ -101,34 +101,27 @@ const AccessReviewEmail: React.FC = () => {
             <Table>
               <TableHeader>
                 <TableRow>
+                  <TableHead>User</TableHead>
+                  <TableHead>Role</TableHead>
                   <TableHead>Resource</TableHead>
                   <TableHead>Environment</TableHead>
-                  <TableHead>Role</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
                 {userAccounts.map((account, index) => (
                   <TableRow key={index}>
+                    <TableCell className="font-medium">{account.name}</TableCell>
+                    <TableCell>{account.role}</TableCell>
                     <TableCell className="font-medium">{account.resource}</TableCell>
                     <TableCell>
                       <Badge variant="outline" className="text-xs">
                         {account.environment}
                       </Badge>
                     </TableCell>
-                    <TableCell>{account.role}</TableCell>
                   </TableRow>
                 ))}
               </TableBody>
             </Table>
-
-            <div className="space-y-2">
-              <p className="font-semibold text-sm">User Details:</p>
-              {userAccounts.map((account, index) => (
-                <div key={index} className="text-sm text-muted-foreground">
-                  {account.name}
-                </div>
-              ))}
-            </div>
           </div>
 
           <div className="flex flex-wrap gap-3 pt-4 border-t">
