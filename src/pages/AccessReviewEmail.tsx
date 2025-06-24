@@ -158,8 +158,8 @@ const AccessReviewEmail: React.FC = () => {
               <p>Your response may include the following actions:</p>
               <ul className="space-y-1 ml-4">
                 <li><strong>"Approve All":</strong> If the roles of all the listed users have not changed.</li>
-                <li><strong>"Reject All":</strong> To remove access for all the listed users.</li>
-                <li><strong>"Partial Approve/Revoke":</strong> Select this option to change the revoke one or more users.</li>
+                <li><strong>"Reject All":</strong> Remove access for all the listed users.</li>
+                <li><strong>"Partial Approve/Revoke":</strong> Select this option to identify the user account(s) to be removed.</li>
               </ul>
               <p><strong>Your response is required by the end of the day, 7/25/2025.</strong></p>
               <p>For more information about <Link to="/job-functions" className="text-blue-600 hover:underline">Role Definition</Link>, please visit the job functions page.</p>
