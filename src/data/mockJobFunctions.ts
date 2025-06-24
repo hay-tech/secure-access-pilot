@@ -5,7 +5,7 @@ export const jobFunctionDefinitions: JobFunctionDefinition[] = [
   {
     id: 'cloud-account-owner',
     title: 'Cloud Account Owner',
-    description: 'This role is the main point of contact with the CSP provider, owns the relationship with the vendor, and ensures the organization's cloud services account is used to execute cloud service offerings. This role reports on the other roles and ensures they are managed appropriately. This role sets organizational policy and evaluates permissions in the cloud PTE environment. The Cloud IAM administrator follows the user access management procedures to meet regulatory and compliance requirements.',
+    description: 'This role is the main point of contact with the CSP provider, owns the relationship with the vendor, and ensures the organization\'s cloud services account is used to execute cloud service offerings. This role reports on the other roles and ensures they are managed appropriately. This role sets organizational policy and evaluates permissions in the cloud PTE environment. The Cloud IAM administrator follows the user access management procedures to meet regulatory and compliance requirements.',
     shortDescription: 'Manages cloud account ownership and vendor relationships',
     permissions: [
       'Organization Administrator',
