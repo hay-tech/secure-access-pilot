@@ -172,15 +172,6 @@ const AccessReviewEmail: React.FC = () => {
             <p>If the responsibilities of one or more of your employees have changed, then please review the <Link to="/job-functions" className="text-blue-600 hover:text-blue-800 underline">Role Definition</Link> & Business Justification criteria for each role when replying to this request.</p>
             <p className="italic">If you need more information, please forward this email to cpecomp@motorolasolutions.com and include your question.</p>
             
-            <div className="pt-2 border-t">
-              <Link 
-                to="/job-functions" 
-                className="inline-flex items-center gap-1 text-blue-600 hover:text-blue-800 underline text-xs"
-              >
-                <ExternalLink className="h-3 w-3" />
-                View detailed permissions for job functions
-              </Link>
-            </div>
           </div>
         </CardContent>
       </Card>
