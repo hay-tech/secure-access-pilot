@@ -130,20 +130,6 @@ const AccessReviewEmail: React.FC = () => {
               Partial Approve/Revoke
             </Button>
           </div>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
-            <div>
-              <span className="font-semibold">Review Name:</span> {reviewData.reviewName}
-            </div>
-            <div>
-              <span className="font-semibold">Review Type:</span> {reviewData.reviewType}
-            </div>
-            <div>
-              <span className="font-semibold">End Date:</span> {reviewData.probableEndDate}
-            </div>
-            <div>
-              <span className="font-semibold">Description:</span> {reviewData.description}
-            </div>
-          </div>
 
           {selectedAction && selectedAction !== 'partial' && (
             <div className="mt-4 p-3 bg-green-50 border border-green-200 rounded-md">
@@ -163,6 +149,20 @@ const AccessReviewEmail: React.FC = () => {
               <p className="mt-2">
                 <strong>Your response is required by the end of the day, 7/25/2025.</strong>
               </p>
+            </div>
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
+              <div>
+                <span className="font-semibold">Review Name:</span> {reviewData.reviewName}
+              </div>
+              <div>
+                <span className="font-semibold">Review Type:</span> {reviewData.reviewType}
+              </div>
+              <div>
+                <span className="font-semibold">End Date:</span> {reviewData.probableEndDate}
+              </div>
+              <div>
+                <span className="font-semibold">Description:</span> {reviewData.description}
+              </div>
             </div>
           </div>
 
