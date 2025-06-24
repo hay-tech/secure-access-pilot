@@ -157,9 +157,9 @@ const AccessReviewEmail: React.FC = () => {
             <div className="space-y-2 text-sm">
               <p>Your response may include the following actions:</p>
               <ul className="space-y-1 ml-4">
-                <li><strong>"Approve All":</strong> Click on this button, if the roles of all the listed users have not changed.</li>
-                <li><strong>"Reject All":</strong> Click on this button, to remove access for all the listed users.</li>
-                <li><strong>"Partial Approve/Revoke":</strong> If one or more of the roles has changed, please select this option to change the user account(s) and process the changes requested.</li>
+                <li><strong>"Approve All":</strong> If the roles of all the listed users have not changed.</li>
+                <li><strong>"Reject All":</strong> Remove access for all the listed users.</li>
+                <li><strong>"Partial Approve/Revoke":</strong> Select this option to identify the user account(s) to be removed.</li>
               </ul>
               <p className="text-xs text-muted-foreground">
                 Your response is required by the end of the day, 7/25/2025.
@@ -169,8 +169,7 @@ const AccessReviewEmail: React.FC = () => {
 
           <div className="text-xs text-muted-foreground pt-4 border-t space-y-2">
             <p><strong>Instructions for review:</strong></p>
-            <p>If the responsibilities of one or more of your employees have changed, then please review the <Link to="/job-functions" className="text-blue-600 hover:text-blue-800 underline">Role Definition</Link> & Business Justification criteria for each role when replying to this request.</p>
-            <p className="italic">If you need more information, please forward this email to cpecomp@motorolasolutions.com and include your question.</p>
+            <p className="italic">If you need more information, Follow this Information Link.</p>
             
           </div>
         </CardContent>
