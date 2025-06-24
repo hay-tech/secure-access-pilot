@@ -93,7 +93,7 @@ const UserAccessReviewTable: React.FC<UserAccessReviewTableProps> = ({
             <TableRow>
               <TableHead>User</TableHead>
               <TableHead>Job Function</TableHead>
-              <TableHead>Environment</TableHead>
+              <TableHead>Manager</TableHead>
               <TableHead>Justification</TableHead>
               <TableHead>Actions</TableHead>
             </TableRow>
@@ -113,7 +113,9 @@ const UserAccessReviewTable: React.FC<UserAccessReviewTableProps> = ({
                       ? user.jobFunctions.join(", ") 
                       : "No job function")}
                   </TableCell>
-                  <TableCell>{regulatoryEnvironment.name}</TableCell>
+                  <TableCell>
+                    {getManagerName(user.manager)}
+                  </TableCell>
                   <TableCell>
                     <div className="max-w-xs">
                       <Input 
