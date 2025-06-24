@@ -91,12 +91,9 @@ const UserAccessReviewTable: React.FC<UserAccessReviewTableProps> = ({
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead>Environment</TableHead>
-              <TableHead>Employee Name</TableHead>
+              <TableHead>User</TableHead>
               <TableHead>Job Function</TableHead>
-              <TableHead>Group(s)</TableHead>
-              <TableHead>Manager</TableHead>
-              <TableHead>Access Type</TableHead>
+              <TableHead>Environment</TableHead>
               <TableHead>Justification</TableHead>
               <TableHead>Actions</TableHead>
             </TableRow>
@@ -107,7 +104,6 @@ const UserAccessReviewTable: React.FC<UserAccessReviewTableProps> = ({
             ) : (
               filteredUsers.map(({ user, gaps }) => (
                 <TableRow key={user.id}>
-                  <TableCell>{regulatoryEnvironment.name}</TableCell>
                   <TableCell className="font-medium">
                     {user.firstName} {user.lastName}
                   </TableCell>
@@ -117,15 +113,7 @@ const UserAccessReviewTable: React.FC<UserAccessReviewTableProps> = ({
                       ? user.jobFunctions.join(", ") 
                       : "No job function")}
                   </TableCell>
-                  <TableCell>
-                    {user.department || "N/A"}
-                  </TableCell>
-                  <TableCell>
-                    {getManagerName(user.manager)}
-                  </TableCell>
-                  <TableCell>
-                    <Badge variant="outline">Permanent</Badge>
-                  </TableCell>
+                  <TableCell>{regulatoryEnvironment.name}</TableCell>
                   <TableCell>
                     <div className="max-w-xs">
                       <Input 
