@@ -6,9 +6,12 @@ import { Badge } from "@/components/ui/badge";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Mail, CheckCircle, XCircle, AlertCircle } from "lucide-react";
 import { toast } from "sonner";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import BulkAccessReview from '@/components/access-reviews/BulkAccessReview';
 
 const AccessReviewEmail: React.FC = () => {
   const [selectedAction, setSelectedAction] = useState<string | null>(null);
+  const [bulkReviewOpen, setBulkReviewOpen] = useState(false);
 
   // Example data matching the uploaded image
   const reviewData = {
@@ -20,34 +23,34 @@ const AccessReviewEmail: React.FC = () => {
 
   const userAccounts = [
     {
-      name: "RITESH TIWARI - BGX467",
-      application: "CPE_PORTAL",
+      name: "Ritesh Desai RTP254",
+      resource: "Azure",
       environment: "Commercial Dev",
-      role: "Admin",
-      permissions: "Admin"
+      role: "Admin"
     },
     {
       name: "SARAH JOHNSON - ABY123",
-      application: "CPE_PORTAL",
+      resource: "GCP",
       environment: "FedRAMP High",
-      role: "Contributor",
-      permissions: "Editor"
+      role: "Contributor"
     },
     {
       name: "MIKE CHEN - CDZ890",
-      application: "CPE_PORTAL",
+      resource: "AWS",
       environment: "CCCS",
-      role: "Reader",
-      permissions: "Viewer"
+      role: "Reader"
     }
   ];
 
   const handleAction = (action: string) => {
     setSelectedAction(action);
+    if (action === 'partial') {
+      setBulkReviewOpen(true);
+      return;
+    }
     const actionMessages = {
       'approve-all': 'Approved access for all listed users',
-      'reject-all': 'Rejected access for all listed users',
-      'partial': 'Partial approval/revocation selected - review individual users'
+      'reject-all': 'Rejected access for all listed users'
     };
     toast.success(actionMessages[action as keyof typeof actionMessages]);
   };
@@ -68,10 +71,6 @@ const AccessReviewEmail: React.FC = () => {
         </CardHeader>
         <CardContent className="p-6 space-y-6">
           <div className="space-y-4">
-            <p className="text-sm">
-              Your response is required to complete the email-test-7 User Access Review for the CPE account(s) and associated privileges listed below.
-            </p>
-            
             <div className="space-y-2">
               <p className="font-semibold text-sm">The goals of the User Access Review are to:</p>
               <ol className="list-decimal list-inside text-sm space-y-1 ml-4">
@@ -94,43 +93,29 @@ const AccessReviewEmail: React.FC = () => {
                 <span className="font-semibold">Description:</span> {reviewData.description}
               </div>
             </div>
-
-            <div className="space-y-2 text-sm">
-              <p>Your response may include the following actions:</p>
-              <ul className="space-y-1 ml-4">
-                <li><strong>"Approve All":</strong> Click on this button, if the roles and privileges of all the listed users have not changed.</li>
-                <li><strong>"Reject All":</strong> Click on this button, to remove access for all the listed users and their privileges.</li>
-                <li><strong>"Partial Approve/Revoke":</strong> If one or more of the listed privileges has been revoked or changed, please select this option to change the user account(s) and process the changes requested.</li>
-              </ul>
-              <p className="text-xs text-muted-foreground">
-                Your response is required by the end of the day, 4/25/2025.
-              </p>
-            </div>
           </div>
 
           <div className="space-y-4">
-            <h3 className="font-semibold">Below is the list of account(s) in the respective application and environment to review:</h3>
+            <h3 className="font-semibold">Below is the list of account(s) in the respective resource and environment to review:</h3>
             
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead>Application</TableHead>
+                  <TableHead>Resource</TableHead>
                   <TableHead>Environment</TableHead>
                   <TableHead>Role</TableHead>
-                  <TableHead>Permissions</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
                 {userAccounts.map((account, index) => (
                   <TableRow key={index}>
-                    <TableCell className="font-medium">{account.application}</TableCell>
+                    <TableCell className="font-medium">{account.resource}</TableCell>
                     <TableCell>
                       <Badge variant="outline" className="text-xs">
                         {account.environment}
                       </Badge>
                     </TableCell>
                     <TableCell>{account.role}</TableCell>
-                    <TableCell>{account.permissions}</TableCell>
                   </TableRow>
                 ))}
               </TableBody>
@@ -176,13 +161,31 @@ const AccessReviewEmail: React.FC = () => {
             </Button>
           </div>
 
-          {selectedAction && (
+          {selectedAction && selectedAction !== 'partial' && (
             <div className="mt-4 p-3 bg-green-50 border border-green-200 rounded-md">
               <p className="text-sm text-green-800">
                 Action selected: {selectedAction.replace('-', ' ').toUpperCase()}
               </p>
             </div>
           )}
+
+          <div className="space-y-4 pt-4 border-t">
+            <p className="text-sm">
+              Your response is required to complete the email-test-7 User Access Review for the CPE account(s) and associated privileges listed above.
+            </p>
+            
+            <div className="space-y-2 text-sm">
+              <p>Your response may include the following actions:</p>
+              <ul className="space-y-1 ml-4">
+                <li><strong>"Approve All":</strong> Click on this button, if the roles and privileges of all the listed users have not changed.</li>
+                <li><strong>"Reject All":</strong> Click on this button, to remove access for all the listed users and their privileges.</li>
+                <li><strong>"Partial Approve/Revoke":</strong> If one or more of the listed privileges has been revoked or changed, please select this option to change the user account(s) and process the changes requested.</li>
+              </ul>
+              <p className="text-xs text-muted-foreground">
+                Your response is required by the end of the day, 4/25/2025.
+              </p>
+            </div>
+          </div>
 
           <div className="text-xs text-muted-foreground pt-4 border-t space-y-2">
             <p><strong>Instructions for review:</strong></p>
@@ -191,6 +194,16 @@ const AccessReviewEmail: React.FC = () => {
           </div>
         </CardContent>
       </Card>
+
+      {/* Bulk Access Review Dialog */}
+      <Dialog open={bulkReviewOpen} onOpenChange={setBulkReviewOpen}>
+        <DialogContent className="max-w-4xl max-h-[80vh] overflow-auto">
+          <DialogHeader>
+            <DialogTitle>Bulk Access Review</DialogTitle>
+          </DialogHeader>
+          <BulkAccessReview onClose={() => setBulkReviewOpen(false)} />
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };
