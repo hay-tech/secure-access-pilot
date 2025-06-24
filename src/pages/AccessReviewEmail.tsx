@@ -168,7 +168,7 @@ const AccessReviewEmail: React.FC = () => {
           </div>
 
           <div className="text-xs text-muted-foreground pt-4 border-t space-y-2">
-            <p><strong>For more information:</strong> Please visit the <Link to="/job-functions" className="text-blue-600 hover:text-blue-800 underline">User Access Review Wiki</Link>.
+            <p><strong>For more information:</strong> Please visit the <Link to="/job-functions" className="text-blue-600 hover:text-blue-800 underline">User Access Review Wiki</Link> New WIKI.
             </p>
           </div>
         </CardContent>
