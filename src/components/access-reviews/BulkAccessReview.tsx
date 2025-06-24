@@ -35,7 +35,6 @@ interface UserReviewData {
   id: string;
   name: string;
   email: string;
-  department: string;
   currentRole: string;
   newRole?: string;
   action: 'certify-as-is' | 'change-role' | 'revoke-access';
@@ -51,31 +50,49 @@ const BulkAccessReview: React.FC<BulkAccessReviewProps> = ({ onClose }) => {
   const { accessReviews } = useAccessReviewManagement();
   const { jobFunctionDefinitions } = useJobFunctionMapping();
 
-  // Get users that need reviews from active reviews
-  const pendingReviews = accessReviews.filter(review => 
-    review.status === 'pending' || review.status === 'overdue'
-  );
-  
-  // Create user review data from pending reviews
-  const usersReviewData: UserReviewData[] = pendingReviews.map((review) => {
-    const userId = review.subjectId;
-    const environment = review.regulatoryEnvironment || 'CPE';
-    return {
-      id: userId,
-      name: `User ${review.subjectId.slice(-4)}`, // Mock name based on ID
-      email: `user${review.subjectId.slice(-4)}@example.com`, // Mock email
-      department: environment,
-      currentRole: review.roleId || 'Cloud Platform Reader',
-      action: userActions[userId] || 'certify-as-is', // Use stored action or default
-      newRole: userRoles[userId] || undefined
-    };
-  });
+  // Mock data reusing examples from accountability database
+  const usersReviewData: UserReviewData[] = [
+    {
+      id: 'user-jane-smith',
+      name: 'Jane Smith',
+      email: 'jane.smith@example.com',
+      currentRole: 'Cloud Platform Administrator',
+      action: 'certify-as-is'
+    },
+    {
+      id: 'user-john-doe',
+      name: 'John Doe',
+      email: 'john.doe@example.com',
+      currentRole: 'Cloud Platform Contributor',
+      action: 'certify-as-is'
+    },
+    {
+      id: 'user-alex-johnson',
+      name: 'Alex Johnson',
+      email: 'alex.johnson@example.com',
+      currentRole: 'Cloud Platform Security Administrator',
+      action: 'certify-as-is'
+    },
+    {
+      id: 'user-maria-garcia',
+      name: 'Maria Garcia',
+      email: 'maria.garcia@example.com',
+      currentRole: 'Cloud Platform Security Reader',
+      action: 'certify-as-is'
+    },
+    {
+      id: 'user-tom-wilson',
+      name: 'Tom Wilson',
+      email: 'tom.wilson@example.com',
+      currentRole: 'Cloud Platform Reader',
+      action: 'certify-as-is'
+    }
+  ];
   
   // Filter users based on search query
   const filteredUsers = usersReviewData.filter(user => 
     user.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
     user.email.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    user.department.toLowerCase().includes(searchQuery.toLowerCase()) ||
     user.currentRole.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
@@ -163,8 +180,7 @@ const BulkAccessReview: React.FC<BulkAccessReviewProps> = ({ onClose }) => {
                   onCheckedChange={handleSelectAll}
                 />
               </TableHead>
-              <TableHead>Name</TableHead>
-              <TableHead>Department</TableHead>
+              <TableHead>User</TableHead>
               <TableHead>Current Role</TableHead>
               <TableHead>Action</TableHead>
               <TableHead>New Role</TableHead>
@@ -188,7 +204,6 @@ const BulkAccessReview: React.FC<BulkAccessReviewProps> = ({ onClose }) => {
                       <div className="text-xs text-muted-foreground">{user.email}</div>
                     </div>
                   </TableCell>
-                  <TableCell>{user.department}</TableCell>
                   <TableCell>{user.currentRole}</TableCell>
                   <TableCell>
                     <Select 
