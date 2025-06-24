@@ -24,7 +24,7 @@ const AccessReviewEmail: React.FC = () => {
 
   const userAccounts = [
     {
-      name: "Ritesh Desai RTP254",
+      name: "RITESH DESAI RTP254",
       resource: "Azure",
       environment: "FedRAMP High",
       role: "Cloud Platform Contributor"
