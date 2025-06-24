@@ -65,7 +65,7 @@ const AccessReviewEmail: React.FC = () => {
 
       <Card>
         <CardHeader className="bg-blue-50 border-b">
-          <CardTitle className="text-lg">ACTION Required By: 7/25/2025 - User Access Review Notification</CardTitle>
+          <CardTitle className="text-lg">ACTION REQUIRED BY: 7/25/2025 - User Access Review Notification</CardTitle>
           <p className="text-sm text-muted-foreground">
             This email is auto-generated for User Access Reviews and is not a phishing training exercise.
           </p>
