@@ -15,9 +15,9 @@ const AccessReviewEmail: React.FC = () => {
 
   // Example data matching the uploaded image
   const reviewData = {
-    reviewName: "email-test-7",
-    reviewType: "adhoc",
-    probableEndDate: "4/25/2025",
+    reviewName: "Monthly Sovereign Environments Review - July 2025 7",
+    reviewType: "Monthly",
+    probableEndDate: "7/25/2025",
     description: "email-test-7"
   };
 
@@ -25,7 +25,7 @@ const AccessReviewEmail: React.FC = () => {
     {
       name: "Ritesh Desai RTP254",
       resource: "Azure",
-      environment: "Commercial Dev",
+      environment: "FedRAMP High",
       role: "Cloud Platform Contributor"
     },
     {
@@ -162,20 +162,16 @@ const AccessReviewEmail: React.FC = () => {
             </div>
           )}
 
-          <div className="space-y-4 pt-4 border-t">
-            <p className="text-sm">
-              Your response is required to complete the email-test-7 User Access Review for the CPE account(s) and associated privileges listed above.
-            </p>
-            
+          <div className="space-y-4 pt-4 border-t">             
             <div className="space-y-2 text-sm">
               <p>Your response may include the following actions:</p>
               <ul className="space-y-1 ml-4">
-                <li><strong>"Approve All":</strong> Click on this button, if the roles and privileges of all the listed users have not changed.</li>
-                <li><strong>"Reject All":</strong> Click on this button, to remove access for all the listed users and their privileges.</li>
-                <li><strong>"Partial Approve/Revoke":</strong> If one or more of the listed privileges has been revoked or changed, please select this option to change the user account(s) and process the changes requested.</li>
+                <li><strong>"Approve All":</strong> Click on this button, if the roles of all the listed users have not changed.</li>
+                <li><strong>"Reject All":</strong> Click on this button, to remove access for all the listed users.</li>
+                <li><strong>"Partial Approve/Revoke":</strong> If one or more of the roles has changed, please select this option to change the user account(s) and process the changes requested.</li>
               </ul>
               <p className="text-xs text-muted-foreground">
-                Your response is required by the end of the day, 4/25/2025.
+                Your response is required by the end of the day, 7/25/2025.
               </p>
             </div>
           </div>
