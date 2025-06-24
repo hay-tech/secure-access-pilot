@@ -26,19 +26,19 @@ const AccessReviewEmail: React.FC = () => {
       name: "Ritesh Desai RTP254",
       resource: "Azure",
       environment: "Commercial Dev",
-      role: "Admin"
+      role: "Cloud Platform Contributor"
     },
     {
       name: "SARAH JOHNSON - ABY123",
       resource: "GCP",
       environment: "FedRAMP High",
-      role: "Contributor"
+      role: "Cloud Platform Security Administrator"
     },
     {
       name: "MIKE CHEN - CDZ890",
       resource: "AWS",
       environment: "CCCS",
-      role: "Reader"
+      role: "Cloud Project Reader"
     }
   ];
 
