@@ -71,20 +71,6 @@ const AccessReviewEmail: React.FC = () => {
           </p>
         </CardHeader>
         <CardContent className="p-6 space-y-6">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
-            <div>
-              <span className="font-semibold">Review Name:</span> {reviewData.reviewName}
-            </div>
-            <div>
-              <span className="font-semibold">Review Type:</span> {reviewData.reviewType}
-            </div>
-            <div>
-              <span className="font-semibold">End Date:</span> {reviewData.probableEndDate}
-            </div>
-            <div>
-              <span className="font-semibold">Description:</span> {reviewData.description}
-            </div>
-          </div>
 
           <div className="space-y-4">
             <h3 className="font-semibold">Below is the list of account(s) in the respective resource and environment to review:</h3>
@@ -143,6 +129,20 @@ const AccessReviewEmail: React.FC = () => {
               <AlertCircle className="h-4 w-4 mr-2" />
               Partial Approve/Revoke
             </Button>
+          </div>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
+            <div>
+              <span className="font-semibold">Review Name:</span> {reviewData.reviewName}
+            </div>
+            <div>
+              <span className="font-semibold">Review Type:</span> {reviewData.reviewType}
+            </div>
+            <div>
+              <span className="font-semibold">End Date:</span> {reviewData.probableEndDate}
+            </div>
+            <div>
+              <span className="font-semibold">Description:</span> {reviewData.description}
+            </div>
           </div>
 
           {selectedAction && selectedAction !== 'partial' && (
