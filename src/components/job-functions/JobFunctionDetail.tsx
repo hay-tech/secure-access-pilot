@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -11,6 +12,10 @@ interface JobFunctionDetailProps {
 
 const JobFunctionDetail: React.FC<JobFunctionDetailProps> = ({ jobFunction }) => {
   if (!jobFunction) return null;
+
+  // Debug logging
+  console.log('JobFunctionDetail - jobFunction:', jobFunction);
+  console.log('JobFunctionDetail - permissions:', jobFunction.permissions);
 
   return (
     <Card className="h-full">
