@@ -70,14 +70,14 @@ const AccessReviewEmail: React.FC = () => {
           </p>
         </CardHeader>
         <CardContent className="p-6 space-y-6">
-          <div className="space-y-4">
-            <div className="space-y-2">
-              <p className="font-semibold text-sm">The goals of the User Access Review are to:</p>
-              <ol className="list-decimal list-inside text-sm space-y-1 ml-4">
-                <li>Identify and remove unnecessary accounts to prevent unauthorized access</li>
-                <li>Ensure all individuals and service accounts are authenticated, authorized, and audited</li>
-              </ol>
-            </div>
+    //      <div className="space-y-4">
+    //        <div className="space-y-2">
+    //          <p className="font-semibold text-sm">The goals of the User Access Review are to:</p>
+    //          <ol className="list-decimal list-inside text-sm space-y-1 ml-4">
+    //            <li>Identify and remove unnecessary accounts to prevent unauthorized access</li>
+    //            <li>Ensure all individuals and service accounts are authenticated, authorized, and audited</li>
+    //          </ol>
+    //        </div>
 
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
               <div>
