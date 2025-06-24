@@ -162,14 +162,13 @@ const AccessReviewEmail: React.FC = () => {
                 <li><strong>"Partial Approve/Revoke":</strong> Select this option to identify the user account(s) to be removed.</li>
               </ul>
               <p><strong>Your response is required by the end of the day, 7/25/2025.</strong></p>
-              <p>For more information about <Link to="/job-functions" className="text-blue-600 hover:underline">Role Definition</Link>, please visit the job functions page.</p>
             </div>
           </div>
 
           <div className="text-xs text-muted-foreground pt-4 border-t space-y-2">
             <p><strong>For additional information related to User Access Reviews:</strong></p>
             <p className="italic">
-              Please visit the <Link to="/job-functions" className="text-blue-600 hover:underline">Job Functions</Link> page for detailed permissions associated with each role.
+              Please visit the User Access Reviews Wiki <LINK>TBD</LINK>.
             </p>
           </div>
         </CardContent>
