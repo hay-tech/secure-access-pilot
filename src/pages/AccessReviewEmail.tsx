@@ -161,16 +161,16 @@ const AccessReviewEmail: React.FC = () => {
                 <li><strong>"Reject All":</strong> Click on this button, to remove access for all the listed users.</li>
                 <li><strong>"Partial Approve/Revoke":</strong> If one or more of the roles has changed, please select this option to change the user account(s) and process the changes requested.</li>
               </ul>
-              <p></p><strong>
-                Your response is required by the end of the day, 7/25/2025.
-              </p>
+              <p><strong>Your response is required by the end of the day, 7/25/2025.</strong></p>
+              <p>For more information about <Link to="/job-functions" className="text-blue-600 hover:underline">Role Definition</Link>, please visit the job functions page.</p>
             </div>
           </div>
 
           <div className="text-xs text-muted-foreground pt-4 border-t space-y-2">
             <p><strong>For additional information related to User Access Reviews:</strong></p>
-            <p className="italic">Please visit the following Link.</p>
-            
+            <p className="italic">
+              Please visit the <Link to="/job-functions" className="text-blue-600 hover:underline">Job Functions</Link> page for detailed permissions associated with each role.
+            </p>
           </div>
         </CardContent>
       </Card>
