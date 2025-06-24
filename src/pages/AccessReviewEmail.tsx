@@ -164,16 +164,13 @@ const AccessReviewEmail: React.FC = () => {
               <p className="mt-2">
                 <strong>Your response is required by the end of the day, 7/25/2025.</strong>
               </p>
-              <p className="mt-2">
-                For detailed information about <Link to="/job-functions" className="text-blue-600 hover:text-blue-800 underline">Role Definition</Link>, please visit the Job Functions page.
-              </p>
             </div>
           </div>
 
           <div className="text-xs text-muted-foreground pt-4 border-t space-y-2">
-            <p><strong>For additional information related to User Access Reviews:</strong></p>
+            <p><strong>For more information:</strong></p>
             <p className="italic">
-              Please visit the <Link to="/job-functions" className="text-blue-600 hover:text-blue-800 underline">Job Functions page</Link> for more information about detailed permissions associated with the job function.
+              Please visit the <Link to="/job-functions" className="text-blue-600 hover:text-blue-800 underline">User Access Review Wiki</Link>.
             </p>
           </div>
         </CardContent>
