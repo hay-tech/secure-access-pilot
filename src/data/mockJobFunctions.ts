@@ -6,7 +6,7 @@ export const jobFunctionDefinitions: JobFunctionDefinition[] = [
     id: 'cloud-account-owner',
     title: 'Cloud Account Owner',
     description: 'Full account ownership and management capabilities',
-    defaultPermissions: [
+    permissions: [
       'Organization Administrator',
       'Billing Account Administrator'
     ],
@@ -21,7 +21,7 @@ export const jobFunctionDefinitions: JobFunctionDefinition[] = [
     id: 'cloud-iam-admin',
     title: 'Cloud IAM Administrator',
     description: 'Identity and Access Management administration',
-    defaultPermissions: [
+    permissions: [
       'Organization Administrator',
       'Security IAM Admin',
       'IAM Recommender Admin',
@@ -41,7 +41,7 @@ export const jobFunctionDefinitions: JobFunctionDefinition[] = [
     id: 'cloud-iam-reader',
     title: 'Cloud IAM Reader',
     description: 'Read-only access to IAM configurations',
-    defaultPermissions: [
+    permissions: [
       'Security Reviewer'
     ],
     recommendedResources: ['aws-cccs-platform-reader', 'gcp-cjis-platform-reader'],
@@ -55,7 +55,7 @@ export const jobFunctionDefinitions: JobFunctionDefinition[] = [
     id: 'cloud-platform-tenant-admin',
     title: 'Cloud Platform Tenant Administrator',
     description: 'Administration of tenant-level resources',
-    defaultPermissions: [
+    permissions: [
       'Organization Administrator',
       'Folder Admin'
     ],
@@ -70,7 +70,7 @@ export const jobFunctionDefinitions: JobFunctionDefinition[] = [
     id: 'cloud-platform-admin',
     title: 'Cloud Platform Administrator',
     description: 'Administration of platform-level resources',
-    defaultPermissions: [
+    permissions: [
       'Editor',
       'Cloud Debugger Agent',
       'Cloud Functions Editor',
@@ -91,7 +91,7 @@ export const jobFunctionDefinitions: JobFunctionDefinition[] = [
     id: 'cloud-platform-contributor',
     title: 'Cloud Platform Contributor',
     description: 'Contributor access to platform resources',
-    defaultPermissions: [
+    permissions: [
       'Cloud Debugger Agent',
       'Cloud Functions Editor',
       'Cloud Scheduler Editor',
@@ -111,7 +111,7 @@ export const jobFunctionDefinitions: JobFunctionDefinition[] = [
     id: 'cloud-platform-reader',
     title: 'Cloud Platform Reader',
     description: 'Read-only access to platform resources',
-    defaultPermissions: [
+    permissions: [
       'Logs Viewer',
       'Monitoring Viewer',
       'Security Center Admin Viewer',
@@ -128,7 +128,7 @@ export const jobFunctionDefinitions: JobFunctionDefinition[] = [
     id: 'cloud-project-admin',
     title: 'Cloud Project Administrator',
     description: 'Administration of project-level resources',
-    defaultPermissions: [
+    permissions: [
       'GCP Owner (project-specific)',
       'Project Logs Viewer',
       'Project Viewer'
@@ -144,7 +144,7 @@ export const jobFunctionDefinitions: JobFunctionDefinition[] = [
     id: 'cloud-project-contributor',
     title: 'Cloud Project Contributor',
     description: 'Contributor access to project resources',
-    defaultPermissions: [
+    permissions: [
       'GCP Editor (project-specific)'
     ],
     recommendedResources: ['aws-us-commercial-dev', 'azure-commercial-project'],
@@ -158,7 +158,7 @@ export const jobFunctionDefinitions: JobFunctionDefinition[] = [
     id: 'cloud-project-reader',
     title: 'Cloud Project Reader',
     description: 'Read-only access to project resources',
-    defaultPermissions: [
+    permissions: [
       'Project Logs Viewer',
       'Project Viewer'
     ],
@@ -173,7 +173,7 @@ export const jobFunctionDefinitions: JobFunctionDefinition[] = [
     id: 'cloud-platform-security-admin',
     title: 'Cloud Platform Security Administrator',
     description: 'Security administration for cloud platforms',
-    defaultPermissions: [
+    permissions: [
       'Security Admin',
       'Security Contributors',
       'Organization Administrator',
@@ -196,7 +196,7 @@ export const jobFunctionDefinitions: JobFunctionDefinition[] = [
     id: 'cloud-platform-security-contributor',
     title: 'Cloud Platform Security Contributor',
     description: 'Security contributor for cloud platforms',
-    defaultPermissions: [
+    permissions: [
       'Security Contributors',
       'Organization Administrator',
       'Security Center Admin',
@@ -215,7 +215,7 @@ export const jobFunctionDefinitions: JobFunctionDefinition[] = [
     id: 'cloud-platform-security-reader',
     title: 'Cloud Platform Security Reader',
     description: 'Security monitoring for cloud platforms',
-    defaultPermissions: [
+    permissions: [
       'Cloud Asset Viewer',
       'Security Center Admin Viewer',
       'Private Logs Viewer',
@@ -232,7 +232,7 @@ export const jobFunctionDefinitions: JobFunctionDefinition[] = [
     id: 'cloud-platform-finops-admin',
     title: 'Cloud Platform FinOps Administrator',
     description: 'Financial operations for cloud platforms',
-    defaultPermissions: [
+    permissions: [
       'Billing Account Administrator',
       'BigQuery Data Viewer',
       'BigQuery Job User',
@@ -250,7 +250,7 @@ export const jobFunctionDefinitions: JobFunctionDefinition[] = [
     id: 'cloud-platform-sre',
     title: 'Cloud Platform Site Reliability Engineer',
     description: 'Site reliability engineering for cloud platforms',
-    defaultPermissions: [
+    permissions: [
       'Logs Viewer',
       'Monitoring Editor',
       'Security Center Admin Viewer',
