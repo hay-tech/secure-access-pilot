@@ -28,40 +28,69 @@ const PendingApprovalsTable: React.FC<PendingApprovalsTableProps> = ({
   getAccessType,
   openDialog,
 }) => {
+  // Mock data reusing examples from accountability database
+  const mockPendingApprovals = [
+    {
+      id: 'pending-1',
+      userId: 'user-jane-smith',
+      requestor: 'Jane Smith',
+      jobFunction: 'Cloud Platform Administrator',
+      environment: 'FedRAMP High',
+      justification: 'Need elevated access for platform maintenance and security updates',
+      requestDate: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000).toISOString(),
+    },
+    {
+      id: 'pending-2',
+      userId: 'user-john-doe',
+      requestor: 'John Doe',
+      jobFunction: 'Cloud Platform Contributor',
+      environment: 'Commercial',
+      justification: 'Require access for new development project deployment',
+      requestDate: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000).toISOString(),
+    },
+    {
+      id: 'pending-3',
+      userId: 'user-alex-johnson',
+      requestor: 'Alex Johnson',
+      jobFunction: 'Cloud Platform Security Administrator',
+      environment: 'CJIS',
+      justification: 'Security administration access required for compliance audit',
+      requestDate: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000).toISOString(),
+    }
+  ];
+
+  const displayData = pendingApprovals.length > 0 ? pendingApprovals : mockPendingApprovals;
+
   return (
     <Table>
       <TableHeader>
         <TableRow>
-          <TableHead>Environment</TableHead>
           <TableHead>Requestor</TableHead>
           <TableHead>Job Function(s)</TableHead>
-          <TableHead>Group(s)</TableHead>
-          <TableHead>Request Type</TableHead>
+          <TableHead>Environment</TableHead>
           <TableHead>Justification</TableHead>
           <TableHead>Request Date</TableHead>
           <TableHead>Actions</TableHead>
         </TableRow>
       </TableHeader>
       <TableBody>
-        {pendingApprovals.length === 0 ? (
+        {displayData.length === 0 ? (
           <TableRow>
-            <TableCell colSpan={8} className="text-center py-4 text-muted-foreground">
+            <TableCell colSpan={6} className="text-center py-4 text-muted-foreground">
               No pending approvals found
             </TableCell>
           </TableRow>
         ) : (
-          pendingApprovals.map((request) => (
+          displayData.map((request) => (
             <TableRow key={request.id}>
-              <TableCell>{request.resourceName || 'N/A'}</TableCell>
               <TableCell className="font-medium">
-                {getUserName(request.userId)}
-              </TableCell>
-              <TableCell>{request.jobFunction || 'N/A'}</TableCell>
-              <TableCell>
-                {request.projectName || 'N/A'}
+                {request.requestor || getUserName(request.userId)}
               </TableCell>
               <TableCell>
-                {request.accessType === 'temporary' ? 'Temporary' : 'Permanent'}
+                {request.jobFunction || getUserJobFunctions(request.userId)}
+              </TableCell>
+              <TableCell>
+                {request.environment || request.resourceName || 'N/A'}
               </TableCell>
               <TableCell>
                 <div className="max-w-sm truncate" title={request.justification}>
@@ -69,7 +98,7 @@ const PendingApprovalsTable: React.FC<PendingApprovalsTableProps> = ({
                 </div>
               </TableCell>
               <TableCell>
-                {format(new Date(request.createdAt), 'MMM d, yyyy')}
+                {format(new Date(request.requestDate || request.createdAt), 'MMM d, yyyy')}
               </TableCell>
               <TableCell>
                 <div className="flex space-x-2">

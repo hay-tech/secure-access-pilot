@@ -25,15 +25,52 @@ const CompletedApprovalsTable: React.FC<CompletedApprovalsTableProps> = ({
   getUserJobFunctions,
   getAccessType,
 }) => {
+  // Mock data reusing examples from accountability database
+  const mockCompletedApprovals = [
+    {
+      id: 'completed-1',
+      userId: 'user-maria-garcia',
+      requestor: 'Maria Garcia',
+      jobFunction: 'Cloud Platform Security Reader',
+      environment: 'CCCS',
+      justification: 'Read-only access needed for security monitoring and compliance reporting',
+      requestDate: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000).toISOString(),
+      approvalDate: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000).toISOString(),
+      decision: 'approved',
+    },
+    {
+      id: 'completed-2',
+      userId: 'user-tom-wilson',
+      requestor: 'Tom Wilson',
+      jobFunction: 'Cloud Platform Reader',
+      environment: 'NIST 800-53 Moderate',
+      justification: 'Access required for system monitoring and performance analysis',
+      requestDate: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString(),
+      approvalDate: new Date(Date.now() - 4 * 24 * 60 * 60 * 1000).toISOString(),
+      decision: 'approved',
+    },
+    {
+      id: 'completed-3',
+      userId: 'user-sarah-jones',
+      requestor: 'Sarah Jones',
+      jobFunction: 'Cloud Platform Administrator',
+      environment: 'FedRAMP High',
+      justification: 'Temporary elevated access for emergency system maintenance',
+      requestDate: new Date(Date.now() - 10 * 24 * 60 * 60 * 1000).toISOString(),
+      approvalDate: new Date(Date.now() - 8 * 24 * 60 * 60 * 1000).toISOString(),
+      decision: 'rejected',
+    }
+  ];
+
+  const displayData = completedApprovals.length > 0 ? completedApprovals : mockCompletedApprovals;
+
   return (
     <Table>
       <TableHeader>
         <TableRow>
-          <TableHead>Environment</TableHead>
           <TableHead>Requestor</TableHead>
           <TableHead>Job Function(s)</TableHead>
-          <TableHead>Group(s)</TableHead>
-          <TableHead>Request Type</TableHead>
+          <TableHead>Environment</TableHead>
           <TableHead>Justification</TableHead>
           <TableHead>Request Date</TableHead>
           <TableHead>Approval Date</TableHead>
@@ -41,30 +78,29 @@ const CompletedApprovalsTable: React.FC<CompletedApprovalsTableProps> = ({
         </TableRow>
       </TableHeader>
       <TableBody>
-        {completedApprovals.length === 0 ? (
+        {displayData.length === 0 ? (
           <TableRow>
-            <TableCell colSpan={9} className="text-center py-4 text-muted-foreground">
+            <TableCell colSpan={7} className="text-center py-4 text-muted-foreground">
               No completed approvals found
             </TableCell>
           </TableRow>
         ) : (
-          completedApprovals.map((request) => {
+          displayData.map((request) => {
             // Get approval details - we'll determine this from the request itself
             const isManagerApproval = request.managerApproval?.status !== 'pending';
             const approval = isManagerApproval ? request.managerApproval : request.securityApproval;
+            const decision = request.decision || approval?.status || 'pending';
             
             return (
               <TableRow key={request.id}>
-                <TableCell>{request.environmentType || 'N/A'}</TableCell>
                 <TableCell className="font-medium">
-                  {getUserName(request.userId)}
-                </TableCell>
-                <TableCell>{getUserJobFunctions(request.userId)}</TableCell>
-                <TableCell>
-                  {request.projectName || 'N/A'}
+                  {request.requestor || getUserName(request.userId)}
                 </TableCell>
                 <TableCell>
-                  {getAccessType(request)}
+                  {request.jobFunction || getUserJobFunctions(request.userId)}
+                </TableCell>
+                <TableCell>
+                  {request.environment || request.environmentType || 'N/A'}
                 </TableCell>
                 <TableCell>
                   <div className="max-w-sm truncate" title={request.justification}>
@@ -72,21 +108,23 @@ const CompletedApprovalsTable: React.FC<CompletedApprovalsTableProps> = ({
                   </div>
                 </TableCell>
                 <TableCell>
-                  {format(new Date(request.createdAt), 'MMM d, yyyy')}
+                  {format(new Date(request.requestDate || request.createdAt), 'MMM d, yyyy')}
                 </TableCell>
                 <TableCell>
-                  {approval?.timestamp ? 
-                    format(new Date(approval.timestamp), 'MMM d, yyyy') : 
-                    'N/A'}
+                  {request.approvalDate ? 
+                    format(new Date(request.approvalDate), 'MMM d, yyyy') : 
+                    (approval?.timestamp ? 
+                      format(new Date(approval.timestamp), 'MMM d, yyyy') : 
+                      'N/A')}
                 </TableCell>
                 <TableCell>
                   <Badge
                     variant="outline"
-                    className={approval?.status === 'approved' ? 
+                    className={decision === 'approved' ? 
                       'bg-green-100 text-green-800' : 
                       'bg-red-100 text-red-800'}
                   >
-                    {approval?.status === 'approved' ? 'Approved' : 'Rejected'}
+                    {decision === 'approved' ? 'Approved' : 'Rejected'}
                   </Badge>
                 </TableCell>
               </TableRow>
