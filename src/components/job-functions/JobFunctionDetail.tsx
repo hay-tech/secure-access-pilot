@@ -1,10 +1,9 @@
 
-
 import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
-import { ShieldCheck, Info, AlertTriangle } from "lucide-react";
+import { ShieldCheck, Info } from "lucide-react";
 import { JobFunctionDefinition } from '@/types/iam';
 
 interface JobFunctionDetailProps {
@@ -69,26 +68,9 @@ const JobFunctionDetail: React.FC<JobFunctionDetailProps> = ({ jobFunction }) =>
             )) || <li className="text-sm text-muted-foreground">No permissions defined for this job function.</li>}
           </ul>
         </div>
-
-        {jobFunction.recommendedResources && (
-          <div>
-            <h3 className="text-lg font-medium mb-2 flex items-center gap-2">
-              <AlertTriangle className="h-5 w-5 text-muted-foreground" />
-              Recommended Resources
-            </h3>
-            <div className="flex flex-wrap gap-2">
-              {jobFunction.recommendedResources.map((resource) => (
-                <Badge key={resource} variant="outline" className="bg-gray-50">
-                  {resource}
-                </Badge>
-              ))}
-            </div>
-          </div>
-        )}
       </CardContent>
     </Card>
   );
 };
 
 export default JobFunctionDetail;
-
