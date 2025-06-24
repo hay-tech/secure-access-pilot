@@ -26,6 +26,7 @@ export interface JobFunctionDefinition {
   id: string;
   title: string;
   description: string;
+  shortDescription: string;
   actions: string[];
   environmentRestrictions?: string[];
   permissions?: string[];
