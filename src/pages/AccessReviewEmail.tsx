@@ -65,7 +65,7 @@ const AccessReviewEmail: React.FC = () => {
 
       <Card>
         <CardHeader className="bg-blue-50 border-b">
-          <CardTitle className="text-lg">ACTION REQUIRED BY: 7/25/2025 - User Access Review Notification</CardTitle>
+          <CardTitle className="text-lg">ACTION REQUIRED BY 7/25/2025 - User Access Review Notification</CardTitle>
           <p className="text-sm text-muted-foreground">
             This email is auto-generated for User Access Reviews and is not a phishing training exercise.
           </p>
@@ -145,7 +145,7 @@ const AccessReviewEmail: React.FC = () => {
                 <li><strong>"Partial Approve/Revoke":</strong> Select this option to identify the user account(s) to be removed.</li>
               </ul>
               <p className="mt-2">
-                <strong>Your response is required by the end of the day, 7/25/2025.</strong>
+                <strong>Submit your response by 7/25/2025.</strong>
               </p>
             </div>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
