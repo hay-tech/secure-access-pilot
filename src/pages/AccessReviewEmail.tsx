@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -70,28 +71,18 @@ const AccessReviewEmail: React.FC = () => {
           </p>
         </CardHeader>
         <CardContent className="p-6 space-y-6">
-    //      <div className="space-y-4">
-    //        <div className="space-y-2">
-    //          <p className="font-semibold text-sm">The goals of the User Access Review are to:</p>
-    //          <ol className="list-decimal list-inside text-sm space-y-1 ml-4">
-    //            <li>Identify and remove unnecessary accounts to prevent unauthorized access</li>
-    //            <li>Ensure all individuals and service accounts are authenticated, authorized, and audited</li>
-    //          </ol>
-    //        </div>
-
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
-              <div>
-                <span className="font-semibold">Review Name:</span> {reviewData.reviewName}
-              </div>
-              <div>
-                <span className="font-semibold">Review Type:</span> {reviewData.reviewType}
-              </div>
-              <div>
-                <span className="font-semibold">Probable End Date:</span> {reviewData.probableEndDate}
-              </div>
-              <div>
-                <span className="font-semibold">Description:</span> {reviewData.description}
-              </div>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
+            <div>
+              <span className="font-semibold">Review Name:</span> {reviewData.reviewName}
+            </div>
+            <div>
+              <span className="font-semibold">Review Type:</span> {reviewData.reviewType}
+            </div>
+            <div>
+              <span className="font-semibold">Probable End Date:</span> {reviewData.probableEndDate}
+            </div>
+            <div>
+              <span className="font-semibold">Description:</span> {reviewData.description}
             </div>
           </div>
 
@@ -178,11 +169,10 @@ const AccessReviewEmail: React.FC = () => {
 
           <div className="text-xs text-muted-foreground pt-4 border-t space-y-2">
             <p><strong>Instructions for review:</strong></p>
-            <p>If the responsibilities of one or more of your employees have changed, then please review the Role Definition & Business Justification criteria for each role when replying to this request.</p>
+            <p>If the responsibilities of one or more of your employees have changed, then please review the <Link to="/job-functions" className="text-blue-600 hover:text-blue-800 underline">Role Definition</Link> & Business Justification criteria for each role when replying to this request.</p>
             <p className="italic">If you need more information, please forward this email to cpecomp@motorolasolutions.com and include your question.</p>
             
             <div className="pt-2 border-t">
-              <p className="mb-2"><strong>Additional Resources:</strong></p>
               <Link 
                 to="/job-functions" 
                 className="inline-flex items-center gap-1 text-blue-600 hover:text-blue-800 underline text-xs"
