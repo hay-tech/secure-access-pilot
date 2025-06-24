@@ -79,7 +79,7 @@ const AccessReviewEmail: React.FC = () => {
               <span className="font-semibold">Review Type:</span> {reviewData.reviewType}
             </div>
             <div>
-              <span className="font-semibold">Probable End Date:</span> {reviewData.probableEndDate}
+              <span className="font-semibold">End Date:</span> {reviewData.probableEndDate}
             </div>
             <div>
               <span className="font-semibold">Description:</span> {reviewData.description}
