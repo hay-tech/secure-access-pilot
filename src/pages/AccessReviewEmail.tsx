@@ -65,7 +65,7 @@ const AccessReviewEmail: React.FC = () => {
 
       <Card>
         <CardHeader className="bg-blue-50 border-b">
-          <CardTitle className="text-lg">ACTION Required By: 7/25/2025 - User Access Review Notification</CardTitle>
+          <CardTitle className="text-lg">ACTION REQUIRED BY: 7/25/2025 - User Access Review Notification</CardTitle>
           <p className="text-sm text-muted-foreground">
             This email is auto-generated for User Access Reviews and is not a phishing training exercise.
           </p>
@@ -130,28 +130,6 @@ const AccessReviewEmail: React.FC = () => {
               Partial Approve/Revoke
             </Button>
           </div>
-
-          {selectedAction && selectedAction !== 'partial' && (
-            <div className="mt-4 p-3 bg-green-50 border border-green-200 rounded-md">
-              <p className="text-sm text-green-800">
-                Action selected: {selectedAction.replace('-', ' ').toUpperCase()}
-              </p>
-            </div>
-          )}
-
-          <div className="space-y-4 pt-4 border-t">             
-            <div className="space-y-2 text-sm">
-              <ul className="space-y-1 ml-4">
-                <li><strong>"Approve All":</strong> Click on this button, if the roles of all the listed users have not changed.</li>
-                <li><strong>"Reject All":</strong> Click on this button, to remove access for all the listed users.</li>
-                <li><strong>"Partial Approve/Revoke":</strong> If one or more of the roles has changed, please select this option to change the user account(s) and process the changes requested.</li>
-              </ul>
-              <p className="mt-2">
-                <strong>Your response is required by the end of the day, 7/25/2025.</strong>
-              </p>
-            </div>
-          </div>
-
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
             <div>
               <span className="font-semibold">Review Name:</span> {reviewData.reviewName}
@@ -164,6 +142,28 @@ const AccessReviewEmail: React.FC = () => {
             </div>
             <div>
               <span className="font-semibold">Description:</span> {reviewData.description}
+            </div>
+          </div>
+
+          {selectedAction && selectedAction !== 'partial' && (
+            <div className="mt-4 p-3 bg-green-50 border border-green-200 rounded-md">
+              <p className="text-sm text-green-800">
+                Action selected: {selectedAction.replace('-', ' ').toUpperCase()}
+              </p>
+            </div>
+          )}
+
+          <div className="space-y-4 pt-4 border-t">             
+            <div className="space-y-2 text-sm">
+              <p>Your response may include the following actions:</p>
+              <ul className="space-y-1 ml-4">
+                <li><strong>"Approve All":</strong> Click on this button, if the roles of all the listed users have not changed.</li>
+                <li><strong>"Reject All":</strong> Click on this button, to remove access for all the listed users.</li>
+                <li><strong>"Partial Approve/Revoke":</strong> If one or more of the roles has changed, please select this option to change the user account(s) and process the changes requested.</li>
+              </ul>
+              <p className="mt-2">
+                <strong>Your response is required by the end of the day, 7/25/2025.</strong>
+              </p>
             </div>
           </div>
 
