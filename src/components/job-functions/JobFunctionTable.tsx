@@ -30,7 +30,6 @@ const JobFunctionTable: React.FC<JobFunctionTableProps> = ({
               <TableRow>
                 <TableHead>Title</TableHead>
                 <TableHead className="hidden md:table-cell">Description</TableHead>
-                <TableHead>Permissions</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -43,14 +42,11 @@ const JobFunctionTable: React.FC<JobFunctionTableProps> = ({
                   >
                     <TableCell className="font-medium">{jobFunction.title}</TableCell>
                     <TableCell className="hidden md:table-cell">{jobFunction.description}</TableCell>
-                    <TableCell>
-                      {jobFunction.defaultPermissions?.length || 0}
-                    </TableCell>
                   </TableRow>
                 ))
               ) : (
                 <TableRow>
-                  <TableCell colSpan={3} className="h-24 text-center">
+                  <TableCell colSpan={2} className="h-24 text-center">
                     No job functions found.
                   </TableCell>
                 </TableRow>

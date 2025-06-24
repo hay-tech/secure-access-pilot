@@ -58,7 +58,7 @@ const JobFunctionDetail: React.FC<JobFunctionDetailProps> = ({ jobFunction }) =>
           <div>
             <h3 className="text-lg font-medium mb-2 flex items-center gap-2">
               <ShieldCheck className="h-5 w-5 text-muted-foreground" />
-              Default Permissions
+              GCP Permissions
             </h3>
             <div className="flex flex-wrap gap-2">
               {jobFunction.defaultPermissions.map((permission) => (
