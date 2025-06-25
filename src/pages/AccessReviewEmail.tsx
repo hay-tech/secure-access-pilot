@@ -140,12 +140,15 @@ const AccessReviewEmail: React.FC = () => {
           <div className="space-y-4 pt-4 border-t">             
             <div className="space-y-2 text-sm">
               <ul className="space-y-1 ml-4">
+                <div><strong>🔒 Privileged Access Highlighted </strong> Ensure these elevated roles are still required for users' current responsibilities </div>
+                <div>✅<span className="italic" }}>Approve All:</span> If the roles of all the listed users have not changed.</div>
+                <div>❌span className="italic" }}>Reject All:</span> To remove access for all the listed users.</div>
+                <div>⚠️span className="italic" }}>Partial Approve/Revoke:</span> Select this option to identify the user account(s) to be removed.</div>
+                <li><strong>"Privileged Roles Highlighted":</strong> Ensure these elevated roles are still required for users' current responsibilities.</li>
                 <li><strong>✅Approve All:</strong> If the roles of all the listed users have not changed.</li>
                 <li><strong>❌Reject All:</strong> To remove access for all the listed users.</li>
                 <li><strong>⚠️Partial Approve/Revoke:</strong> Select this option to identify the user account(s) to be removed.</li>
-                <div>✅<span style={{ fontStyle: 'italic' }}>Approve All:</span>If the roles of all the listed users have not changed.</div>
-                <li><strong>"Privileged Roles Highlighted":</strong> Ensure these elevated roles are still required for users' current responsibilities.</li>
-                <div><strong>🔒 Privileged Access Highlighted </strong> Ensure these elevated roles are still required for users' current responsibilities </div>
+                <div>✅<span style={{ fontStyle: 'italic' }}>Approve All:</span> If the roles of all the listed users have not changed.</div>
               </ul>
               <p className="mt-2">
                 <strong>Submit your response by 7/25/2025.</strong>
