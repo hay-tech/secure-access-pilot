@@ -143,6 +143,7 @@ const AccessReviewEmail: React.FC = () => {
                 <li><strong>✅Approve All:</strong> If the roles of all the listed users have not changed.</li>
                 <li><strong>❌Reject All:</strong> To remove access for all the listed users.</li>
                 <li><strong>⚠️Partial Approve/Revoke:</strong> Select this option to identify the user account(s) to be removed.</li>
+                <div style={{ fontStyle: 'italic' }}>✅Approve All:</div>If the roles of all the listed users have not changed.
                 <li><strong>"Privileged Roles Highlighted":</strong> Ensure these elevated roles are still required for users' current responsibilities.</li>
                 <div><strong>🔒 Privileged Access Highlighted </strong> Ensure these elevated roles are still required for users' current responsibilities </div>
               </ul>
