@@ -122,6 +122,7 @@ const AccessReviewEmail: React.FC = () => {
             </Table>
           </div>
 
+          <div><strong>🔒 Account with Privileged Access Highlighted:</strong> Please pay extra attention to the highlighted user accounts.</div>
           <div className="flex flex-wrap gap-3 pt-4 border-t">
             <Button 
               onClick={() => handleAction('approve-all')}
@@ -162,7 +163,6 @@ const AccessReviewEmail: React.FC = () => {
 
           <div className="space-y-4 pt-4 border-t">             
             <div className="space-y-2 text-sm">
-              <div><strong>🔒 Privileged Access Highlighted:</strong> Ensure these elevated roles are still required for users' current responsibilities.</div>
               <ul>
                 <li><strong>"Approve All"</strong>: If the roles of all the listed users have not changed.</li>
                 <li><strong>"Reject All"</strong>: To remove access for all the listed users.</li>
@@ -171,6 +171,9 @@ const AccessReviewEmail: React.FC = () => {
               <p className="mt-2">
                 <strong>Your response is required by the end of the day, 7/25/2025.</strong>
               </p>
+            </div>
+            <div className="text-xs text-muted-foreground pt-4 border-t space-y-2">
+              <p><strong>For additional information related to User Access Reviews:</strong> Please visit the Access Review Wiki (LINK TO BE ADDED)</p>
             </div>
           </div>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
@@ -188,9 +191,6 @@ const AccessReviewEmail: React.FC = () => {
             </div>
           </div>
 
-          <div className="text-xs text-muted-foreground pt-4 border-t space-y-2">
-            <p><strong>For additional information related to User Access Reviews:</strong> Please visit the Access Review Wiki (LINK TO BE ADDED)</p>
-          </div>
         </CardContent>
       </Card>
 
