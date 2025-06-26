@@ -11,7 +11,8 @@ import {
   Briefcase,
   Clock,
   User,
-  Mail
+  Mail,
+  Book
 } from "lucide-react";
 import { useAuth } from "../../contexts/AuthContext";
 
@@ -67,6 +68,7 @@ export function Sidebar() {
         {shouldShowAccessReviewEmail && (
           <SidebarItem icon={Mail} label="Review Email" href="/review-email" active={pathname === '/review-email'} />
         )}
+        <SidebarItem icon={Book} label="Access Review Wiki" href="/access-review-wiki" active={pathname === '/access-review-wiki'} />
         {shouldShowReports && (
           <SidebarItem icon={FileText} label="Reports" href="/reports" active={pathname === '/reports'} />
         )}
