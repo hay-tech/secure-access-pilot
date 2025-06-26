@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -24,7 +23,7 @@ const AccessReviewEmail: React.FC = () => {
 
   const userAccounts = [
     {
-      name: "RITESH DESAI RTP254",
+      name: "Ritesh Desai RTP254",
       resource: "Azure",
       environment: "FedRAMP High",
       role: "Cloud Platform Contributor"
@@ -42,6 +41,14 @@ const AccessReviewEmail: React.FC = () => {
       role: "Cloud Project Reader"
     }
   ];
+
+  // Function to check if a role is privileged
+  const isPrivilegedRole = (role: string) => {
+    const privilegedKeywords = ['contributor', 'administrator', 'admin'];
+    return privilegedKeywords.some(keyword => 
+      role.toLowerCase().includes(keyword)
+    );
+  };
 
   const handleAction = (action: string) => {
     setSelectedAction(action);
@@ -65,14 +72,30 @@ const AccessReviewEmail: React.FC = () => {
 
       <Card>
         <CardHeader className="bg-blue-50 border-b">
-          <CardTitle className="text-lg">ACTION REQUIRED BY 7/25/2025 - User Access Review Notification</CardTitle>
+          <CardTitle className="text-lg">ACTION Required By: 7/25/2025 - User Access Review Notification</CardTitle>
           <p className="text-sm text-muted-foreground">
             This email is auto-generated for User Access Reviews and is not a phishing training exercise.
           </p>
         </CardHeader>
         <CardContent className="p-6 space-y-6">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
+            <div>
+              <span className="font-semibold">Review Name:</span> {reviewData.reviewName}
+            </div>
+            <div>
+              <span className="font-semibold">Review Type:</span> {reviewData.reviewType}
+            </div>
+            <div>
+              <span className="font-semibold">Probable End Date:</span> {reviewData.probableEndDate}
+            </div>
+            <div>
+              <span className="font-semibold">Description:</span> {reviewData.description}
+            </div>
+          </div>
 
-          <div className="space-y-2">            
+          <div className="space-y-4">
+            <h3 className="font-semibold">Below is the list of account(s) in the respective resource and environment to review:</h3>
+            
             <Table>
               <TableHeader>
                 <TableRow>
@@ -84,9 +107,21 @@ const AccessReviewEmail: React.FC = () => {
               </TableHeader>
               <TableBody>
                 {userAccounts.map((account, index) => (
-                  <TableRow key={index}>
+                  <TableRow 
+                    key={index} 
+                    className={isPrivilegedRole(account.role) ? "bg-yellow-50 border-yellow-200" : ""}
+                  >
                     <TableCell className="font-medium">{account.name}</TableCell>
-                    <TableCell>{account.role}</TableCell>
+                    <TableCell>
+                      <div className="flex items-center gap-2">
+                        {account.role}
+                        {isPrivilegedRole(account.role) && (
+                          <Badge variant="outline" className="bg-yellow-100 text-yellow-800 border-yellow-300 text-xs">
+                            Privileged
+                          </Badge>
+                        )}
+                      </div>
+                    </TableCell>
                     <TableCell className="font-medium">{account.resource}</TableCell>
                     <TableCell>
                       <Badge variant="outline" className="text-xs">
@@ -139,35 +174,23 @@ const AccessReviewEmail: React.FC = () => {
 
           <div className="space-y-4 pt-4 border-t">             
             <div className="space-y-2 text-sm">
-              <div><strong>🔒 Privileged Access Highlighted </strong> Ensure these elevated roles are still required for users' current responsibilities </div>
-              <div><strong> Review Options:</strong></div>
-              <ul className="space-y-1 ml-4" style={{ listStyleType: 'disc', paddingLeft: '20px' }}>
-                <li><span className="italic">Approve All:</span> If the roles of all the listed users have not changed.</li>
-                <li><span className="italic">Reject All:</span> To remove access for all the listed users.</li>
-                <li><span className="italic">Partial Approve/Revoke:</span> Select this option to identify the user account(s) to be removed.</li>
+              <div><strong>🔒 Privileged Access Highlighted:</strong> Ensure these elevated roles are still required for users' current responsibilities</div>
+              <p>Your response may include the following actions:</p>
+              <ul className="space-y-1 ml-4">
+                <li><strong>"Approve All":</strong> Click on this button, if the roles of all the listed users have not changed.</li>
+                <li><strong>"Reject All":</strong> Click on this button, to remove access for all the listed users.</li>
+                <li><strong>"Partial Approve/Revoke":</strong> If one or more of the roles has changed, please select this option to change the user account(s) and process the changes requested.</li>
               </ul>
               <p className="mt-2">
-                <strong>Submit your response by 7/25/2025.</strong>
+                <strong>Your response is required by the end of the day, 7/25/2025.</strong>
               </p>
-            </div>
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
-              <div>
-                <span className="font-semibold">Review Name:</span> {reviewData.reviewName}
-              </div>
-              <div>
-                <span className="font-semibold">Review Type:</span> {reviewData.reviewType}
-              </div>
-              <div>
-                <span className="font-semibold">End Date:</span> {reviewData.probableEndDate}
-              </div>
-              <div>
-                <span className="font-semibold">Description:</span> {reviewData.description}
-              </div>
             </div>
           </div>
 
           <div className="text-xs text-muted-foreground pt-4 border-t space-y-2">
-            <p><strong>For more information:</strong> Please visit the <Link to="/job-functions" className="text-blue-600 hover:text-blue-800 underline">User Access Review Wiki</Link> New WIKI "ALL THINGS UAR" WILL BE CREATED.
+            <p><strong>For additional information related to User Access Reviews:</strong></p>
+            <p className="italic">
+              Please visit the <Link to="/job-functions" className="text-blue-600 hover:text-blue-800 underline">Role Definition</Link> Link.
             </p>
           </div>
         </CardContent>
