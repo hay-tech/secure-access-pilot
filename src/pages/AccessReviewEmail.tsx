@@ -189,7 +189,7 @@ const AccessReviewEmail: React.FC = () => {
           </div>
 
           <div className="text-xs text-muted-foreground pt-4 border-t space-y-2">
-            <p><strong>For additional information related to User Access Reviews:</strong> Please the Access Review Wiki (LINK TO BE ADDED)</p>
+            <p><strong>For additional information related to User Access Reviews:</strong> Please visit the Access Review Wiki (LINK TO BE ADDED)</p>
           </div>
         </CardContent>
       </Card>
