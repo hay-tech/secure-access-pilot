@@ -79,20 +79,6 @@ const AccessReviewEmail: React.FC = () => {
           </p>
         </CardHeader>
         <CardContent className="p-6 space-y-6">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
-            <div>
-              <span className="font-semibold">Review Name:</span> {reviewData.reviewName}
-            </div>
-            <div>
-              <span className="font-semibold">Review Type:</span> {reviewData.reviewType}
-            </div>
-            <div>
-              <span className="font-semibold">Probable End Date:</span> {reviewData.probableEndDate}
-            </div>
-            <div>
-              <span className="font-semibold">Description:</span> {reviewData.description}
-            </div>
-          </div>
 
           <div className="space-y-4">
             <h3 className="font-semibold">Below is the list of account(s) in the respective resource and environment to review:</h3>
@@ -188,6 +174,20 @@ const AccessReviewEmail: React.FC = () => {
               <p className="mt-2">
                 <strong>Your response is required by the end of the day, 7/25/2025.</strong>
               </p>
+            </div>
+          </div>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
+            <div>
+              <span className="font-semibold">Review Name:</span> {reviewData.reviewName}
+            </div>
+            <div>
+              <span className="font-semibold">Review Type:</span> {reviewData.reviewType}
+            </div>
+            <div>
+              <span className="font-semibold">End Date:</span> {reviewData.probableEndDate}
+            </div>
+            <div>
+              <span className="font-semibold">Description:</span> {reviewData.description}
             </div>
           </div>
 
