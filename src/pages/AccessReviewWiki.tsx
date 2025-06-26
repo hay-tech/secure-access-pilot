@@ -84,7 +84,7 @@ const AccessReviewWiki: React.FC = () => {
         </CardHeader>
         <CardContent className="p-6">
           <p className="text-sm mb-2">
-            <strong>Monthly, Quarterly, annually, or Ad Hoc</strong> (as specified in the review email), depending on the Environment's regulatory and security requirements.
+            <strong>Monthly, Quarterly, Annually, or Ad Hoc</strong> (as specified in the review email), depending on the Environment's regulatory and security requirements.
           </p>
           <p className="text-sm">
             <strong>Review Due Date</strong> is always <span className="underline">indicated clearly</span> in the notification (e.g., April 25, 2025).
