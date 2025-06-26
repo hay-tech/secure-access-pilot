@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -107,14 +108,15 @@ const AccessReviewEmail: React.FC = () => {
               </TableHeader>
               <TableBody>
                 {userAccounts.map((account, index) => (
-                  <TableRow 
-                    key={index} 
-                    className={isPrivilegedRole(account.role) ? "bg-yellow-50 border-yellow-200" : ""}
-                  >
-                    <TableCell className="font-medium">{account.name}</TableCell>
+                  <TableRow key={index}>
+                    <TableCell className={isPrivilegedRole(account.role) ? "font-bold" : "font-medium"}>
+                      {account.name}
+                    </TableCell>
                     <TableCell>
                       <div className="flex items-center gap-2">
-                        {account.role}
+                        <span className={isPrivilegedRole(account.role) ? "font-bold" : ""}>
+                          {account.role}
+                        </span>
                         {isPrivilegedRole(account.role) && (
                           <Badge variant="outline" className="bg-yellow-100 text-yellow-800 border-yellow-300 text-xs">
                             Privileged
@@ -122,7 +124,9 @@ const AccessReviewEmail: React.FC = () => {
                         )}
                       </div>
                     </TableCell>
-                    <TableCell className="font-medium">{account.resource}</TableCell>
+                    <TableCell className={isPrivilegedRole(account.role) ? "font-bold" : "font-medium"}>
+                      {account.resource}
+                    </TableCell>
                     <TableCell>
                       <Badge variant="outline" className="text-xs">
                         {account.environment}
