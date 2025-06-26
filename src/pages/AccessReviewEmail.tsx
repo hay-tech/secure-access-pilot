@@ -173,10 +173,10 @@ const AccessReviewEmail: React.FC = () => {
               </p>
             </div>
           </div>
+          <div className="text-xs text-muted-foreground pt-4 border-t space-y-2">
+            <p><strong>For additional information related to User Access Reviews:Please visit the Access Review Wiki (LINK TO BE ADDED)</strong> </p>
+          </div>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
-            <div className="text-xs text-muted-foreground pt-4 border-t space-y-2">
-              <p><strong>For additional information related to User Access Reviews:Please visit the Access Review Wiki (LINK TO BE ADDED)</strong> </p>
-            </div>
             <div>
               <span className="font-semibold">Review Name:</span> {reviewData.reviewName}
             </div>
