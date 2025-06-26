@@ -80,9 +80,7 @@ const AccessReviewEmail: React.FC = () => {
         </CardHeader>
         <CardContent className="p-6 space-y-6">
 
-          <div className="space-y-4">
-            <h3 className="font-semibold">Below is the list of account(s) in the respective resource and environment to review:</h3>
-            
+          <div className="space-y-4">            
             <Table>
               <TableHeader>
                 <TableRow>
