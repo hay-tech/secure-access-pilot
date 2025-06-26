@@ -168,8 +168,8 @@ const AccessReviewEmail: React.FC = () => {
                 <li><strong>"Partial Approve/Revoke"</strong>: Select this option to identify the user account(s) to be removed.</li>
               </ul>
 
-              <div className="text-xs pt-4 border-t space-y-2">
-                <p><strong>For additional information related to User Access Reviews: Please visit the Access Review Wiki (LINK TO BE ADDED)</strong> </p>
+              <div className="text-s pt-4 border-t space-y-2">
+                <p><strong>For additional information related to User Access Reviews: Please visit the Access Review Wiki <link> </strong> </p>
               </div>
               <p className="mt-2">
                 <strong>Your response is required by the end of the day, 7/25/2025.</strong>
