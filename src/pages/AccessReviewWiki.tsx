@@ -184,8 +184,8 @@ const AccessReviewWiki: React.FC = () => {
               ))}
             </TableBody>
           </Table>
-          <ul className="space-y-2 text-sm list-decimal list-inside">
-            <li>A <stron>privileged account</stron> is a powerful account designed for users who need to manage, maintain, and secure a system, granting them the necessary control to execute actions that could significantly impact the system's security and operation.</li>
+          <ul className="space-y-2 text-sm">
+            <li>A <strong>privileged account</strong> is a powerful account designed for users who need to manage, maintain, and secure a system, granting them the necessary control to execute actions that could significantly impact the system's security and operation.</li>
           </ul>
           </CardContent>
       </Card>
