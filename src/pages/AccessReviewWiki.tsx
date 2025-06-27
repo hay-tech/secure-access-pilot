@@ -184,7 +184,10 @@ const AccessReviewWiki: React.FC = () => {
               ))}
             </TableBody>
           </Table>
-        </CardContent>
+          <ol className="space-y-2 text-sm list-decimal list-inside">
+            <li>A privileged account is a powerful account designed for users who need to manage, maintain, and secure a system, granting them the necessary control to execute actions that could significantly impact the system's security and operation.</li>
+          </ol>
+          </CardContent>
       </Card>
 
       {/* What to Do Section */}
