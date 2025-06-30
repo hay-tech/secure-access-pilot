@@ -172,7 +172,7 @@ const AccessReviewEmail: React.FC = () => {
                 <p><strong>For additional information related to User Access Reviews</strong>: Please visit the <Link to="/access-review-wiki" className="text-blue-600 hover:text-blue-800 underline">Access Review Wiki</Link>. </p>
               </div>
               <p className="mt-2">
-                <strong>Your response is required by the end of the day, 7/25/2025.</strong>
+                <strong>To maintain your employees' access, your response is required by the end of the day, 7/25/2025.</strong>
               </p>
             </div>
           </div>
