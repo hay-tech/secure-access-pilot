@@ -1,4 +1,5 @@
 
+
 import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -32,10 +33,10 @@ const AutomatedUAR: React.FC = () => {
     },
     {
       id: 4,
-      title: "🛡️ Compliance System",
-      subtitle: "Governance Framework",
-      description: "System that enforces security policies and compliance rules",
-      icon: Shield,
+      title: "🔍 Threat Intelligence Service",
+      subtitle: "Security Analysis Platform",
+      description: "Provides proactive threat detection, improved incident response and enhanced security posture",
+      icon: Search,
       color: "bg-orange-50 border-orange-200"
     },
     {
@@ -302,3 +303,4 @@ const AutomatedUAR: React.FC = () => {
 };
 
 export default AutomatedUAR;
+
