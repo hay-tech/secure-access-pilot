@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -9,7 +8,7 @@ const AutomatedUAR: React.FC = () => {
     {
       id: 1,
       title: "🤖 Automation Bot",
-      subtitle: "UAR Scanner",
+      subtitle: "UAR Scanner", 
       description: "Core automation system that orchestrates the entire UAR process",
       icon: Bot,
       color: "bg-blue-50 border-blue-200"
@@ -143,7 +142,7 @@ const AutomatedUAR: React.FC = () => {
     <div className="space-y-6 max-w-7xl mx-auto">
       <div className="flex items-center gap-2">
         <Bot className="h-6 w-6 text-primary" />
-        <h1 className="text-3xl font-bold tracking-tight">📦 Automated User Access Review (UAR) Process</h1>
+        <h1 className="text-3xl font-bold tracking-tight">📦 Automated User Access Verification Process</h1>
       </div>
 
       {/* Key Components Section */}

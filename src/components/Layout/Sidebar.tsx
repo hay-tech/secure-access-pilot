@@ -1,4 +1,3 @@
-
 import { Link, useLocation } from "react-router-dom";
 import { cn } from "@/lib/utils";
 import { 
@@ -74,7 +73,7 @@ export function Sidebar() {
         )}
         <SidebarItem icon={Book} label="Access Review Wiki" href="/access-review-wiki" active={pathname === '/access-review-wiki'} />
         {shouldShowAutomatedUAR && (
-          <SidebarItem icon={Bot} label="Automated User Access Verification Flow" href="/automated-uar" active={pathname === '/automated-uar'} />
+          <SidebarItem icon={Bot} label="User Access Verification Flow" href="/automated-uar" active={pathname === '/automated-uar'} />
         )}
         {shouldShowReports && (
           <SidebarItem icon={FileText} label="Reports" href="/reports" active={pathname === '/reports'} />
