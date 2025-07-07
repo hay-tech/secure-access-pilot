@@ -12,7 +12,8 @@ import {
   Clock,
   User,
   Mail,
-  Book
+  Book,
+  Bot
 } from "lucide-react";
 import { useAuth } from "../../contexts/AuthContext";
 
@@ -55,6 +56,8 @@ export function Sidebar() {
 
   const shouldShowAccessReviewEmail = currentUser?.jobFunction === 'Manager';
 
+  const shouldShowAutomatedUAR = currentUser?.jobFunction === 'CPE Compliance Analyst';
+
   return (
     <div className="hidden lg:flex flex-col gap-6 border-r bg-background px-2 py-4 h-full">
       <div className="flex flex-col gap-1">
@@ -69,6 +72,9 @@ export function Sidebar() {
           <SidebarItem icon={Mail} label="Review Email" href="/review-email" active={pathname === '/review-email'} />
         )}
         <SidebarItem icon={Book} label="Access Review Wiki" href="/access-review-wiki" active={pathname === '/access-review-wiki'} />
+        {shouldShowAutomatedUAR && (
+          <SidebarItem icon={Bot} label="Automated UAR" href="/automated-uar" active={pathname === '/automated-uar'} />
+        )}
         {shouldShowReports && (
           <SidebarItem icon={FileText} label="Reports" href="/reports" active={pathname === '/reports'} />
         )}

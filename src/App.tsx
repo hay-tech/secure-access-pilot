@@ -11,6 +11,7 @@ import AccessRequests from './pages/AccessRequests';
 import AccessReviews from './pages/AccessReviews';
 import AccessReviewEmail from './pages/AccessReviewEmail';
 import AccessReviewWiki from './pages/AccessReviewWiki';
+import AutomatedUAR from './pages/AutomatedUAR';
 import Approvals from './pages/Approvals';
 import Reports from './pages/Reports';
 import Users from './pages/Users';
@@ -38,6 +39,7 @@ function App() {
                 <Route path="reviews" element={<AccessReviews />} />
                 <Route path="review-email" element={<AccessReviewEmail />} />
                 <Route path="access-review-wiki" element={<AccessReviewWiki />} />
+                <Route path="automated-uar" element={<AutomatedUAR />} />
                 <Route path="approvals" element={<Approvals />} />
                 <Route path="reports" element={<Reports />} />
                 <Route path="users" element={<Users />} />
