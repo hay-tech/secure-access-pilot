@@ -122,12 +122,6 @@ const AutomatedUAR: React.FC = () => {
       color: "text-purple-600"
     },
     {
-      role: "🕵️ Threat Intelligence Analyst",
-      description: "Reviews and investigates security alerts",
-      icon: Bot,
-      color: "text-green-600"
-    },
-    {
       role: "🤖 Automation System",
       description: "Executes the UAR process without human intervention",
       icon: Bot,
