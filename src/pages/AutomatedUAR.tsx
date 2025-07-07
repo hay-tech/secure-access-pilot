@@ -289,14 +289,6 @@ const AutomatedUAR: React.FC = () => {
               </div>
             </div>
           </div>
-          <div className="mt-6 p-4 bg-gradient-to-r from-blue-50 to-purple-50 rounded-lg border">
-            <h3 className="font-semibold text-sm mb-2">💡 Lovable UAR Process Summary</h3>
-            <p className="text-sm text-muted-foreground">
-              This automated UAR system creates a lovable, human-centered approach to security compliance. 
-              The process is designed to be self-explanatory with clear visual indicators, friendly notifications, 
-              and comprehensive reporting that makes compliance management both efficient and approachable.
-            </p>
-          </div>
         </CardContent>
       </Card>
     </div>
