@@ -1,7 +1,7 @@
 import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Bot, Database, Shield, AlertTriangle, CheckCircle, FileText, Bell, Users, Zap, Cloud, Server, Lock, Eye, ArrowRight, ArrowDown } from "lucide-react";
+import { Bot, Database, Shield, AlertTriangle, CheckCircle, FileText, Bell, Users, Zap, Cloud, Server, Lock, Eye, ArrowRight, ArrowDown, Search } from "lucide-react";
 
 const AutomatedUAR: React.FC = () => {
   const keyComponents = [
@@ -80,6 +80,16 @@ const AutomatedUAR: React.FC = () => {
     },
     {
       id: 4,
+      phase: "🔍 Analysis Phase",
+      title: "Threat Intelligence Review",
+      description: "Security team analyzes mismatch alert for potential threats and validates security implications",
+      status: "normal",
+      tags: ["#ThreatAnalysis", "#SecurityReview"],
+      icon: Search,
+      color: "border-purple-300 bg-purple-50"
+    },
+    {
+      id: 5,
       phase: "📄 Reporting Phase",
       title: "Generate & Send Report to Compliance",
       description: "Create comprehensive compliance report and deliver to compliance team for review",
