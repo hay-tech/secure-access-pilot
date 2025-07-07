@@ -1,7 +1,7 @@
 import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Bot, Database, Shield, AlertTriangle, CheckCircle, FileText, Bell, Users, Zap, Cloud, Server, Lock, Eye, ArrowRight, ArrowDown, Search } from "lucide-react";
+import { Bot, Database, Shield, AlertTriangle, CheckCircle, FileText, Bell, Users, Zap, Cloud, Server, Lock, Eye, ArrowRight, ArrowDown } from "lucide-react";
 
 const AutomatedUAR: React.FC = () => {
   const keyComponents = [
@@ -31,6 +31,14 @@ const AutomatedUAR: React.FC = () => {
     },
     {
       id: 4,
+      title: "🛡️ Compliance System",
+      subtitle: "Governance Framework",
+      description: "System that enforces security policies and compliance rules",
+      icon: Shield,
+      color: "bg-orange-50 border-orange-200"
+    },
+    {
+      id: 5,
       title: "📢 Notification Service",
       subtitle: "Alert System",
       description: "Service that sends real-time alerts to stakeholders",
@@ -38,7 +46,7 @@ const AutomatedUAR: React.FC = () => {
       color: "bg-red-50 border-red-200"
     },
     {
-      id: 5,
+      id: 6,
       title: "📊 Reporting Module",
       subtitle: "Analytics & Reports",
       description: "Generates comprehensive compliance and audit reports",
@@ -80,21 +88,21 @@ const AutomatedUAR: React.FC = () => {
     },
     {
       id: 4,
-      phase: "🔍 Analysis Phase",
-      title: "Threat Intelligence Review",
-      description: "Security team analyzes mismatch alert for potential threats and validates security implications",
+      phase: "📄 Reporting Phase",
+      title: "Generate Report",
+      description: "Create comprehensive compliance report with all scan results",
       status: "normal",
-      tags: ["#ThreatAnalysis", "#SecurityReview"],
-      icon: Search,
+      tags: ["#ReportGenerated", "#ComplianceReport"],
+      icon: FileText,
       color: "border-purple-300 bg-purple-50"
     },
     {
       id: 5,
       phase: "📄 Reporting Phase",
-      title: "Generate & Send Report to Compliance",
-      description: "Create comprehensive compliance report and deliver to compliance team for review",
+      title: "Send Report to Compliance",
+      description: "Deliver final audit report to compliance team for review",
       status: "success",
-      tags: ["#ReportGenerated", "#ComplianceDelivery", "#AuditComplete"],
+      tags: ["#AuditComplete", "#ComplianceDelivery"],
       icon: CheckCircle,
       color: "border-green-300 bg-green-50"
     }
@@ -112,6 +120,12 @@ const AutomatedUAR: React.FC = () => {
       description: "Reviews reports and ensures regulatory compliance",
       icon: Shield,
       color: "text-purple-600"
+    },
+    {
+      role: "🕵️ Threat Intelligence Analyst",
+      description: "Reviews and investigates security alerts",
+      icon: Bot,
+      color: "text-green-600"
     },
     {
       role: "🤖 Automation System",
