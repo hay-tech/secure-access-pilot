@@ -259,7 +259,7 @@ const AutomatedUAR: React.FC = () => {
 
       {/* Flow Legend */}
       <Card>
-        <CardHeader className="bg-blue-50 border-b">
+        <CardHeader className="bg-gray-50 border-b">
           <CardTitle className="flex items-center gap-2 text-lg">
             <Lock className="h-5 w-5" />
             4. Flow Connectors & Legend
