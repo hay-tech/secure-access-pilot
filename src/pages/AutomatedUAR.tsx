@@ -148,7 +148,7 @@ const AutomatedUAR: React.FC = () => {
 
       {/* Key Components Section */}
       <Card>
-        <CardHeader className="bg-gradient-to-r from-blue-50 to-purple-50 border-b">
+        <CardHeader className="bg-gradient-to-r from-grey-50 to-purple-50 border-b">
           <CardTitle className="flex items-center gap-2 text-lg">
             <Zap className="h-5 w-5" />
             1. Key Components (Nodes) - Systems & Services
