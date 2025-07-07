@@ -2,113 +2,227 @@
 import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Bot, Database, Shield, AlertTriangle, CheckCircle, FileText, Bell, Users, Zap } from "lucide-react";
+import { Bot, Database, Shield, AlertTriangle, CheckCircle, FileText, Bell, Users, Zap, Cloud, Server, Lock, Eye, ArrowRight, ArrowDown } from "lucide-react";
 
 const AutomatedUAR: React.FC = () => {
-  const processSteps = [
+  const keyComponents = [
     {
       id: 1,
-      title: "Scan Users & Privileges",
-      description: "Automation Bot pulls actual privileges from Environment",
+      title: "🤖 Automation Bot",
+      subtitle: "UAR Scanner",
+      description: "Core automation system that orchestrates the entire UAR process",
       icon: Bot,
-      color: "bg-blue-100 text-blue-800 border-blue-300"
+      color: "bg-blue-50 border-blue-200"
     },
     {
       id: 2,
-      title: "Compare with Access Control DB",
-      description: "Bot fetches expected user access and compares actual vs expected",
+      title: "📘 Access Control DB",
+      subtitle: "Reference Database",
+      description: "Repository of expected user access permissions and entitlements",
       icon: Database,
-      color: "bg-purple-100 text-purple-800 border-purple-300"
+      color: "bg-purple-50 border-purple-200"
     },
     {
       id: 3,
-      title: "Mismatch Detection",
-      description: "System determines if there are any access mismatches",
-      icon: Shield,
-      color: "bg-orange-100 text-orange-800 border-orange-300"
+      title: "🌐 Environment Systems",
+      subtitle: "Cloud, DBs, Applications",
+      description: "Production systems where actual user permissions are scanned",
+      icon: Cloud,
+      color: "bg-green-50 border-green-200"
     },
     {
       id: 4,
-      title: "Freeze Access (If Mismatch)",
-      description: "Disable user access and send alerts to compliance & admin",
-      icon: AlertTriangle,
-      color: "bg-red-100 text-red-800 border-red-300"
+      title: "🛡️ Compliance System",
+      subtitle: "Governance Framework",
+      description: "System that enforces security policies and compliance rules",
+      icon: Shield,
+      color: "bg-orange-50 border-orange-200"
     },
     {
       id: 5,
-      title: "Log Match (If No Mismatch)",
-      description: "Record successful review in reporting module",
-      icon: CheckCircle,
-      color: "bg-green-100 text-green-800 border-green-300"
+      title: "📢 Notification Service",
+      subtitle: "Alert System",
+      description: "Service that sends real-time alerts to stakeholders",
+      icon: Bell,
+      color: "bg-red-50 border-red-200"
     },
     {
       id: 6,
-      title: "Generate Compliance Report",
-      description: "Prepare and send final summary report to compliance team",
+      title: "📊 Reporting Module",
+      subtitle: "Analytics & Reports",
+      description: "Generates comprehensive compliance and audit reports",
       icon: FileText,
-      color: "bg-indigo-100 text-indigo-800 border-indigo-300"
+      color: "bg-indigo-50 border-indigo-200"
     }
   ];
 
-  const reportItems = [
-    { icon: Users, label: "Users Scanned", status: "success" },
-    { icon: AlertTriangle, label: "Mismatches", status: "warning" },
-    { icon: Shield, label: "Access Frozen", status: "error" },
-    { icon: Bell, label: "Alerts Sent", status: "info" },
-    { icon: CheckCircle, label: "Compliance Status", status: "success" }
+  const flowBlocks = [
+    {
+      id: 1,
+      phase: "🔍 Scan Phase",
+      title: "Scan Users & Permissions",
+      description: "Automation Bot scans all environment systems for actual user privileges",
+      status: "normal",
+      tags: ["#AccessReview", "#UserScan"],
+      icon: Eye,
+      color: "border-green-300 bg-green-50"
+    },
+    {
+      id: 2,
+      phase: "📘 Validation Phase", 
+      title: "Compare with Access Control DB",
+      description: "Bot fetches expected permissions and performs comparison analysis",
+      status: "normal",
+      tags: ["#SecurityCompliance", "#DataValidation"],
+      icon: Database,
+      color: "border-blue-300 bg-blue-50"
+    },
+    {
+      id: 3,
+      phase: "⚠️ Response Phase",
+      title: "Mismatch? ➝ Freeze Access + Send Alert",
+      description: "Decision point: If mismatch detected, freeze access and trigger alerts",
+      status: "warning",
+      tags: ["#AutoFreeze", "#AlertSent"],
+      icon: AlertTriangle,
+      color: "border-orange-300 bg-orange-50"
+    },
+    {
+      id: 4,
+      phase: "📄 Reporting Phase",
+      title: "Generate Report",
+      description: "Create comprehensive compliance report with all scan results",
+      status: "normal",
+      tags: ["#ReportGenerated", "#ComplianceReport"],
+      icon: FileText,
+      color: "border-purple-300 bg-purple-50"
+    },
+    {
+      id: 5,
+      phase: "📄 Reporting Phase",
+      title: "Send Report to Compliance",
+      description: "Deliver final audit report to compliance team for review",
+      status: "success",
+      tags: ["#AuditComplete", "#ComplianceDelivery"],
+      icon: CheckCircle,
+      color: "border-green-300 bg-green-50"
+    }
   ];
 
-  const getStatusColor = (status: string) => {
+  const personas = [
+    {
+      role: "🧑‍💻 Admin / Project Owner",
+      description: "Receives alerts and manages access control responses",
+      icon: Users,
+      color: "text-blue-600"
+    },
+    {
+      role: "🕵️ Compliance Officer",
+      description: "Reviews reports and ensures regulatory compliance",
+      icon: Shield,
+      color: "text-purple-600"
+    },
+    {
+      role: "🤖 Automation System",
+      description: "Executes the UAR process without human intervention",
+      icon: Bot,
+      color: "text-green-600"
+    }
+  ];
+
+  const getArrowColor = (status: string) => {
     switch (status) {
-      case 'success': return 'text-green-600';
-      case 'warning': return 'text-orange-600';
-      case 'error': return 'text-red-600';
-      case 'info': return 'text-blue-600';
-      default: return 'text-gray-600';
+      case 'success': return 'text-green-500';
+      case 'warning': return 'text-orange-500';
+      case 'error': return 'text-red-500';
+      default: return 'text-blue-500';
     }
   };
 
   return (
-    <div className="space-y-6 max-w-6xl mx-auto">
+    <div className="space-y-6 max-w-7xl mx-auto">
       <div className="flex items-center gap-2">
         <Bot className="h-6 w-6 text-primary" />
-        <h1 className="text-3xl font-bold tracking-tight">Automated User Access Review (UAR) Process</h1>
+        <h1 className="text-3xl font-bold tracking-tight">📦 Automated User Access Review (UAR) Process</h1>
       </div>
 
+      {/* Key Components Section */}
       <Card>
         <CardHeader className="bg-gradient-to-r from-blue-50 to-purple-50 border-b">
           <CardTitle className="flex items-center gap-2 text-lg">
             <Zap className="h-5 w-5" />
-            UAR Automation Flow
+            1. Key Components (Nodes) - Systems & Services
           </CardTitle>
           <p className="text-sm text-muted-foreground">
-            Automated process for continuous user access verification and compliance monitoring
+            Core systems and services that power the automated UAR process
           </p>
         </CardHeader>
         <CardContent className="p-6">
-          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-            {processSteps.map((step, index) => (
-              <div key={step.id} className="relative">
-                <Card className={`border-2 ${step.color.includes('border') ? '' : 'border-gray-200'} hover:shadow-md transition-shadow`}>
-                  <CardHeader className="pb-3">
-                    <div className="flex items-center gap-3">
-                      <div className={`p-2 rounded-lg ${step.color}`}>
-                        <step.icon className="h-5 w-5" />
-                      </div>
-                      <Badge variant="outline" className="text-xs">
-                        Step {step.id}
-                      </Badge>
+          <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+            {keyComponents.map((component) => (
+              <Card key={component.id} className={`${component.color} hover:shadow-md transition-shadow`}>
+                <CardHeader className="pb-3">
+                  <div className="flex items-center gap-3">
+                    <component.icon className="h-6 w-6" />
+                    <div>
+                      <h3 className="font-semibold text-sm">{component.title}</h3>
+                      <p className="text-xs text-muted-foreground">{component.subtitle}</p>
                     </div>
-                    <CardTitle className="text-base">{step.title}</CardTitle>
+                  </div>
+                </CardHeader>
+                <CardContent className="pt-0">
+                  <p className="text-xs text-muted-foreground">{component.description}</p>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* Flow Blocks Section */}
+      <Card>
+        <CardHeader className="bg-gradient-to-r from-green-50 to-blue-50 border-b">
+          <CardTitle className="flex items-center gap-2 text-lg">
+            <ArrowRight className="h-5 w-5" />
+            2. UAR Automation Flow - Process Blocks
+          </CardTitle>
+          <p className="text-sm text-muted-foreground">
+            Sequential steps and conditional branches with visual flow indicators
+          </p>
+        </CardHeader>
+        <CardContent className="p-6">
+          <div className="space-y-6">
+            {flowBlocks.map((block, index) => (
+              <div key={block.id} className="relative">
+                <Card className={`border-2 ${block.color} hover:shadow-md transition-shadow`}>
+                  <CardHeader className="pb-3">
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-3">
+                        <block.icon className="h-5 w-5" />
+                        <div>
+                          <Badge variant="outline" className="text-xs mb-1">
+                            {block.phase}
+                          </Badge>
+                          <h3 className="font-semibold text-base">{block.title}</h3>
+                        </div>
+                      </div>
+                      <div className="flex gap-1">
+                        {block.tags.map((tag, tagIndex) => (
+                          <Badge key={tagIndex} variant="secondary" className="text-xs">
+                            {tag}
+                          </Badge>
+                        ))}
+                      </div>
+                    </div>
                   </CardHeader>
                   <CardContent className="pt-0">
-                    <p className="text-sm text-muted-foreground">{step.description}</p>
+                    <p className="text-sm text-muted-foreground">{block.description}</p>
                   </CardContent>
                 </Card>
                 
-                {index < processSteps.length - 1 && (
-                  <div className="hidden lg:block absolute top-1/2 -right-8 transform -translate-y-1/2 text-gray-400">
-                    →
+                {index < flowBlocks.length - 1 && (
+                  <div className="flex justify-center my-4">
+                    <ArrowDown className={`h-6 w-6 ${getArrowColor(flowBlocks[index + 1].status)}`} />
                   </div>
                 )}
               </div>
@@ -117,71 +231,70 @@ const AutomatedUAR: React.FC = () => {
         </CardContent>
       </Card>
 
-      {/* System Components */}
+      {/* Personas Section */}
       <Card>
-        <CardHeader className="bg-gray-50 border-b">
+        <CardHeader className="bg-gradient-to-r from-orange-50 to-pink-50 border-b">
           <CardTitle className="flex items-center gap-2 text-lg">
-            <Database className="h-5 w-5" />
-            System Components
+            <Users className="h-5 w-5" />
+            3. Personas & Roles
           </CardTitle>
+          <p className="text-sm text-muted-foreground">
+            Key stakeholders involved in the UAR process
+          </p>
         </CardHeader>
         <CardContent className="p-6">
-          <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-            <div className="flex items-center gap-3 p-3 bg-blue-50 rounded-lg">
-              <Bot className="h-5 w-5 text-blue-600" />
-              <div>
-                <p className="font-medium text-sm">Automation Bot</p>
-                <p className="text-xs text-muted-foreground">Process Controller</p>
+          <div className="grid gap-4 md:grid-cols-3">
+            {personas.map((persona, index) => (
+              <div key={index} className="flex items-center gap-3 p-4 bg-white border rounded-lg hover:shadow-sm transition-shadow">
+                <persona.icon className={`h-6 w-6 ${persona.color}`} />
+                <div>
+                  <p className="font-medium text-sm">{persona.role}</p>
+                  <p className="text-xs text-muted-foreground">{persona.description}</p>
+                </div>
               </div>
-            </div>
-            <div className="flex items-center gap-3 p-3 bg-green-50 rounded-lg">
-              <Shield className="h-5 w-5 text-green-600" />
-              <div>
-                <p className="font-medium text-sm">Environment</p>
-                <p className="text-xs text-muted-foreground">Access Source</p>
-              </div>
-            </div>
-            <div className="flex items-center gap-3 p-3 bg-purple-50 rounded-lg">
-              <Database className="h-5 w-5 text-purple-600" />
-              <div>
-                <p className="font-medium text-sm">Access Control DB</p>
-                <p className="text-xs text-muted-foreground">Reference Data</p>
-              </div>
-            </div>
-            <div className="flex items-center gap-3 p-3 bg-orange-50 rounded-lg">
-              <Bell className="h-5 w-5 text-orange-600" />
-              <div>
-                <p className="font-medium text-sm">Notification Service</p>
-                <p className="text-xs text-muted-foreground">Alert System</p>
-              </div>
-            </div>
+            ))}
           </div>
         </CardContent>
       </Card>
 
-      {/* Compliance Report Details */}
+      {/* Flow Legend */}
       <Card>
-        <CardHeader className="bg-indigo-50 border-b">
-          <CardTitle className="flex items-center gap-2 text-lg text-indigo-800">
-            <FileText className="h-5 w-5" />
-            Compliance Report Includes
+        <CardHeader className="bg-gray-50 border-b">
+          <CardTitle className="flex items-center gap-2 text-lg">
+            <Lock className="h-5 w-5" />
+            4. Flow Connectors & Legend
           </CardTitle>
         </CardHeader>
         <CardContent className="p-6">
-          <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-5">
-            {reportItems.map((item, index) => (
-              <div key={index} className="flex flex-col items-center gap-2 p-4 bg-white border rounded-lg hover:shadow-sm transition-shadow">
-                <item.icon className={`h-6 w-6 ${getStatusColor(item.status)}`} />
-                <p className="text-sm font-medium text-center">{item.label}</p>
+          <div className="grid gap-4 md:grid-cols-3">
+            <div className="flex items-center gap-3 p-3 bg-green-50 rounded-lg border border-green-200">
+              <ArrowRight className="h-5 w-5 text-green-600" />
+              <div>
+                <p className="font-medium text-sm text-green-800">✅ Normal Flow</p>
+                <p className="text-xs text-green-600">Sequential process steps</p>
               </div>
-            ))}
+            </div>
+            <div className="flex items-center gap-3 p-3 bg-orange-50 rounded-lg border border-orange-200">
+              <ArrowRight className="h-5 w-5 text-orange-600" />
+              <div>
+                <p className="font-medium text-sm text-orange-800">⚠️ Warning Flow</p>
+                <p className="text-xs text-orange-600">Mismatch detection path</p>
+              </div>
+            </div>
+            <div className="flex items-center gap-3 p-3 bg-blue-50 rounded-lg border border-blue-200">
+              <ArrowRight className="h-5 w-5 text-blue-600" />
+              <div>
+                <p className="font-medium text-sm text-blue-800">🔁 Data Flow</p>
+                <p className="text-xs text-blue-600">System handoffs</p>
+              </div>
+            </div>
           </div>
-          <div className="mt-6 p-4 bg-gray-50 rounded-lg">
-            <h3 className="font-medium text-sm mb-2">Report Summary</h3>
+          <div className="mt-6 p-4 bg-gradient-to-r from-blue-50 to-purple-50 rounded-lg border">
+            <h3 className="font-semibold text-sm mb-2">💡 Lovable UAR Process Summary</h3>
             <p className="text-sm text-muted-foreground">
-              The automated UAR process generates comprehensive compliance reports that include user scan results, 
-              identified mismatches, access control actions taken, alert notifications sent, and overall compliance status. 
-              These reports are automatically delivered to the compliance team for review and audit trail purposes.
+              This automated UAR system creates a lovable, human-centered approach to security compliance. 
+              The process is designed to be self-explanatory with clear visual indicators, friendly notifications, 
+              and comprehensive reporting that makes compliance management both efficient and approachable.
             </p>
           </div>
         </CardContent>
