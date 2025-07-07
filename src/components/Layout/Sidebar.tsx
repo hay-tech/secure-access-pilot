@@ -56,7 +56,8 @@ export function Sidebar() {
 
   const shouldShowAccessReviewEmail = currentUser?.jobFunction === 'Manager';
 
-  const shouldShowAutomatedUAR = currentUser?.jobFunction === 'CPE Compliance Analyst';
+  const shouldShowAutomatedUAR = currentUser?.jobFunction === 'Manager' || 
+                                currentUser?.jobFunction === 'CPE Compliance Analyst';
 
   return (
     <div className="hidden lg:flex flex-col gap-6 border-r bg-background px-2 py-4 h-full">
@@ -73,7 +74,7 @@ export function Sidebar() {
         )}
         <SidebarItem icon={Book} label="Access Review Wiki" href="/access-review-wiki" active={pathname === '/access-review-wiki'} />
         {shouldShowAutomatedUAR && (
-          <SidebarItem icon={Bot} label="Automated UAR" href="/automated-uar" active={pathname === '/automated-uar'} />
+          <SidebarItem icon={Bot} label="Automated User Access Verification Flow" href="/automated-uar" active={pathname === '/automated-uar'} />
         )}
         {shouldShowReports && (
           <SidebarItem icon={FileText} label="Reports" href="/reports" active={pathname === '/reports'} />
