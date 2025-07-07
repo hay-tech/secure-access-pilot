@@ -1,7 +1,8 @@
+
 import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Bot, Database, Shield, AlertTriangle, CheckCircle, FileText, Bell, Users, Zap, Cloud, Server, Lock, Eye, ArrowRight, ArrowDown } from "lucide-react";
+import { Bot, Database, Shield, AlertTriangle, CheckCircle, FileText, Bell, Users, Zap, Cloud, Server, Lock, Eye, ArrowRight, ArrowDown, Search } from "lucide-react";
 
 const AutomatedUAR: React.FC = () => {
   const keyComponents = [
@@ -88,22 +89,22 @@ const AutomatedUAR: React.FC = () => {
     },
     {
       id: 4,
-      phase: "📄 Reporting Phase",
-      title: "Generate Report",
-      description: "Create comprehensive compliance report with all scan results",
-      status: "normal",
-      tags: ["#ReportGenerated", "#ComplianceReport"],
-      icon: FileText,
-      color: "border-purple-300 bg-purple-50"
+      phase: "🔍 Investigation Phase",
+      title: "Threat Intelligence Review",
+      description: "Threat Intelligence Analyst reviews and investigates the security mismatch alert",
+      status: "warning",
+      tags: ["#ThreatAnalysis", "#SecurityInvestigation"],
+      icon: Search,
+      color: "border-red-300 bg-red-50"
     },
     {
       id: 5,
       phase: "📄 Reporting Phase",
-      title: "Send Report to Compliance",
-      description: "Deliver final audit report to compliance team for review",
+      title: "Generate & Send Report to Compliance",
+      description: "Create comprehensive compliance report and deliver to compliance team for review",
       status: "success",
-      tags: ["#AuditComplete", "#ComplianceDelivery"],
-      icon: CheckCircle,
+      tags: ["#ReportGenerated", "#ComplianceDelivery"],
+      icon: FileText,
       color: "border-green-300 bg-green-50"
     }
   ];
