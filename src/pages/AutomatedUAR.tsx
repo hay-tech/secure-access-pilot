@@ -30,7 +30,7 @@ const AutomatedUAR: React.FC = () => {
       color: "bg-green-50 border-green-200"
     },
     {
-      id: 5,
+      id: 4,
       title: "📢 Notification Service",
       subtitle: "Alert System",
       description: "Service that sends real-time alerts to stakeholders",
@@ -38,7 +38,7 @@ const AutomatedUAR: React.FC = () => {
       color: "bg-red-50 border-red-200"
     },
     {
-      id: 6,
+      id: 5,
       title: "📊 Reporting Module",
       subtitle: "Analytics & Reports",
       description: "Generates comprehensive compliance and audit reports",
@@ -81,20 +81,10 @@ const AutomatedUAR: React.FC = () => {
     {
       id: 4,
       phase: "📄 Reporting Phase",
-      title: "Generate Report",
-      description: "Create comprehensive compliance report with all scan results",
-      status: "normal",
-      tags: ["#ReportGenerated", "#ComplianceReport"],
-      icon: FileText,
-      color: "border-purple-300 bg-purple-50"
-    },
-    {
-      id: 5,
-      phase: "📄 Reporting Phase",
-      title: "Send Report to Compliance",
-      description: "Deliver final audit report to compliance team for review",
+      title: "Generate & Send Report to Compliance",
+      description: "Create comprehensive compliance report and deliver to compliance team for review",
       status: "success",
-      tags: ["#AuditComplete", "#ComplianceDelivery"],
+      tags: ["#ReportGenerated", "#ComplianceDelivery", "#AuditComplete"],
       icon: CheckCircle,
       color: "border-green-300 bg-green-50"
     }
