@@ -89,20 +89,10 @@ const AutomatedUAR: React.FC = () => {
     {
       id: 4,
       phase: "📄 Reporting Phase",
-      title: "Generate Report",
-      description: "Create comprehensive compliance report with all scan results",
-      status: "normal",
-      tags: ["#ReportGenerated", "#ComplianceReport"],
-      icon: FileText,
-      color: "border-purple-300 bg-purple-50"
-    },
-    {
-      id: 5,
-      phase: "📄 Reporting Phase",
-      title: "Send Report to Compliance",
-      description: "Deliver final audit report to compliance team for review",
+      title: "Generate & Send Report to Compliance",
+      description: "Create comprehensive compliance report and deliver to compliance team for review",
       status: "success",
-      tags: ["#AuditComplete", "#ComplianceDelivery"],
+      tags: ["#ReportGenerated", "#ComplianceDelivery", "#AuditComplete"],
       icon: CheckCircle,
       color: "border-green-300 bg-green-50"
     }
