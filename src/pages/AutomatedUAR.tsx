@@ -27,7 +27,7 @@ const AutomatedUAR: React.FC = () => {
       id: 3,
       title: "🌐 Environment Systems",
       subtitle: "Cloud, DBs, Applications",
-      description: "Production systems where actual user permissions are scanned",
+      description: "Production systems where ACTUAL user permissions are scanned",
       icon: Cloud,
       color: "bg-green-50 border-green-200"
     },
@@ -72,7 +72,7 @@ const AutomatedUAR: React.FC = () => {
       id: 2,
       phase: "📘 Validation Phase", 
       title: "Compare with Access Control DB",
-      description: "Bot fetches expected permissions and performs comparison analysis",
+      description: "Bot fetches expected permissions and performs comparison analysis. Note: DB is pre-populated with Users/Service Accounts Approvals",
       status: "normal",
       tags: ["#SecurityCompliance", "#DataValidation"],
       icon: Database,
@@ -81,8 +81,8 @@ const AutomatedUAR: React.FC = () => {
     {
       id: 3,
       phase: "⚠️ Response Phase",
-      title: "Mismatch? ➝ Freeze Access + Send Alert",
-      description: "Decision point: If mismatch detected, freeze access and trigger alerts",
+      title: "Mismatch? ➝ Freeze Access + Send Log/Alert",
+      description: "Decision point: If mismatch detected, freeze access and trigger a log/alert to Threat Intelligence monitored centralized logs",
       status: "warning",
       tags: ["#AutoFreeze", "#AlertSent"],
       icon: AlertTriangle,
