@@ -27,7 +27,7 @@ const AutomatedUAR: React.FC = () => {
       id: 3,
       title: "🌐 Environment Systems",
       subtitle: "Cloud, DBs, Applications",
-      description: "Production systems where ACTUAL user permissions are scanned",
+      description: "Production systems where actual user permissions are scanned",
       icon: Cloud,
       color: "bg-green-50 border-green-200"
     },
@@ -62,7 +62,7 @@ const AutomatedUAR: React.FC = () => {
       id: 1,
       phase: "🔍 Scan Phase",
       title: "Scan Users & Permissions",
-      description: "Automation Bot scans all environment systems for actual user privileges",
+      description: "Automation Bot scans all environment systems for ACTUAL user privileges",
       status: "normal",
       tags: ["#AccessReview", "#UserScan"],
       icon: Eye,
