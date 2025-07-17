@@ -169,7 +169,7 @@ const AccessReviewEmail: React.FC = () => {
               </ul>
 
               <div className="text-s pt-4 border-t space-y-2">
-                <p><strong>For additional information related to User Access Reviews</strong>: Please visit the <Link to="/access-review-wiki" className="text-blue-600 hover:text-blue-800 underline">User Access Review FAQs</Link>. </p>
+                <p><strong>For additional information related to User Access Reviews</strong>: Please visit the <Link to="https://docs.google.com/document/d/1yaCy1oRxCxuPk0kA73pHkG25pmCMoqX9RKHe5UmDnHs/edit?tab=t.vh0ej6r5g8gl" className="text-blue-600 hover:text-blue-800 underline">User Access Review FAQs</Link>. </p>
               </div>
               <p className="mt-2">
                 <strong>To maintain your employees' access, your response is required by the end of the day, 7/25/2025.</strong>
