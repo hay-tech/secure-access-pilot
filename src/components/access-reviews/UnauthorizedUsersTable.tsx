@@ -10,10 +10,17 @@ import {
   TableHeader, 
   TableRow 
 } from '@/components/ui/table';
-import { Check, X, AlertTriangle } from "lucide-react";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
+import { Check, X, AlertTriangle, MoreVertical } from "lucide-react";
 import { Badge } from '@/components/ui/badge';
 import { Checkbox } from '@/components/ui/checkbox';
 import { useAccessReviewManagement } from '@/hooks/iam/useAccessReviewManagement';
+import { useToast } from '@/hooks/use-toast';
 
 interface UnauthorizedUsersTableProps {
   users: any[];
@@ -31,6 +38,28 @@ const UnauthorizedUsersTable: React.FC<UnauthorizedUsersTableProps> = ({
   onSelectUser = () => {}
 }) => {
   const { getUsersByCSP } = useAccessReviewManagement();
+  const { toast } = useToast();
+
+  const handleRightSizePermissions = (userId: string, userName: string) => {
+    toast({
+      title: "Permissions Right-Sized",
+      description: `Excess permissions removed for ${userName}`,
+    });
+  };
+
+  const handleRemoveAllPermissions = (userId: string, userName: string) => {
+    toast({
+      title: "All Permissions Removed",
+      description: `All unauthorized permissions removed for ${userName}`,
+    });
+  };
+
+  const handleDisableIdentity = (userId: string, userName: string) => {
+    toast({
+      title: "Identity Disabled",
+      description: `Account disabled for ${userName}`,
+    });
+  };
   
   // Get the status caption text
   const getStatusCaption = () => {
@@ -117,6 +146,7 @@ const UnauthorizedUsersTable: React.FC<UnauthorizedUsersTableProps> = ({
           <TableHead>Current Permissions</TableHead>
           <TableHead>Violation Type</TableHead>
           <TableHead>Status</TableHead>
+          <TableHead>Action</TableHead>
         </TableRow>
       </TableHeader>
       <TableBody>
@@ -214,6 +244,26 @@ const UnauthorizedUsersTable: React.FC<UnauthorizedUsersTableProps> = ({
                     <AlertTriangle className="h-3 w-3 mr-1" /> Account Disabled
                   </Badge>
                 )}
+              </TableCell>
+              <TableCell>
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button variant="ghost" size="icon">
+                      <MoreVertical className="h-4 w-4" />
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="end">
+                    <DropdownMenuItem onClick={() => handleRightSizePermissions(user.userId, user.userName)}>
+                      Right-size permissions (remove excess permissions)
+                    </DropdownMenuItem>
+                    <DropdownMenuItem onClick={() => handleRemoveAllPermissions(user.userId, user.userName)}>
+                      Remove all unauthorized permissions
+                    </DropdownMenuItem>
+                    <DropdownMenuItem onClick={() => handleDisableIdentity(user.userId, user.userName)}>
+                      Disable identity
+                    </DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
               </TableCell>
             </TableRow>
           );
