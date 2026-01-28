@@ -40,16 +40,16 @@ const UnauthorizedUsersTable: React.FC<UnauthorizedUsersTableProps> = ({
   const { getUsersByCSP } = useAccessReviewManagement();
   const { toast } = useToast();
 
-  const handleRightSizePermissions = (userId: string, userName: string) => {
+  const handleFlagFalsePositive = (userId: string, userName: string) => {
     toast({
-      title: "Permissions Right-Sized",
-      description: `Excess permissions removed for ${userName}`,
+      title: "Flagged as False Positive",
+      description: `${userName} has been flagged for review`,
     });
   };
 
-  const handleRemoveAllPermissions = (userId: string, userName: string) => {
+  const handleRemoveUnauthorizedPermissions = (userId: string, userName: string) => {
     toast({
-      title: "All Permissions Removed",
+      title: "Unauthorized Permissions Removed",
       description: `All unauthorized permissions removed for ${userName}`,
     });
   };
@@ -253,11 +253,11 @@ const UnauthorizedUsersTable: React.FC<UnauthorizedUsersTableProps> = ({
                     </Button>
                   </DropdownMenuTrigger>
                   <DropdownMenuContent align="end">
-                    <DropdownMenuItem onClick={() => handleRightSizePermissions(user.userId, user.userName)}>
-                      Right-size permissions (remove excess permissions)
+                    <DropdownMenuItem onClick={() => handleFlagFalsePositive(user.userId, user.userName)}>
+                      Flag false positive
                     </DropdownMenuItem>
-                    <DropdownMenuItem onClick={() => handleRemoveAllPermissions(user.userId, user.userName)}>
-                      Remove all unauthorized permissions
+                    <DropdownMenuItem onClick={() => handleRemoveUnauthorizedPermissions(user.userId, user.userName)}>
+                      Remove unauthorized permissions
                     </DropdownMenuItem>
                     <DropdownMenuItem onClick={() => handleDisableIdentity(user.userId, user.userName)}>
                       Disable identity
